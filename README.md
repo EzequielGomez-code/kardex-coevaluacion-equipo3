@@ -11,6 +11,17 @@ requiere un despliegue.
 Este repositorio contiene **la base**. Los tres módulos funcionales se
 construyen sobre ella, cada uno en su propia rama.
 
+| | |
+|---|---|
+| **Aplicación en línea** | <https://kardex-aco4.onrender.com> |
+| **Repositorio** | <https://github.com/EzequielGomez-code/kardex> (privado) |
+| **Base de datos** | Neon PostgreSQL 18, región `us-east-2` |
+| **Usuario de prueba** | `admin` |
+
+El servicio gratuito de Render se duerme a los 15 minutos de inactividad. La
+primera carga después de un rato tarda entre 30 y 60 segundos en despertar:
+es normal, no es un error.
+
 ---
 
 ## 1. Qué trae esta base
@@ -262,6 +273,23 @@ Abra `https://<su-servicio>.onrender.com/` y entre con `admin` y la contraseña
 que cargó. Si ve la pantalla de acceso con la barra verde a la izquierda, quedó
 desplegado.
 
+### 7.5 Estado actual del despliegue
+
+Ya está montado y en línea:
+
+| Pieza | Valor |
+|---|---|
+| Servicio Render | `kardex` (plan Free, región Oregon) |
+| URL pública | <https://kardex-aco4.onrender.com> |
+| Despliegue automático | activado en cada `push` a `main` |
+| Base de datos | Neon, ya migrada y sembrada |
+| `SEMBRAR_AL_DESPLEGAR` | `false` — la siembra ya corrió |
+
+Render asignó el sufijo `-aco4` porque el nombre `kardex` ya estaba tomado por
+otra cuenta. `ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS` apuntan a ese host; además,
+`config/settings/produccion.py` añade solo el valor de `RENDER_EXTERNAL_HOSTNAME`,
+así que el sistema sigue funcionando si el host cambia.
+
 ---
 
 ## 8. Terminado cuando
@@ -275,7 +303,7 @@ desplegado.
 - [x] Toda acción quedó en la auditoría, y ese registro no se puede editar ni borrar
 - [x] `pylint apps/ config/` da 10.00/10 (el mínimo exigido era 8.0)
 - [x] `pytest` pasa en verde — 74 pruebas
-- [ ] Desplegada en Render conectada a Neon (pasos 7.2 y 7.3: requieren la cuenta de GitHub del equipo)
+- [x] Desplegada en Render, conectada a Neon y respondiendo en <https://kardex-aco4.onrender.com>
 
 Las evidencias de las dos últimas corridas están en `evidencias/`.
 
