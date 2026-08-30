@@ -1,4 +1,6 @@
-77c0a11 docs: README, brief de referencia y evidencias de calidad
+23f5b2d docs: URLs reales del despliegue y evidencia de produccion
+44ed1c9 fix: elimina config/settings.py huerfano de startproject
+646ea17 docs: README, brief de referencia y evidencias de calidad
 7a56541 docs: despliegue en Render con Neon y guion de construccion
 c0d9a63 test: pruebas de autenticacion, permisos, auditoria y campos
 448db7a feat: comando sembrar y fixture de permisos y roles

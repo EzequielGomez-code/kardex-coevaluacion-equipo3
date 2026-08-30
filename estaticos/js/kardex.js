@@ -123,32 +123,25 @@
   /* ------------------------------------------- Selección múltiple en tablas */
   document.addEventListener("change", function (evento) {
     var origen = evento.target;
-    if (!origen.matches("[data-seleccionar-todo]")) return;
-
     var tabla = origen.closest("table");
     if (!tabla) return;
-    tabla.querySelectorAll("[data-seleccionar-fila]").forEach(function (casilla) {
-      casilla.checked = origen.checked;
-    });
-    actualizarBarraSeleccion(tabla);
-  });
 
-  document.addEventListener("change", function (evento) {
-    if (evento.target.matches("[data-seleccionar-fila]")) {
-      actualizarBarraSeleccion(evento.target.closest("table"));
+    if (origen.matches("[data-seleccionar-todo]")) {
+      tabla.querySelectorAll("[data-seleccionar-fila]").forEach(function (casilla) {
+        casilla.checked = origen.checked;
+      });
+    } else if (!origen.matches("[data-seleccionar-fila]")) {
+      return;
     }
-  });
 
-  function actualizarBarraSeleccion(tabla) {
-    if (!tabla) return;
-    var marcadas = tabla.querySelectorAll("[data-seleccionar-fila]:checked").length;
     var barra = document.getElementById("seleccion-barra");
+    var contador = barra && barra.querySelector("[data-contador-seleccion]");
     if (!barra) return;
+    var marcadas = tabla.querySelectorAll("[data-seleccionar-fila]:checked").length;
     barra.hidden = marcadas === 0;
-    var contador = barra.querySelector("[data-contador-seleccion]");
     if (contador) {
       contador.textContent =
         marcadas === 1 ? "1 fila seleccionada" : marcadas + " filas seleccionadas";
     }
-  }
+  });
 })();

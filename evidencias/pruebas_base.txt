@@ -77,4 +77,4 @@ apps\nucleo\utilidades.py                        66      8    88%
 apps\nucleo\views.py                            191    112    41%
 -----------------------------------------------------------------
 TOTAL                                          1875    509    73%
-74 passed, 24 warnings in 5.46s
+74 passed, 24 warnings in 3.70s
