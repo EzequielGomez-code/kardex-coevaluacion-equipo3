@@ -1,0 +1,546 @@
+[
+  {
+    "model": "nucleo.permiso",
+    "pk": 1,
+    "fields": {
+      "clave": "articulo.ver",
+      "descripcion": "Ver artículos y existencias",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 2,
+    "fields": {
+      "clave": "articulo.crear",
+      "descripcion": "Crear artículos",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 3,
+    "fields": {
+      "clave": "articulo.editar",
+      "descripcion": "Editar artículos",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 4,
+    "fields": {
+      "clave": "articulo.eliminar",
+      "descripcion": "Eliminar artículos",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 5,
+    "fields": {
+      "clave": "movimiento.ver",
+      "descripcion": "Ver movimientos de inventario",
+      "modulo": "Movimientos"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 6,
+    "fields": {
+      "clave": "movimiento.crear",
+      "descripcion": "Registrar entradas, salidas y transferencias",
+      "modulo": "Movimientos"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 7,
+    "fields": {
+      "clave": "movimiento.anular",
+      "descripcion": "Anular movimientos registrados",
+      "modulo": "Movimientos"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 8,
+    "fields": {
+      "clave": "movimiento.aprobar",
+      "descripcion": "Aprobar movimientos que requieren visto bueno",
+      "modulo": "Movimientos"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 9,
+    "fields": {
+      "clave": "almacen.gestionar",
+      "descripcion": "Crear y editar almacenes",
+      "modulo": "Administración"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 10,
+    "fields": {
+      "clave": "usuario.gestionar",
+      "descripcion": "Crear usuarios, roles y permisos",
+      "modulo": "Administración"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 11,
+    "fields": {
+      "clave": "configuracion.gestionar",
+      "descripcion": "Configurar parámetros y campos del sistema",
+      "modulo": "Sistema"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 12,
+    "fields": {
+      "clave": "reporte.ver",
+      "descripcion": "Consultar reportes y auditoría",
+      "modulo": "Reportes"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 13,
+    "fields": {
+      "clave": "alerta.ver",
+      "descripcion": "Ver alertas de inventario",
+      "modulo": "Alertas"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 14,
+    "fields": {
+      "clave": "alerta.resolver",
+      "descripcion": "Marcar alertas como resueltas",
+      "modulo": "Alertas"
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 1,
+    "fields": {
+      "nombre": "Administrador de TI",
+      "descripcion": "Administra usuarios, roles, parámetros y la configuración del sistema.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1,
+    "fields": {
+      "rol": 1,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 2,
+    "fields": {
+      "rol": 1,
+      "permiso": 2
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 3,
+    "fields": {
+      "rol": 1,
+      "permiso": 3
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 4,
+    "fields": {
+      "rol": 1,
+      "permiso": 4
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 5,
+    "fields": {
+      "rol": 1,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 6,
+    "fields": {
+      "rol": 1,
+      "permiso": 6
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 7,
+    "fields": {
+      "rol": 1,
+      "permiso": 7
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 8,
+    "fields": {
+      "rol": 1,
+      "permiso": 8
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 9,
+    "fields": {
+      "rol": 1,
+      "permiso": 9
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 10,
+    "fields": {
+      "rol": 1,
+      "permiso": 10
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 11,
+    "fields": {
+      "rol": 1,
+      "permiso": 11
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 12,
+    "fields": {
+      "rol": 1,
+      "permiso": 12
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 13,
+    "fields": {
+      "rol": 1,
+      "permiso": 13
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 14,
+    "fields": {
+      "rol": 1,
+      "permiso": 14
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 2,
+    "fields": {
+      "nombre": "Gerente de almacén",
+      "descripcion": "Responsable de las existencias de uno o varios almacenes; aprueba movimientos.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 15,
+    "fields": {
+      "rol": 2,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 16,
+    "fields": {
+      "rol": 2,
+      "permiso": 2
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 17,
+    "fields": {
+      "rol": 2,
+      "permiso": 3
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 18,
+    "fields": {
+      "rol": 2,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 19,
+    "fields": {
+      "rol": 2,
+      "permiso": 6
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 20,
+    "fields": {
+      "rol": 2,
+      "permiso": 7
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 21,
+    "fields": {
+      "rol": 2,
+      "permiso": 8
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 22,
+    "fields": {
+      "rol": 2,
+      "permiso": 9
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 23,
+    "fields": {
+      "rol": 2,
+      "permiso": 12
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 24,
+    "fields": {
+      "rol": 2,
+      "permiso": 13
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 25,
+    "fields": {
+      "rol": 2,
+      "permiso": 14
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 3,
+    "fields": {
+      "nombre": "Operador de almacén",
+      "descripcion": "Registra las entradas y salidas del día a día.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 26,
+    "fields": {
+      "rol": 3,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 27,
+    "fields": {
+      "rol": 3,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 28,
+    "fields": {
+      "rol": 3,
+      "permiso": 6
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 29,
+    "fields": {
+      "rol": 3,
+      "permiso": 13
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 4,
+    "fields": {
+      "nombre": "Gerente de compras",
+      "descripcion": "Mantiene el catálogo y atiende las alertas de reposición.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 30,
+    "fields": {
+      "rol": 4,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 31,
+    "fields": {
+      "rol": 4,
+      "permiso": 2
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 32,
+    "fields": {
+      "rol": 4,
+      "permiso": 3
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 33,
+    "fields": {
+      "rol": 4,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 34,
+    "fields": {
+      "rol": 4,
+      "permiso": 12
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 35,
+    "fields": {
+      "rol": 4,
+      "permiso": 13
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 36,
+    "fields": {
+      "rol": 4,
+      "permiso": 14
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 5,
+    "fields": {
+      "nombre": "Gerente de ventas",
+      "descripcion": "Consulta disponibilidad de artículos y reportes de salida.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 37,
+    "fields": {
+      "rol": 5,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 38,
+    "fields": {
+      "rol": 5,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 39,
+    "fields": {
+      "rol": 5,
+      "permiso": 12
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 40,
+    "fields": {
+      "rol": 5,
+      "permiso": 13
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 6,
+    "fields": {
+      "nombre": "Auditor",
+      "descripcion": "Solo lectura sobre todo el sistema, incluida la auditoría.",
+      "es_sistema": true,
+      "creado_en": "2026-01-01T00:00:00-04:00",
+      "actualizado_en": "2026-01-01T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 41,
+    "fields": {
+      "rol": 6,
+      "permiso": 1
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 42,
+    "fields": {
+      "rol": 6,
+      "permiso": 5
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 43,
+    "fields": {
+      "rol": 6,
+      "permiso": 12
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 44,
+    "fields": {
+      "rol": 6,
+      "permiso": 13
+    }
+  }
+]
