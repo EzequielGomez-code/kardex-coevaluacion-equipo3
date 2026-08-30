@@ -1,0 +1,10 @@
+77c0a11 docs: README, brief de referencia y evidencias de calidad
+7a56541 docs: despliegue en Render con Neon y guion de construccion
+c0d9a63 test: pruebas de autenticacion, permisos, auditoria y campos
+448db7a feat: comando sembrar y fixture de permisos y roles
+dad53de feat: apps de catalogo, movimientos y alertas con estructura completa
+622d040 feat: vistas, formularios y rutas del nucleo
+0650677 feat: interfaz con sistema de diseno propio, HTMX y Alpine
+1984849 feat: capa de configuracion con campos personalizados y parametros
+72b200b feat: modelos, repositorios y servicios del nucleo
+403fe91 chore: estructura del proyecto Django con ajustes divididos
