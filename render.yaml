@@ -1,0 +1,53 @@
+# Infraestructura de Kardex en Render (plan gratuito, sin tarjeta).
+#
+# La base de datos NO se declara aquí a propósito: se usa Neon, porque la base
+# gratuita de Render expira a los 30 días y se borra (punto 7 del brief).
+# DATABASE_URL se carga a mano en el panel de Render con la cadena de Neon.
+
+services:
+  - type: web
+    name: kardex
+    runtime: python
+    plan: free
+    region: oregon
+    branch: main
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn config.wsgi:application --workers 2 --threads 4 --timeout 60"
+    healthCheckPath: /acceso/
+    autoDeploy: true
+
+    envVars:
+      # Módulo de ajustes de producción: DEBUG=False, HTTPS obligatorio.
+      - key: DJANGO_SETTINGS_MODULE
+        value: config.settings.produccion
+
+      - key: PYTHON_VERSION
+        value: "3.12.13"
+
+      # Render genera un valor aleatorio y lo guarda solo en el entorno.
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+
+      - key: DJANGO_DEBUG
+        value: "False"
+
+      # Cadena de conexión de Neon. Se carga a mano en el panel: NUNCA aquí.
+      - key: DATABASE_URL
+        sync: false
+
+      # Contraseña del administrador inicial. También a mano en el panel.
+      - key: DJANGO_ADMIN_PASSWORD
+        sync: false
+
+      - key: ALLOWED_HOSTS
+        sync: false
+
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+
+      - key: TIME_ZONE
+        value: America/Santo_Domingo
+
+      # Pon "true" solo en el primer despliegue para cargar permisos y roles.
+      - key: SEMBRAR_AL_DESPLEGAR
+        value: "false"
