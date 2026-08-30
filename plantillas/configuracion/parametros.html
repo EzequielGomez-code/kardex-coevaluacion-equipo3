@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Parámetros del sistema</h1>
+      <p class="encabezado__bajada">
+        Decisiones de negocio guardadas como datos. Al guardar, el cambio se aplica de
+        inmediato: no hace falta reiniciar el servidor ni desplegar de nuevo.
+      </p>
+    </div>
+  </div>
+
+  <form hx-post="{% url 'configuracion:parametros' %}" hx-swap="none">
+    {% csrf_token %}
+
+    {% if formulario.non_field_errors %}
+      <div class="formulario__errores" style="margin-bottom: var(--e3);">
+        {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="panel">
+      {% for grupo in grupos %}
+        <section class="grupo-parametros">
+          <h2 class="grupo-parametros__titulo">{{ grupo.nombre }}</h2>
+          {% for fila in grupo.filas %}
+            <div class="parametro-fila">
+              <div>
+                <div class="parametro-fila__nombre">{{ fila.parametro.etiqueta }}</div>
+                <div class="parametro-fila__clave">{{ fila.parametro.clave }}</div>
+                {% if fila.parametro.ayuda %}
+                  <div class="parametro-fila__ayuda">{{ fila.parametro.ayuda }}</div>
+                {% endif %}
+              </div>
+              <div class="parametro-fila__valor">
+                {{ fila.campo }}
+                {% for error in fila.campo.errors %}
+                  <p class="campo-grupo__error">{{ error }}</p>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+        </section>
+      {% endfor %}
+    </div>
+
+    <div class="formulario__pie" style="border: 0;">
+      <button class="boton boton--primario" type="submit">Guardar parámetros</button>
+    </div>
+  </form>
+{% endblock %}

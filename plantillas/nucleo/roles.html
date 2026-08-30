@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Roles y permisos</h1>
+      <p class="encabezado__bajada">
+        Cada rol agrupa los permisos que puede ejercer un usuario. El servidor verifica
+        el permiso en cada pantalla, no solo oculta los botones.
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      <button class="boton boton--primario" type="button"
+              hx-get="{% url 'nucleo:rol_nuevo' %}" hx-target="#modal">
+        {% icono "mas" %} Nuevo rol
+      </button>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-busqueda">Buscar</label>
+        <input class="campo filtros__texto" type="search" id="f-busqueda" name="busqueda"
+               value="{{ busqueda }}" placeholder="Nombre o descripción">
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_rol filas=pagina plantilla_filas="nucleo/_fila_rol.html" con_acciones=True %}
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No hay roles que coincidan con el filtro" %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

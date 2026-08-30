@@ -1,0 +1,15 @@
+{% load formato %}
+{% comment %} Envoltura de modal para HTMX. La vista devuelve este parcial y kardex.js lo
+   cierra al recibir el evento kardexCerrarModal. {% endcomment %}
+<div class="modal-fondo" @click.self="$el.remove()">
+  <div class="modal{% if ancho %} modal--ancho{% endif %}" role="dialog" aria-modal="true"
+       aria-labelledby="modal-titulo">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="modal-titulo">{{ titulo_modal }}</h2>
+      <button class="modal__cerrar" type="button" data-cerrar-modal aria-label="Cerrar">
+        {% icono "cerrar" %}
+      </button>
+    </div>
+    {% block modal_cuerpo %}{% endblock %}
+  </div>
+</div>

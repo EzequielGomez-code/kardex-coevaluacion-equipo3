@@ -1,0 +1,18 @@
+{% comment %} Un campo de formulario con su etiqueta, ayuda y errores.
+   Uso: {% include "componentes/campo.html" with campo=formulario.nombre %} {% endcomment %}
+<div class="campo-grupo">
+  {% if campo.field.widget.input_type == "checkbox" %}
+    <label class="casilla-linea" for="{{ campo.id_for_label }}">
+      {{ campo }}
+      <span>{{ campo.label }}</span>
+    </label>
+  {% else %}
+    <label class="campo-grupo__etiqueta" for="{{ campo.id_for_label }}">
+      {{ campo.label }}{% if campo.field.required %}<span class="campo-grupo__obligatorio">*</span>{% endif %}
+    </label>
+    {{ campo }}
+  {% endif %}
+
+  {% if campo.help_text %}<p class="campo-grupo__ayuda">{{ campo.help_text }}</p>{% endif %}
+  {% for error in campo.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}
+</div>

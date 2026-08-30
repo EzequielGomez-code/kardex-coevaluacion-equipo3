@@ -1,0 +1,47 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        {% include "componentes/campo.html" with campo=formulario.nombre %}
+        {% include "componentes/campo.html" with campo=formulario.descripcion %}
+
+        <div>
+          <p class="campo-grupo__etiqueta" style="margin-bottom: var(--e2);">Permisos</p>
+          {% for modulo, permisos in grupos_permiso.items %}
+            <div class="permisos-grupo">
+              <p class="permisos-grupo__titulo">{{ modulo }}</p>
+              <div class="permisos-grupo__lista">
+                {% for permiso in permisos %}
+                  <label class="casilla-linea" for="p-{{ permiso.pk }}">
+                    <input class="casilla" type="checkbox" name="permisos" id="p-{{ permiso.pk }}"
+                           value="{{ permiso.clave }}"
+                           {% if permiso.clave in permisos_marcados %}checked{% endif %}>
+                    <span>{{ permiso.descripcion }}</span>
+                  </label>
+                {% endfor %}
+              </div>
+            </div>
+          {% endfor %}
+          {% for error in formulario.permisos.errors %}
+            <p class="campo-grupo__error">{{ error }}</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

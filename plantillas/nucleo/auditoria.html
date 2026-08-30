@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Auditoría</h1>
+      <p class="encabezado__bajada">
+        Rastro inmutable de las acciones del sistema. Los registros no se editan ni se
+        eliminan, ni desde la interfaz ni desde el panel de administración.
+      </p>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-busqueda">Buscar</label>
+        <input class="campo filtros__texto" type="search" id="f-busqueda" name="busqueda"
+               value="{{ busqueda }}" placeholder="Entidad o identificador">
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-entidad">Entidad</label>
+        <select class="campo filtros__seleccion" id="f-entidad" name="entidad">
+          <option value="">Todas</option>
+          {% for nombre in entidades %}
+            <option value="{{ nombre }}" {% if entidad == nombre %}selected{% endif %}>{{ nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-accion">Acción</label>
+        <select class="campo filtros__seleccion" id="f-accion" name="accion">
+          <option value="">Todas</option>
+          {% for valor, etiqueta in acciones %}
+            <option value="{{ valor }}" {% if accion == valor %}selected{% endif %}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_auditoria filas=pagina plantilla_filas="nucleo/_fila_auditoria.html" %}
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No hay movimientos de auditoría con ese filtro" texto_vacio="Cambie los criterios para ver otros registros." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

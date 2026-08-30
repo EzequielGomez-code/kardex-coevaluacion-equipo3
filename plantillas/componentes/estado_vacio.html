@@ -1,0 +1,6 @@
+{# Estado vacío en lenguaje de dominio, nunca «No hay datos» (punto 5.4). #}
+<div class="estado-vacio">
+  <p class="estado-vacio__titulo">{{ titulo_vacio }}</p>
+  {% if texto_vacio %}<p class="estado-vacio__texto">{{ texto_vacio }}</p>{% endif %}
+  {% if accion_vacio %}{{ accion_vacio }}{% endif %}
+</div>

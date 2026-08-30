@@ -1,0 +1,54 @@
+{% load static formato %}<!doctype html>
+<html lang="es-DO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso · Kardex</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/componentes.css' %}">
+</head>
+<body>
+  <div class="acceso">
+    <section class="acceso__lienzo">
+      <div>
+        <p class="acceso__marca">Kardex</p>
+        <p class="acceso__nota">{{ nombre_empresa }}</p>
+      </div>
+      <p class="acceso__lema">
+        Gestión de inventario multi-almacén. Las categorías, los campos, los tipos de
+        movimiento y las reglas se configuran desde la interfaz, no desde el código.
+      </p>
+      <p class="acceso__nota">INF-5250 · Equipo #3 · UASD</p>
+    </section>
+
+    <section class="acceso__panel">
+      <h1 class="acceso__titulo">Acceso al sistema</h1>
+      <p class="acceso__ayuda">Use las credenciales que le asignó el administrador de TI.</p>
+
+      <form class="formulario" method="post" action="{% url 'nucleo:iniciar_sesion' %}{% if request.GET.siguiente %}?siguiente={{ request.GET.siguiente|urlencode }}{% endif %}">
+        {% csrf_token %}
+
+        {% if formulario.non_field_errors %}
+          <div class="formulario__errores">
+            {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+
+        {% include "componentes/campo.html" with campo=formulario.username %}
+        {% include "componentes/campo.html" with campo=formulario.password %}
+
+        <button class="boton boton--primario boton--bloque" type="submit">Entrar</button>
+      </form>
+
+      <p class="t-xs texto-3" style="margin-top: var(--e6);">
+        Tras 5 intentos fallidos la cuenta queda bloqueada 30 minutos.
+      </p>
+    </section>
+  </div>
+</body>
+</html>

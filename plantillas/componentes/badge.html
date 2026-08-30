@@ -1,0 +1,5 @@
+{% comment %} Badge de estado. Uso:
+   {% include "componentes/badge.html" with texto="Activo" variante="ok" %} {% endcomment %}
+<span class="badge badge--{{ variante|default:"neutro" }}">
+  {% if con_punto %}<span class="badge__punto"></span>{% endif %}{{ texto }}
+</span>

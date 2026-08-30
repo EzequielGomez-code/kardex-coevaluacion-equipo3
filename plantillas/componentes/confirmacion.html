@@ -1,0 +1,21 @@
+{% load formato %}
+{# Modal de confirmación para acciones que no se deshacen. #}
+<div class="modal-fondo" @click.self="$el.remove()">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="confirmar-titulo">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo" id="confirmar-titulo">{{ titulo_modal|default:"Confirmar acción" }}</h2>
+      <button class="modal__cerrar" type="button" data-cerrar-modal aria-label="Cerrar">
+        {% icono "cerrar" %}
+      </button>
+    </div>
+    <div class="modal__cuerpo">
+      <p class="confirmacion__mensaje">{{ mensaje }}</p>
+      {% if detalle %}<p class="confirmacion__detalle">{{ detalle }}</p>{% endif %}
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--peligro" type="button"
+              hx-post="{{ destino }}" hx-swap="none">{{ etiqueta_envio|default:"Confirmar" }}</button>
+    </div>
+  </div>
+</div>

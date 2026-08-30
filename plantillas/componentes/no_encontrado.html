@@ -1,0 +1,19 @@
+{% load formato %}
+{# Respuesta a una petición HTMX cuyo objeto ya no existe. #}
+<div class="modal-fondo" @click.self="$el.remove()">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal__cabecera">
+      <h2 class="modal__titulo">Registro no encontrado</h2>
+      <button class="modal__cerrar" type="button" data-cerrar-modal aria-label="Cerrar">
+        {% icono "cerrar" %}
+      </button>
+    </div>
+    <div class="modal__cuerpo">
+      <p>El registro que intenta abrir ya no existe. Es posible que otro usuario lo haya
+         eliminado mientras tenía la pantalla abierta.</p>
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cerrar</button>
+    </div>
+  </div>
+</div>

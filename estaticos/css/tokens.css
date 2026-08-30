@@ -1,0 +1,47 @@
+/*
+ * Kardex — variables de diseño.
+ * Punto 5.2 del brief. Ningún color, tamaño ni espacio se escribe suelto en
+ * otro archivo: todo sale de aquí.
+ */
+
+:root {
+  --fondo:          #F5F4F0;
+  --superficie:     #FFFFFF;
+  --superficie-alt: #FAF9F6;
+  --borde:          #DCD9D1;
+  --borde-fuerte:   #C2BEB4;
+
+  --texto:   #23211E;
+  --texto-2: #6A665F;
+  --texto-3: #918C83;
+
+  --acento:       #1F5B4E;
+  --acento-hover: #17463C;
+  --acento-suave: #E7EFEC;
+
+  --alerta: #A03A22;
+  --aviso:  #8A6410;
+  --ok:     #3B6E2A;
+
+  --radio:   4px;
+  --radio-s: 3px;
+
+  --fuente: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono:   "IBM Plex Mono", ui-monospace, monospace;
+  --t-xs: 12px; --t-s: 13px; --t-base: 14px; --t-m: 16px; --t-l: 20px; --t-xl: 26px;
+
+  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e6: 24px; --e8: 32px;
+
+  /* Medidas del armazón (punto 5.1). */
+  --ancho-lateral: 220px;
+  --alto-superior: 48px;
+  --alto-fila: 36px;
+
+  /* Única sombra permitida: menús desplegables y modales. */
+  --sombra-flotante: 0 2px 8px rgba(35, 33, 30, .12);
+
+  /* Tintes de fondo para los estados, derivados de los colores de estado. */
+  --alerta-suave: #F6E9E5;
+  --aviso-suave:  #F5EEDD;
+  --ok-suave:     #E9F0E5;
+}

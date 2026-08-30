@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Panel</h1>
+      <p class="encabezado__bajada">
+        Estado general del sistema · {{ nombre_empresa }}
+      </p>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-bottom: var(--e4);">
+    <div class="cifras">
+      <div class="cifra">
+        <div class="cifra__valor">{{ total_almacenes|entero }}</div>
+        <div class="cifra__nombre">Almacenes activos</div>
+      </div>
+      <div class="cifra">
+        <div class="cifra__valor">{{ total_usuarios|entero }}</div>
+        <div class="cifra__nombre">Usuarios activos</div>
+      </div>
+      <div class="cifra">
+        <div class="cifra__valor">{{ total_roles|entero }}</div>
+        <div class="cifra__nombre">Roles definidos</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rejilla">
+    <div class="panel">
+      <div class="panel__cabecera">
+        <h2 class="panel__titulo">Almacenes en operación</h2>
+        {% if perms_almacen %}{% endif %}
+      </div>
+      {% if almacenes %}
+        <table class="tabla">
+          <thead>
+            <tr><th>Código</th><th>Nombre</th><th>Encargado</th></tr>
+          </thead>
+          <tbody>
+            {% for almacen in almacenes %}
+              <tr>
+                <td>{{ almacen.codigo|mono }}</td>
+                <td class="tabla__principal">{{ almacen.nombre }}</td>
+                <td class="texto-2">{{ almacen.encargado|default:"Sin asignar" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay almacenes registrados" texto_vacio="Registre el primer almacén para empezar a controlar existencias." %}
+      {% endif %}
+    </div>
+
+    <div class="panel">
+      <div class="panel__cabecera">
+        <h2 class="panel__titulo">Actividad reciente</h2>
+        {% if user.rol %}
+          <a class="boton boton--plano" href="{% url 'nucleo:auditoria' %}">Ver auditoría</a>
+        {% endif %}
+      </div>
+      {% if actividad %}
+        {% for registro in actividad %}
+          <div class="linea-actividad">
+            <span class="linea-actividad__fecha">{{ registro.creado_en|fecha_hora }}</span>
+            <span>
+              {% include "componentes/badge.html" with texto=registro.get_accion_display variante=registro.accion|clase_de_accion %}
+            </span>
+            <span class="texto-2">
+              {{ registro.usuario|default:"Sistema" }} · {{ registro.entidad }}
+              {% if registro.entidad_id %}<span class="mono">#{{ registro.entidad_id }}</span>{% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      {% else %}
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Sin actividad registrada" texto_vacio="Las acciones sobre el inventario aparecerán aquí a medida que ocurran." %}
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}

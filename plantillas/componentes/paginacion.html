@@ -1,0 +1,35 @@
+{# Paginación con el texto exacto que pide el punto 5.4. #}
+{% if total %}
+  <div class="paginacion">
+    <span>Mostrando {{ desde }}–{{ hasta }} de {{ total }}</span>
+
+    {% if paginador.num_pages > 1 %}
+      <div class="paginacion__controles">
+        {% if pagina.has_previous %}
+          <a class="paginacion__enlace"
+             href="?{% if parametros_url %}{{ parametros_url }}&{% endif %}pagina={{ pagina.previous_page_number }}"
+             rel="prev">Anterior</a>
+        {% else %}
+          <span class="paginacion__enlace paginacion__enlace--inerte">Anterior</span>
+        {% endif %}
+
+        {% for numero in paginador.page_range %}
+          {% if numero == pagina.number %}
+            <span class="paginacion__enlace paginacion__enlace--activa">{{ numero }}</span>
+          {% elif numero > pagina.number|add:"-3" and numero < pagina.number|add:"3" %}
+            <a class="paginacion__enlace"
+               href="?{% if parametros_url %}{{ parametros_url }}&{% endif %}pagina={{ numero }}">{{ numero }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if pagina.has_next %}
+          <a class="paginacion__enlace"
+             href="?{% if parametros_url %}{{ parametros_url }}&{% endif %}pagina={{ pagina.next_page_number }}"
+             rel="next">Siguiente</a>
+        {% else %}
+          <span class="paginacion__enlace paginacion__enlace--inerte">Siguiente</span>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}

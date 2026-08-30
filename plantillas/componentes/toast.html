@@ -1,0 +1,11 @@
+{% comment %} Toast servido desde el servidor. El camino normal es el evento HX-Trigger
+   kardexToast, que arma el aviso en kardex.js; esto es el respaldo sin JS. {% endcomment %}
+{% if messages %}
+  <div class="toasts">
+    {% for mensaje in messages %}
+      <div class="toast toast--{{ mensaje.tags|default:"ok" }}" role="status">
+        <div class="toast__texto">{{ mensaje }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

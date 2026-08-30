@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block titulo %}{{ codigo }} · {{ titulo }}{% endblock %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">{{ titulo }}</h1>
+      <p class="encabezado__bajada">Código {{ codigo }}</p>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="estado-vacio">
+      <p class="estado-vacio__titulo">{{ titulo }}</p>
+      <p class="estado-vacio__texto">{{ detalle }}</p>
+      <a class="boton boton--secundario" href="{% url 'nucleo:panel' %}">Volver al panel</a>
+    </div>
+  </div>
+{% endblock %}

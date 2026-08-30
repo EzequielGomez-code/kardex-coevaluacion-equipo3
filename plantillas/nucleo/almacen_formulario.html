@@ -1,0 +1,40 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.codigo %}
+          {% include "componentes/campo.html" with campo=formulario.nombre %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.direccion %}
+        {% include "componentes/campo.html" with campo=formulario.encargado %}
+        {% include "componentes/campo.html" with campo=formulario.activo %}
+
+        {# Campos que el usuario definió desde «Campos personalizados». #}
+        {% if campos_personalizados.fields %}
+          <div class="campos-dinamicos">
+            <p class="campos-dinamicos__titulo">Campos personalizados</p>
+            {% for campo in campos_personalizados %}
+              {% include "componentes/campo_dinamico.html" with campo=campo %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

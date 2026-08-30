@@ -1,0 +1,12 @@
+{% load formato %}
+<tr>
+  <td class="mono">{{ fila.creado_en|fecha_hora }}</td>
+  <td>{{ fila.usuario|default:"Sistema" }}</td>
+  <td>
+    {% include "componentes/badge.html" with texto=fila.get_accion_display variante=fila.accion|clase_de_accion %}
+  </td>
+  <td class="tabla__principal">{{ fila.entidad }}</td>
+  <td>{% if fila.entidad_id %}{{ fila.entidad_id|mono }}{% else %}<span class="texto-3">—</span>{% endif %}</td>
+  <td><span class="detalle-json">{{ fila.detalle }}</span></td>
+  <td class="mono texto-3">{{ fila.ip|default:"—" }}</td>
+</tr>

@@ -1,0 +1,14 @@
+{# Resultados del buscador global de la barra superior. #}
+{% if termino %}
+  {% regroup resultados by grupo as por_grupo %}
+  {% for grupo in por_grupo %}
+    <div class="buscador__grupo">{{ grupo.grouper }}</div>
+    {% for resultado in grupo.list %}
+      <a class="buscador__item" href="{{ resultado.destino }}">{{ resultado.texto }}</a>
+    {% endfor %}
+  {% empty %}
+    <p class="buscador__vacio">Sin coincidencias para «{{ termino }}».</p>
+  {% endfor %}
+{% else %}
+  <p class="buscador__vacio">Escriba para buscar almacenes o usuarios.</p>
+{% endif %}

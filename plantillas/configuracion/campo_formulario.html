@@ -1,0 +1,58 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none"
+        x-data="{ tipo: '{{ formulario.tipo.value|default:"texto" }}' }">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.entidad %}
+          {% include "componentes/campo.html" with campo=formulario.categoria %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.clave %}
+          {% include "componentes/campo.html" with campo=formulario.etiqueta %}
+        </div>
+
+        <div class="campo-grupo">
+          <label class="campo-grupo__etiqueta" for="{{ formulario.tipo.id_for_label }}">
+            {{ formulario.tipo.label }}<span class="campo-grupo__obligatorio">*</span>
+          </label>
+          <select class="campo campo--seleccion" name="tipo" id="{{ formulario.tipo.id_for_label }}"
+                  x-model="tipo">
+            {% for valor, etiqueta in formulario.tipo.field.choices %}
+              <option value="{{ valor }}" {% if formulario.tipo.value == valor %}selected{% endif %}>{{ etiqueta }}</option>
+            {% endfor %}
+          </select>
+          {% for error in formulario.tipo.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}
+        </div>
+
+        <div x-show="['lista', 'lista_multiple'].includes(tipo)" x-cloak>
+          {% include "componentes/campo.html" with campo=formulario.opciones %}
+        </div>
+
+        {% include "componentes/campo.html" with campo=formulario.ayuda %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.orden %}
+          <div>
+            {% include "componentes/campo.html" with campo=formulario.requerido %}
+            {% include "componentes/campo.html" with campo=formulario.activo %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

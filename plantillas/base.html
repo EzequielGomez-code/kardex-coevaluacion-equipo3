@@ -1,0 +1,124 @@
+{% load static formato %}<!doctype html>
+{% comment %} Layout maestro de Kardex. El menú lateral no se escribe aquí: se arma solo
+   desde apps/*/navegacion.py (punto 5.1 del brief). {% endcomment %}
+<html lang="es-DO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}{{ titulo|default:"Panel" }}{% endblock %} · {{ nombre_sistema }}</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/componentes.css' %}">
+
+  <script src="{% static 'js/htmx.min.js' %}" defer></script>
+  <script src="{% static 'js/alpine.min.js' %}" defer></script>
+  <script src="{% static 'js/kardex.js' %}" defer></script>
+</head>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  {% include "componentes/iconos.html" %}
+
+  <div class="armazon">
+    <aside class="lateral">
+      <div class="lateral__marca">
+        <span class="lateral__nombre">{{ nombre_sistema }}</span>
+        <span class="lateral__empresa">{{ nombre_empresa }}</span>
+      </div>
+
+      <nav class="lateral__menu" aria-label="Menú principal">
+        {% for seccion in secciones_menu %}
+          <div class="menu__seccion">
+            <p class="menu__titulo">{{ seccion.nombre }}</p>
+            {% for enlace in seccion.enlaces %}
+              <a class="menu__enlace{% if enlace.activa %} menu__enlace--activa{% endif %}"
+                 href="{{ enlace.destino }}">
+                {% icono enlace.icono %}<span>{{ enlace.titulo }}</span>
+              </a>
+            {% endfor %}
+          </div>
+        {% endfor %}
+      </nav>
+
+      {# Pie con versión y commit corto (punto 5.4). #}
+      <div class="lateral__pie">
+        <div>{{ nombre_sistema }} v{{ version_kardex }}</div>
+        {% if commit_corto %}<div class="mono">{{ commit_corto }}</div>{% endif %}
+      </div>
+    </aside>
+
+    <header class="superior">
+      <nav class="migas" aria-label="Migas de pan">
+        <a href="{% url 'nucleo:panel' %}">Inicio</a>
+        {% for miga in migas %}
+          <span class="migas__separador" aria-hidden="true">/</span>
+          {% if forloop.last %}
+            <span class="migas__actual">{{ miga.texto }}</span>
+          {% elif miga.destino %}
+            <a href="{{ miga.destino }}">{{ miga.texto }}</a>
+          {% else %}
+            <span>{{ miga.texto }}</span>
+          {% endif %}
+        {% endfor %}
+      </nav>
+
+      <div class="superior__buscador" x-data="{ abierto: false }" @click.outside="abierto = false">
+        <span class="buscador__icono">{% icono "buscar" %}</span>
+        <label class="solo-lectores" for="buscador-global">Buscar en el sistema</label>
+        <input class="buscador__campo" id="buscador-global" type="search" name="q"
+               placeholder="Buscar almacenes, usuarios…" autocomplete="off"
+               hx-get="{% url 'nucleo:buscador' %}"
+               hx-trigger="input changed delay:250ms, focus"
+               hx-target="#resultados-busqueda"
+               @focus="abierto = true"
+               @keydown.escape="abierto = false; $el.blur()">
+        <kbd class="buscador__atajo">/</kbd>
+        <div class="buscador__resultados" id="resultados-busqueda" x-show="abierto" x-cloak></div>
+      </div>
+
+      <div class="usuario" x-data="{ abierto: false }" @click.outside="abierto = false">
+        <button class="usuario__boton" type="button" @click="abierto = !abierto"
+                aria-haspopup="true" :aria-expanded="abierto">
+          <span class="usuario__iniciales">{{ user.iniciales }}</span>
+          <span>{{ user.nombre_completo|default:user.username }}</span>
+          {% icono "abajo" %}
+        </button>
+
+        <div class="usuario__menu" x-show="abierto" x-cloak>
+          <div class="usuario__cabecera">
+            <div class="usuario__nombre">{{ user.nombre_completo|default:user.username }}</div>
+            <div class="usuario__rol">{{ user.rol.nombre|default:"Sin rol asignado" }}</div>
+          </div>
+          <a class="usuario__item" href="{% url 'nucleo:perfil' %}">{% icono "usuarios" %} Mi perfil</a>
+          <form method="post" action="{% url 'nucleo:cerrar_sesion' %}">
+            {% csrf_token %}
+            <button class="usuario__item" type="submit">{% icono "salir" %} Cerrar sesión</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main class="principal">
+      {% block contenido %}{% endblock %}
+
+      <footer class="pie">
+        <span>{{ nombre_sistema }} v{{ version_kardex }}</span>
+        {% if commit_corto %}<span class="mono">commit {{ commit_corto }}</span>{% endif %}
+        <span>{{ nombre_empresa }}</span>
+        <span>INF-5250 · Equipo #3 · UASD</span>
+      </footer>
+    </main>
+  </div>
+
+  {# Contenedor único de modales y de avisos. #}
+  <div id="modal"></div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <style>[x-cloak] { display: none !important; }</style>
+  {% block guion %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Campos personalizados</h1>
+      <p class="encabezado__bajada">
+        Campos que se agregan a cualquier entidad sin tocar el código. Arrastre una fila
+        por su asa para cambiar el orden en que aparecen en los formularios.
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      <button class="boton boton--primario" type="button"
+              hx-get="{% url 'configuracion:campo_nuevo' %}?entidad={{ entidad }}" hx-target="#modal">
+        {% icono "mas" %} Nuevo campo
+      </button>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-entidad">Entidad</label>
+        <select class="campo filtros__seleccion" id="f-entidad" name="entidad">
+          <option value="">Todas</option>
+          {% for nombre in entidades %}
+            <option value="{{ nombre }}" {% if entidad == nombre %}selected{% endif %}>{{ nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% if total %}
+      <div class="tabla-envoltura" x-data="reordenador('{% url 'configuracion:campos_reordenar' %}')">
+        <div class="grupo-entidad">
+          <span>Campo · etiqueta · tipo · obligatorio · estado</span>
+          <span class="texto-3" x-show="guardando" x-cloak>Guardando orden…</span>
+        </div>
+
+        <div class="campos-lista" @dragover.prevent>
+          {% for definicion in pagina %}
+            <div class="campo-fila" draggable="true" data-id="{{ definicion.pk }}"
+                 @dragstart="empezar($event)" @dragover.prevent="sobre($event)"
+                 @drop.prevent="soltar($event)" @dragend="terminar($event)">
+              <span class="campo-fila__asa" title="Arrastrar para reordenar">{% icono "arrastrar" %}</span>
+              <span>
+                <span class="mono">{{ definicion.entidad }}.{{ definicion.clave }}</span>
+                <span class="texto-2"> · {{ definicion.etiqueta }}</span>
+                {% if definicion.categoria %}
+                  <span class="texto-3 t-xs"> (solo {{ definicion.categoria }})</span>
+                {% endif %}
+              </span>
+              <span class="texto-2 t-s">{{ tipos|get_item:definicion.tipo }}</span>
+              <span>
+                {% if definicion.requerido %}
+                  {% include "componentes/badge.html" with texto="Obligatorio" variante="aviso" %}
+                {% else %}
+                  <span class="texto-3 t-s">Opcional</span>
+                {% endif %}
+              </span>
+              <span>
+                {% if definicion.activo %}
+                  {% include "componentes/badge.html" with texto="Activo" variante="ok" con_punto=True %}
+                {% else %}
+                  {% include "componentes/badge.html" with texto="Inactivo" variante="neutro" con_punto=True %}
+                {% endif %}
+              </span>
+              <span class="tabla__acciones">
+                <button class="boton boton--plano" type="button"
+                        hx-get="{% url 'configuracion:campo_editar' definicion.pk %}" hx-target="#modal">
+                  {% icono "editar" %} Editar
+                </button>
+              </span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay campos personalizados" texto_vacio="Cree el primero para que aparezca en el formulario de la entidad que elija." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block guion %}
+<script>
+  /* Reordenamiento por arrastre. El orden definitivo lo guarda el servidor. */
+  document.addEventListener("alpine:init", function () {
+    Alpine.data("reordenador", function (destino) {
+      return {
+        guardando: false,
+        origen: null,
+        empezar: function (evento) {
+          this.origen = evento.target.closest(".campo-fila");
+          this.origen.classList.add("campo-fila--arrastrando");
+          evento.dataTransfer.effectAllowed = "move";
+        },
+        sobre: function (evento) {
+          var destinoFila = evento.target.closest(".campo-fila");
+          if (!destinoFila || destinoFila === this.origen) return;
+          var caja = destinoFila.getBoundingClientRect();
+          var despues = (evento.clientY - caja.top) / caja.height > 0.5;
+          destinoFila.parentNode.insertBefore(
+            this.origen, despues ? destinoFila.nextSibling : destinoFila);
+        },
+        soltar: function () { this.persistir(destino); },
+        terminar: function () {
+          if (this.origen) this.origen.classList.remove("campo-fila--arrastrando");
+          this.origen = null;
+        },
+        persistir: function (url) {
+          var self = this;
+          var ids = Array.from(document.querySelectorAll(".campo-fila"))
+            .map(function (fila) { return parseInt(fila.dataset.id, 10); });
+          self.guardando = true;
+          fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+                ? document.querySelector("[name=csrfmiddlewaretoken]").value
+                : (("; " + document.cookie).split("; csrftoken=")[1] || "").split(";")[0]
+            },
+            body: JSON.stringify({ orden: ids })
+          }).then(function () {
+            self.guardando = false;
+            document.body.dispatchEvent(new CustomEvent("kardexToast", {
+              detail: { texto: "Orden de los campos guardado.", tipo: "ok" }
+            }));
+          }).catch(function () {
+            self.guardando = false;
+            document.body.dispatchEvent(new CustomEvent("kardexToast", {
+              detail: { texto: "No se pudo guardar el orden.", tipo: "alerta" }
+            }));
+          });
+        }
+      };
+    });
+  });
+</script>
+{% endblock %}

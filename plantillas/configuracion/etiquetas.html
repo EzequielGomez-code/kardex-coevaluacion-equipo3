@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Etiquetas</h1>
+      <p class="encabezado__bajada">
+        Marcas de color que se pegan a artículos, movimientos o cualquier otra entidad.
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      <button class="boton boton--primario" type="button"
+              hx-get="{% url 'configuracion:etiqueta_nueva' %}" hx-target="#modal">
+        {% icono "mas" %} Nueva etiqueta
+      </button>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_etiqueta filas=pagina plantilla_filas="configuracion/_fila_etiqueta.html" con_acciones=True sin_filtros=True %}
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura tabla-envoltura--sola">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay etiquetas definidas" texto_vacio="Cree etiquetas para clasificar registros sin agregar columnas nuevas." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

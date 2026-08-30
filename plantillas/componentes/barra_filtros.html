@@ -1,0 +1,14 @@
+{% load formato %}
+{% comment %} Barra de filtros. El estado vive en la URL, no en la sesión (punto 5.4):
+   ?almacen=2&categoria=8&estado=activo {% endcomment %}
+<form class="filtros" method="get" action="{{ request.path }}"
+      hx-get="{{ request.path }}" hx-target="#region-tabla" hx-select="#region-tabla"
+      hx-swap="outerHTML" hx-push-url="true" hx-trigger="change, submit">
+  {{ campos_filtro }}
+  <div class="filtros__acciones">
+    <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+    {% if request.GET %}
+      <a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>
+    {% endif %}
+  </div>
+</form>

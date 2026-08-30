@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Mi perfil</h1>
+      <p class="encabezado__bajada">Datos de su cuenta y permisos efectivos.</p>
+    </div>
+  </div>
+
+  <div class="rejilla">
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Cuenta</h2></div>
+      <table class="tabla">
+        <tbody>
+          <tr><td class="texto-2">Nombre de acceso</td><td>{{ user.username|mono }}</td></tr>
+          <tr><td class="texto-2">Nombre completo</td><td>{{ user.nombre_completo|default:"—" }}</td></tr>
+          <tr><td class="texto-2">Correo</td><td>{{ user.email|default:"—" }}</td></tr>
+          <tr><td class="texto-2">Teléfono</td><td>{{ user.telefono|default:"—" }}</td></tr>
+          <tr><td class="texto-2">Rol</td><td>{{ user.rol.nombre|default:"Sin rol asignado" }}</td></tr>
+          <tr><td class="texto-2">Último acceso</td><td>{{ user.last_login|fecha_hora }}</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel__cabecera">
+        <h2 class="panel__titulo">Permisos efectivos</h2>
+        <span class="texto-3 t-xs">{{ permisos|length }} permiso{{ permisos|length|pluralize:"s" }}</span>
+      </div>
+      <div class="panel__cuerpo">
+        {% if permisos %}
+          <div class="lista-permisos">
+            {% for clave in permisos %}
+              {% include "componentes/badge.html" with texto=clave variante="neutro" %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="texto-2 t-s">
+            Su cuenta no tiene permisos asignados. Solicite un rol al administrador de TI.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

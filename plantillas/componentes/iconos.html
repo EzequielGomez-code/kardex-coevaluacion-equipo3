@@ -1,0 +1,108 @@
+{% comment %} Sprite de íconos: monocromos, 16 px, trazo de 1.5 px, heredan el color del
+   texto (punto 5.4 del brief). Se incluye una sola vez en base.html y se usa
+   con {% icono "nombre" %}. Sin emojis en ninguna parte de la interfaz. {% endcomment %}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-panel" viewBox="0 0 16 16">
+      <rect x="2" y="2" width="5" height="5" rx="1"/>
+      <rect x="9" y="2" width="5" height="3" rx="1"/>
+      <rect x="9" y="7" width="5" height="7" rx="1"/>
+      <rect x="2" y="9" width="5" height="5" rx="1"/>
+    </symbol>
+
+    <symbol id="i-almacen" viewBox="0 0 16 16">
+      <path d="M2 6.6 8 2.6l6 4V14H2z"/>
+      <path d="M6 14v-4.2h4V14"/>
+    </symbol>
+
+    <symbol id="i-usuarios" viewBox="0 0 16 16">
+      <circle cx="8" cy="5.5" r="2.6"/>
+      <path d="M2.8 14c0-2.6 2.3-4.2 5.2-4.2s5.2 1.6 5.2 4.2"/>
+    </symbol>
+
+    <symbol id="i-roles" viewBox="0 0 16 16">
+      <path d="M8 1.9 13 3.7v4.1c0 3-2.1 5.2-5 6.3-2.9-1.1-5-3.3-5-6.3V3.7z"/>
+      <path d="M6.1 8 7.5 9.4 10 6.6"/>
+    </symbol>
+
+    <symbol id="i-auditoria" viewBox="0 0 16 16">
+      <path d="M3.5 2h6L13 5.4V14h-9.5z"/>
+      <path d="M9.3 2v3.6H13"/>
+      <path d="M5.8 8.6h4.4M5.8 11.2h4.4"/>
+    </symbol>
+
+    <symbol id="i-ajustes" viewBox="0 0 16 16">
+      <path d="M2.4 4.4h11.2M2.4 8h11.2M2.4 11.6h11.2"/>
+      <circle cx="6" cy="4.4" r="1.5"/>
+      <circle cx="10.4" cy="8" r="1.5"/>
+      <circle cx="5.2" cy="11.6" r="1.5"/>
+    </symbol>
+
+    <symbol id="i-campos" viewBox="0 0 16 16">
+      <rect x="2.2" y="3" width="11.6" height="4" rx="1"/>
+      <rect x="2.2" y="9" width="11.6" height="4" rx="1"/>
+      <path d="M4.6 5h3M4.6 11h5"/>
+    </symbol>
+
+    <symbol id="i-etiquetas" viewBox="0 0 16 16">
+      <path d="M2.4 2.4h4.9l6.3 6.3-4.9 4.9-6.3-6.3z"/>
+      <path d="M5.1 5.1h.01"/>
+    </symbol>
+
+    <symbol id="i-catalogo" viewBox="0 0 16 16">
+      <path d="M8 2 14 5v6l-6 3-6-3V5z"/>
+      <path d="M2 5l6 3 6-3M8 8v6"/>
+    </symbol>
+
+    <symbol id="i-movimientos" viewBox="0 0 16 16">
+      <path d="M2.4 5.4h9.4M9.2 2.8l2.6 2.6-2.6 2.6"/>
+      <path d="M13.6 10.6H4.2M6.8 13.2 4.2 10.6l2.6-2.6"/>
+    </symbol>
+
+    <symbol id="i-alertas" viewBox="0 0 16 16">
+      <path d="M12 6.6c0-2.2-1.8-4-4-4s-4 1.8-4 4c0 3.2-1.4 4.2-1.4 4.2h10.8S12 9.8 12 6.6z"/>
+      <path d="M6.8 13.2a1.4 1.4 0 0 0 2.4 0"/>
+    </symbol>
+
+    <symbol id="i-buscar" viewBox="0 0 16 16">
+      <circle cx="7.1" cy="7.1" r="4.4"/>
+      <path d="m10.4 10.4 3 3"/>
+    </symbol>
+
+    <symbol id="i-salir" viewBox="0 0 16 16">
+      <path d="M6.2 13.6H3.4a1 1 0 0 1-1-1V3.4a1 1 0 0 1 1-1h2.8"/>
+      <path d="m10.2 11 3-3-3-3M13.2 8H6"/>
+    </symbol>
+
+    <symbol id="i-abajo" viewBox="0 0 16 16"><path d="m4.4 6.2 3.6 3.6 3.6-3.6"/></symbol>
+    <symbol id="i-arriba" viewBox="0 0 16 16"><path d="m4.4 9.8 3.6-3.6 3.6 3.6"/></symbol>
+    <symbol id="i-izquierda" viewBox="0 0 16 16"><path d="m9.8 3.8-4.2 4.2 4.2 4.2"/></symbol>
+    <symbol id="i-derecha" viewBox="0 0 16 16"><path d="m6.2 3.8 4.2 4.2-4.2 4.2"/></symbol>
+    <symbol id="i-mas" viewBox="0 0 16 16"><path d="M8 3.2v9.6M3.2 8h9.6"/></symbol>
+    <symbol id="i-cerrar" viewBox="0 0 16 16"><path d="m4 4 8 8M12 4l-8 8"/></symbol>
+    <symbol id="i-cheque" viewBox="0 0 16 16"><path d="m3.4 8.4 3.1 3.1 6.1-7"/></symbol>
+
+    <symbol id="i-arrastrar" viewBox="0 0 16 16">
+      <path d="M6 4h0M10 4h0M6 8h0M10 8h0M6 12h0M10 12h0"/>
+    </symbol>
+
+    <symbol id="i-editar" viewBox="0 0 16 16">
+      <path d="M11.1 2.6a1.5 1.5 0 0 1 2.3 2.3L5.6 12.7l-3 .7.7-3z"/>
+    </symbol>
+
+    <symbol id="i-filtro" viewBox="0 0 16 16">
+      <path d="M2.4 3.2h11.2l-4.4 5.2v4.6l-2.4 1.2V8.4z"/>
+    </symbol>
+
+    <symbol id="i-aviso" viewBox="0 0 16 16">
+      <path d="M8 2.4 14.4 13H1.6z"/>
+      <path d="M8 6.6v3M8 11.6h0"/>
+    </symbol>
+
+    <symbol id="i-papelera" viewBox="0 0 16 16">
+      <path d="M2.8 4.4h10.4M6 4.4V2.8h4v1.6M4.2 4.4l.7 9h6.2l.7-9"/>
+    </symbol>
+
+    <symbol id="i-punto" viewBox="0 0 16 16"><circle cx="8" cy="8" r="2.4"/></symbol>
+  </defs>
+</svg>

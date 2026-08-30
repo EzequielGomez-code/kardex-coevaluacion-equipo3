@@ -1,0 +1,28 @@
+{% load static %}<!doctype html>
+<html lang="es-DO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceso bloqueado · Kardex</title>
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/componentes.css' %}">
+</head>
+<body>
+  <div class="acceso">
+    <section class="acceso__lienzo">
+      <p class="acceso__marca">Kardex</p>
+      <p class="acceso__nota">{{ nombre_empresa }}</p>
+    </section>
+    <section class="acceso__panel">
+      <h1 class="acceso__titulo">Acceso bloqueado</h1>
+      <p class="acceso__ayuda">
+        Se registraron 5 intentos fallidos desde esta dirección. El acceso queda
+        bloqueado durante 30 minutos. Si necesita entrar antes, comuníquese con el
+        administrador de TI.
+      </p>
+      <p class="t-xs texto-3">El intento quedó registrado en la auditoría del sistema.</p>
+    </section>
+  </div>
+</body>
+</html>

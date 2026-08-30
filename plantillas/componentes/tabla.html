@@ -1,0 +1,59 @@
+{% load formato %}
+{% comment %} Tabla reutilizable: ordenable y con selección múltiple (punto 5.5).
+
+   Uso:
+     {% include "componentes/tabla.html" with columnas=columnas filas=pagina
+        plantilla_filas="nucleo/_fila_almacen.html" seleccionable=True %}
+
+   Cada columna es un diccionario:
+     etiqueta  texto de la cabecera
+     clave     campo por el que ordena (opcional)
+     clase     clase CSS extra, por ejemplo "num" para cantidades
+{% endcomment %}
+<div class="tabla-envoltura{% if sin_filtros %} tabla-envoltura--sola{% endif %}">
+  {% if seleccionable %}
+    <div class="seleccion-barra" id="seleccion-barra" hidden>
+      <span data-contador-seleccion>0 filas seleccionadas</span>
+    </div>
+  {% endif %}
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        {% if seleccionable %}
+          <th class="tabla__seleccion">
+            <label class="solo-lectores" for="marcar-todo">Seleccionar todas las filas</label>
+            <input class="casilla" type="checkbox" id="marcar-todo" data-seleccionar-todo>
+          </th>
+        {% endif %}
+        {% for columna in columnas %}
+          <th class="{{ columna.clase }}">
+            {% if columna.clave %}
+              {% if request.GET.orden == columna.clave %}
+                <a href="{% url_con orden=columna.clave|add:"-desc" %}">
+                  {{ columna.etiqueta }}{% icono "abajo" "orden-flecha orden-flecha--activa" %}
+                </a>
+              {% elif request.GET.orden == columna.clave|add:"-desc" %}
+                <a href="{% url_con orden=columna.clave %}">
+                  {{ columna.etiqueta }}{% icono "arriba" "orden-flecha orden-flecha--activa" %}
+                </a>
+              {% else %}
+                <a href="{% url_con orden=columna.clave %}">
+                  {{ columna.etiqueta }}{% icono "abajo" "orden-flecha" %}
+                </a>
+              {% endif %}
+            {% else %}
+              {{ columna.etiqueta }}
+            {% endif %}
+          </th>
+        {% endfor %}
+        {% if con_acciones %}<th class="tabla__acciones"><span class="solo-lectores">Acciones</span></th>{% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% for fila in filas %}
+        {% include plantilla_filas %}
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

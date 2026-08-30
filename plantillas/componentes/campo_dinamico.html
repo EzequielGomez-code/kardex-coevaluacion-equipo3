@@ -1,0 +1,16 @@
+{% comment %} Campo personalizado: se pinta a partir de una DefinicionCampo, sin que la
+   plantilla sepa de antemano qué campos existen (punto 4.2 del brief). {% endcomment %}
+<div class="campo-grupo" data-tipo="{{ campo.field.widget.attrs.data_tipo }}">
+  {% if campo.field.widget.input_type == "checkbox" %}
+    <label class="casilla-linea" for="{{ campo.id_for_label }}">
+      {{ campo }}<span>{{ campo.label }}</span>
+    </label>
+  {% else %}
+    <label class="campo-grupo__etiqueta" for="{{ campo.id_for_label }}">
+      {{ campo.label }}{% if campo.field.required %}<span class="campo-grupo__obligatorio">*</span>{% endif %}
+    </label>
+    {{ campo }}
+  {% endif %}
+  {% if campo.help_text %}<p class="campo-grupo__ayuda">{{ campo.help_text }}</p>{% endif %}
+  {% for error in campo.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}
+</div>
