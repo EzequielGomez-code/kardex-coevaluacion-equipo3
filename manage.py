@@ -1,0 +1,22 @@
+#!/usr/bin/env python
+"""Utilidad de línea de comandos de Django para las tareas administrativas."""
+
+import os
+import sys
+
+
+def main() -> None:
+    """Ejecuta el comando de Django recibido por la línea de comandos."""
+    # Por omisión se trabaja en local; en Render la variable llega del entorno.
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+    try:
+        from django.core.management import execute_from_command_line
+    except ImportError as exc:
+        raise ImportError(
+            "No se pudo importar Django. ¿Está instalado y el entorno virtual activo?"
+        ) from exc
+    execute_from_command_line(sys.argv)
+
+
+if __name__ == "__main__":
+    main()

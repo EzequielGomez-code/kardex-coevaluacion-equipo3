@@ -1,0 +1,31 @@
+# Configuración de las herramientas de calidad de Kardex.
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+exclude = ["venv", "*/migrations/*", "staticfiles"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "C4", "DJ"]
+ignore = [
+    "E501",   # el largo de línea lo controla Pylint con max-line-length=110
+    "B008",   # llamadas en valores por omisión: patrón normal en Django
+    "DJ001",  # null=True en CharField: justificado en los campos opcionales
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.local"
+python_files = ["test_*.py", "*_test.py"]
+testpaths = ["pruebas", "apps"]
+addopts = "-q --strict-markers"
+filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.coverage.run]
+source = ["apps"]
+omit = ["*/migrations/*", "*/pruebas/*", "*/tests/*", "venv/*"]
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "raise NotImplementedError"]

@@ -1,0 +1,42 @@
+# Entorno virtual
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.Python
+
+# Secretos — nunca al repositorio (Seguridad #5)
+.env
+.env.local
+*.pem
+
+# Base de datos local
+db.sqlite3
+db.sqlite3-journal
+
+# Estáticos recolectados y archivos subidos
+staticfiles/
+medios/
+
+# Pruebas y cobertura
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Herramientas
+.ruff_cache/
+.mypy_cache/
+
+# Editores y sistema operativo
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+.DS_Store

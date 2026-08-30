@@ -1,0 +1,48 @@
+# Configuración de Pylint para Kardex.
+# Punto 8 del brief: max-line-length=110 y los avisos propios de Django apagados.
+
+[MAIN]
+load-plugins=pylint_django
+django-settings-module=config.settings.local
+ignore=venv,migrations,staticfiles,node_modules
+ignore-paths=^.*/migrations/.*$
+jobs=0
+suggestion-mode=yes
+
+[FORMAT]
+max-line-length=110
+indent-string='    '
+
+[MESSAGES CONTROL]
+disable=
+    # Django resuelve estos por su cuenta o son ruido en un proyecto Django.
+    missing-module-docstring,
+    too-few-public-methods,
+    duplicate-code,
+    import-outside-toplevel,
+    # El ORM de Django genera atributos que Pylint no ve estáticamente.
+    no-member,
+    # Los modelos declaran Meta sin docstring por convención de Django.
+    invalid-name,
+    # Vistas y servicios con varios parámetros con nombre son intencionales.
+    too-many-arguments,
+    too-many-positional-arguments,
+    too-many-locals,
+    too-many-return-statements,
+    too-many-branches,
+    unused-argument,
+    # Se usa la anotación diferida de tipos (from __future__ import annotations).
+    consider-using-f-string
+
+[BASIC]
+good-names=i,j,k,ex,pk,id,_,qs,db
+# Los nombres de dominio van en español (punto 8 del brief).
+no-docstring-rgx=^_
+
+[DESIGN]
+max-attributes=12
+max-args=10
+max-parents=10
+
+[REPORTS]
+score=yes
