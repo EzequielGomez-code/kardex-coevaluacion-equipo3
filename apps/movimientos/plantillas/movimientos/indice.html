@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  {% include "componentes/encabezado_pagina.html" with titulo=titulo %}
+
+  <div class="panel">
+    <div class="estado-vacio">
+      <p class="estado-vacio__titulo">Este módulo todavía no está construido</p>
+      <p class="estado-vacio__texto">
+        {{ alcance|capfirst }}. Lo desarrolla {{ responsable }} en su propia rama, sobre
+        esta base.
+      </p>
+      <p class="estado-vacio__texto texto-3">
+        La ruta, el permiso <span class="mono">movimiento.ver</span> y el layout ya están
+        resueltos: basta con reemplazar el cuerpo de <span class="mono">apps/movimientos/views.py</span>.
+      </p>
+    </div>
+  </div>
+{% endblock %}
