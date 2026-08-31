@@ -17,6 +17,18 @@
         <div class="cifra__valor">{{ total_almacenes|entero }}</div>
         <div class="cifra__nombre">Almacenes activos</div>
       </div>
+      {% if valor_inventario is not None %}
+        <div class="cifra">
+          <div class="cifra__valor">{% moneda valor_inventario %}</div>
+          <div class="cifra__nombre">Valor del inventario</div>
+        </div>
+      {% endif %}
+      {% if total_alertas_abiertas is not None %}
+        <div class="cifra">
+          <div class="cifra__valor">{{ total_alertas_abiertas|entero }}</div>
+          <div class="cifra__nombre">Alertas abiertas</div>
+        </div>
+      {% endif %}
       <div class="cifra">
         <div class="cifra__valor">{{ total_usuarios|entero }}</div>
         <div class="cifra__nombre">Usuarios activos</div>
@@ -29,37 +41,55 @@
   </div>
 
   <div class="rejilla">
-    <div class="panel">
-      <div class="panel__cabecera">
-        <h2 class="panel__titulo">Almacenes en operación</h2>
-        {% if perms_almacen %}{% endif %}
+    {% if alertas_abiertas is not None %}
+      <div class="panel">
+        <div class="panel__cabecera">
+          <h2 class="panel__titulo">Alertas abiertas</h2>
+          <a class="boton boton--plano" href="{% url 'alertas:indice' %}">Ver todas</a>
+        </div>
+        {% if alertas_abiertas %}
+          <table class="tabla">
+            <thead><tr><th>Artículo</th><th>Almacén</th><th>Mensaje</th></tr></thead>
+            <tbody>
+              {% for alerta in alertas_abiertas %}
+                <tr>
+                  <td class="mono">{{ alerta.articulo.sku }}</td>
+                  <td class="texto-2">{{ alerta.almacen.codigo }}</td>
+                  <td>{{ alerta.mensaje }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        {% else %}
+          {% include "componentes/estado_vacio.html" with titulo_vacio="Sin alertas abiertas" texto_vacio="El inventario cumple con todas las reglas activas." %}
+        {% endif %}
       </div>
-      {% if almacenes %}
-        <table class="tabla">
-          <thead>
-            <tr><th>Código</th><th>Nombre</th><th>Encargado</th></tr>
-          </thead>
-          <tbody>
-            {% for almacen in almacenes %}
-              <tr>
-                <td>{{ almacen.codigo|mono }}</td>
-                <td class="tabla__principal">{{ almacen.nombre }}</td>
-                <td class="texto-2">{{ almacen.encargado|default:"Sin asignar" }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay almacenes registrados" texto_vacio="Registre el primer almacén para empezar a controlar existencias." %}
-      {% endif %}
-    </div>
+    {% endif %}
+
+    {% if movimientos_recientes is not None %}
+      <div class="panel">
+        <div class="panel__cabecera">
+          <h2 class="panel__titulo">Movimientos recientes</h2>
+          <a class="boton boton--plano" href="{% url 'movimientos:indice' %}">Ver todos</a>
+        </div>
+        {% if movimientos_recientes %}
+          {% for movimiento in movimientos_recientes %}
+            <div class="linea-actividad">
+              <span class="linea-actividad__fecha">{{ movimiento.fecha|fecha_hora }}</span>
+              <span class="mono">{{ movimiento.numero }}</span>
+              <span class="texto-2">{{ movimiento.tipo.nombre }} · {{ movimiento.total_cantidad|cantidad }}</span>
+            </div>
+          {% endfor %}
+        {% else %}
+          {% include "componentes/estado_vacio.html" with titulo_vacio="Sin movimientos todavía" texto_vacio="Registre una entrada para empezar el kardex." %}
+        {% endif %}
+      </div>
+    {% endif %}
 
     <div class="panel">
       <div class="panel__cabecera">
         <h2 class="panel__titulo">Actividad reciente</h2>
-        {% if user.rol %}
-          <a class="boton boton--plano" href="{% url 'nucleo:auditoria' %}">Ver auditoría</a>
-        {% endif %}
+        <a class="boton boton--plano" href="{% url 'nucleo:auditoria' %}">Ver auditoría</a>
       </div>
       {% if actividad %}
         {% for registro in actividad %}
@@ -78,5 +108,25 @@
         {% include "componentes/estado_vacio.html" with titulo_vacio="Sin actividad registrada" texto_vacio="Las acciones sobre el inventario aparecerán aquí a medida que ocurran." %}
       {% endif %}
     </div>
+
+    {% if grafico_existencias %}
+      <div class="panel">
+        <div class="panel__cabecera"><h2 class="panel__titulo">Existencias por almacén</h2></div>
+        <div class="panel__cuerpo">
+          <svg class="grafico-barras" viewBox="0 0 400 {{ grafico_existencias.alto_total }}"
+               role="img" aria-label="Valor de existencias por almacén">
+            <line class="grafico-barras__eje" x1="60" y1="0" x2="60" y2="{{ grafico_existencias.alto_total }}"></line>
+            {% for barra in grafico_existencias.barras %}
+              <text class="grafico-barras__etiqueta" x="0" y="{{ barra.y|add:20 }}">{{ barra.codigo }}</text>
+              <rect class="grafico-barras__barra" x="60" y="{{ barra.y|add:6 }}"
+                    width="{{ barra.ancho }}" height="20" rx="2"></rect>
+              <text class="grafico-barras__valor" x="{{ barra.ancho|add:68 }}" y="{{ barra.y|add:20 }}">
+                {% moneda barra.valor %}
+              </text>
+            {% endfor %}
+          </svg>
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endblock %}

@@ -156,19 +156,70 @@ def cerrar_sesion(request: HttpRequest) -> HttpResponse:
 # ---------------------------------------------------------------------------
 # Panel
 # ---------------------------------------------------------------------------
+ALTO_FILA_GRAFICO = 34
+ANCHO_MAXIMO_BARRA = 260
+
+
+def _geometria_grafico_barras(filas: list[dict]) -> dict:
+    """
+    Convierte ``[{almacen__codigo, total}, …]`` en coordenadas SVG listas
+    para pintar, para que la plantilla no tenga que hacer aritmética.
+    """
+    valor_maximo = max((fila["total"] for fila in filas), default=0) or 1
+    barras = []
+    for indice, fila in enumerate(filas):
+        barras.append(
+            {
+                "codigo": fila["almacen__codigo"],
+                "valor": fila["total"],
+                "y": indice * ALTO_FILA_GRAFICO,
+                "ancho": round((fila["total"] / valor_maximo) * ANCHO_MAXIMO_BARRA, 1),
+            }
+        )
+    return {"barras": barras, "alto_total": len(filas) * ALTO_FILA_GRAFICO}
+
+
 @requiere_sesion
 def panel(request: HttpRequest) -> HttpResponse:
-    """Pantalla de entrada, con el estado general y la actividad reciente."""
+    """
+    Pantalla de entrada: cifras clave, alertas abiertas, movimientos
+    recientes y existencias por almacén — nunca tres tarjetas idénticas.
+
+    Cada bloque se omite si el usuario no tiene el permiso que le
+    correspondería a esa pantalla; el panel no es una puerta trasera para
+    ver datos que la barra lateral ya le tiene ocultos.
+    """
     almacenes_activos = ServicioAlmacenes.listar(estado="activo")
     contexto = {
         "titulo": "Panel",
         "migas": [{"texto": "Panel"}],
-        "almacenes": almacenes_activos,
         "total_almacenes": almacenes_activos.count(),
         "total_usuarios": ServicioUsuarios.listar(estado="activo").count(),
         "total_roles": ServicioRoles.listar().count(),
-        "actividad": ServicioAuditoria.listar()[:12],
+        "actividad": ServicioAuditoria.listar()[:8],
     }
+
+    if request.user.tiene_permiso("alerta.ver"):
+        # Importación diferida: evita un ciclo entre nucleo y alertas.
+        from apps.alertas.models import EstadoAlerta  # pylint: disable=import-outside-toplevel
+        from apps.alertas.services import ServicioAlertas  # pylint: disable=import-outside-toplevel
+
+        contexto["alertas_abiertas"] = ServicioAlertas.listar(estado=EstadoAlerta.ABIERTA)[:8]
+        contexto["total_alertas_abiertas"] = ServicioAlertas.contar_abiertas()
+
+    if request.user.tiene_permiso("movimiento.ver"):
+        # Importación diferida: evita un ciclo entre nucleo y movimientos.
+        from apps.movimientos.repositories import (
+            RepositorioExistencias,  # pylint: disable=import-outside-toplevel
+        )
+        from apps.movimientos.services import ServicioMovimientos  # pylint: disable=import-outside-toplevel
+
+        contexto["movimientos_recientes"] = ServicioMovimientos.listar()[:8]
+        contexto["valor_inventario"] = RepositorioExistencias.total_valor()
+        valor_por_almacen = RepositorioExistencias.valor_por_almacen()
+        if valor_por_almacen:
+            contexto["grafico_existencias"] = _geometria_grafico_barras(valor_por_almacen)
+
     return render(request, "nucleo/panel.html", contexto)
 
 

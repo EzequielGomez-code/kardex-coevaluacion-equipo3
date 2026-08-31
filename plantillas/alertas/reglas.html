@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Reglas de alerta</h1>
+      <p class="encabezado__bajada">
+        Qué vigilar, en qué almacenes y con qué margen.
+        {% if reglas %}<span class="encabezado__contador">· {{ reglas|length }} en total</span>{% endif %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"alerta.configurar" %}
+        <button class="boton boton--primario" type="button"
+                hx-get="{% url 'alertas:regla_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Nueva regla
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+    {% if reglas %}
+      {% include "componentes/tabla.html" with columnas=columnas_regla filas=reglas plantilla_filas="alertas/_fila_regla.html" con_acciones=True %}
+      <div class="tarjetas-lista">
+        {% for fila in reglas %}{% include "alertas/_tarjeta_regla.html" %}{% endfor %}
+      </div>
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay reglas de alerta" texto_vacio="Cree una regla para que el sistema empiece a vigilar el inventario por su cuenta." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

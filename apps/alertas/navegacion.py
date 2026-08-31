@@ -1,9 +1,4 @@
-"""
-Entrada de menú que aporta la app ``alertas``.
-
-El layout la recoge sola desde ``apps/*/navegacion.py``; no hay que tocar
-``base.html`` (punto 5.1 del brief).
-"""
+"""Entradas de menú que aporta la app ``alertas``."""
 
 ENTRADAS: list[dict] = [
     {
@@ -13,5 +8,13 @@ ENTRADAS: list[dict] = [
         "permiso": "alerta.ver",
         "icono": "alertas",
         "orden": 30,
+    },
+    {
+        "seccion": "Sistema",
+        "titulo": "Reglas de alerta",
+        "url": "alertas:reglas",
+        "permiso": "alerta.configurar",
+        "icono": "alertas",
+        "orden": 41,
     },
 ]

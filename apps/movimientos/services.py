@@ -314,7 +314,22 @@ def _registrar_y_aplicar(
     movimiento.total_cantidad = total_cantidad
     movimiento.total_costo = total_costo
     movimiento.save()
+    _evaluar_alertas_del_movimiento(movimiento)
     return movimiento
+
+
+def _evaluar_alertas_del_movimiento(movimiento: Movimiento) -> None:
+    """
+    Dispara la evaluación de alertas sobre los pares (artículo, almacén) que
+    tocó el movimiento — así una entrada o salida se refleja en la bandeja de
+    alertas sin esperar a una tarea programada (el plan gratuito de Render no
+    trae una).
+    """
+    from apps.alertas.services import ServicioEvaluador  # pylint: disable=import-outside-toplevel
+
+    pares = set(movimiento.lineas.values_list("articulo_id", "almacen_id"))
+    if pares:
+        ServicioEvaluador.evaluar_pares(pares)
 
 
 def _aplicar_lineas_entrada(movimiento: Movimiento, lineas: list[dict]) -> tuple[Decimal, Decimal]:
@@ -718,6 +733,7 @@ class ServicioAprobaciones:
         movimiento.aprobado_por = usuario
         movimiento.aprobado_en = timezone.now()
         movimiento.save()
+        _evaluar_alertas_del_movimiento(movimiento)
 
         ServicioAuditoria.registrar(
             entidad="Movimiento", entidad_id=movimiento.pk, accion=RegistroAuditoria.Accion.EDITAR,

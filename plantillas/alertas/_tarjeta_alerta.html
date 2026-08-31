@@ -1,0 +1,25 @@
+{% load formato %}
+<div class="tarjeta-fila">
+  <div class="tarjeta-fila__principal">
+    <a href="{% url 'movimientos:kardex' fila.articulo.pk %}">{{ fila.articulo.sku|mono }}</a>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-2">{{ fila.almacen.codigo }}</span>
+    {% include "componentes/badge.html" with texto=etiquetas_estado|get_item:fila.estado variante=variantes_estado|get_item:fila.estado con_punto=True %}
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-2">{{ fila.mensaje }}</span>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Generada</span>
+    <span class="texto-2">{{ fila.generada_en|fecha_hora }}</span>
+  </div>
+  {% if user|tiene_permiso:"alerta.resolver" and fila.estado != "resuelta" and fila.estado != "ignorada" %}
+    <div class="tarjeta-fila__acciones">
+      <button class="boton boton--secundario" type="button"
+              hx-get="{% url 'alertas:alerta_estado' fila.pk %}" hx-target="#modal">
+        {% icono "cheque" %} Actualizar
+      </button>
+    </div>
+  {% endif %}
+</div>

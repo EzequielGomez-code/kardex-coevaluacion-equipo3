@@ -13,6 +13,7 @@ from decimal import Decimal
 from django.db.models import DecimalField, F, Q, QuerySet, Sum
 from django.utils import timezone
 
+from apps.catalogo.models import Articulo
 from apps.movimientos.models import (
     ConsumoLote,
     EstadoMovimiento,
@@ -184,11 +185,20 @@ class RepositorioExistencias:
 
         Cada artículo tiene una fila de existencia por almacén desde el
         primer movimiento que lo toca; la regla de no-negativo necesita una
-        fila real que bloquear, no un agregado calculado al vuelo.
+        fila real que bloquear, no un agregado calculado al vuelo. Al
+        crearla, el mínimo arranca en el valor por defecto del artículo —
+        de ahí en más se edita por almacén, no vuelve a copiarse.
         """
-        existencia, _ = Existencia.objects.get_or_create(
+        existencia, creada = Existencia.objects.get_or_create(
             articulo_id=articulo_id, almacen_id=almacen_id
         )
+        if creada:
+            minimo_por_defecto = Articulo.objects.filter(pk=articulo_id).values_list(
+                "stock_minimo_defecto", flat=True
+            ).first()
+            if minimo_por_defecto:
+                existencia.stock_minimo = minimo_por_defecto
+                existencia.save(update_fields=["stock_minimo"])
         return Existencia.objects.select_for_update().get(pk=existencia.pk)
 
     @staticmethod
@@ -205,6 +215,15 @@ class RepositorioExistencias:
         """Devuelve el valor total del inventario, sumado sobre todas las existencias."""
         total = Existencia.objects.aggregate(total=Sum("valor"))["total"]
         return total if total is not None else Decimal("0")
+
+    @staticmethod
+    def valor_por_almacen() -> list[dict]:
+        """Devuelve el valor de inventario agrupado por almacén, de mayor a menor."""
+        return list(
+            Existencia.objects.values("almacen__codigo", "almacen__nombre")
+            .annotate(total=Sum("valor"))
+            .order_by("-total")
+        )
 
 
 class RepositorioKardex:

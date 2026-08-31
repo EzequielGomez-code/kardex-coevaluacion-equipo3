@@ -1,0 +1,20 @@
+{% load formato %}
+<tr>
+  <td class="tabla__principal">
+    <a href="{% url 'movimientos:kardex' fila.articulo.pk %}">{{ fila.articulo.sku }} — {{ fila.articulo.nombre }}</a>
+  </td>
+  <td class="texto-2">{{ fila.almacen.codigo }}</td>
+  <td>{{ fila.mensaje }}</td>
+  <td class="texto-2">{{ fila.generada_en|fecha_hora }}</td>
+  <td>
+    {% include "componentes/badge.html" with texto=etiquetas_estado|get_item:fila.estado variante=variantes_estado|get_item:fila.estado con_punto=True %}
+  </td>
+  <td class="tabla__acciones">
+    {% if user|tiene_permiso:"alerta.resolver" and fila.estado != "resuelta" and fila.estado != "ignorada" %}
+      <button class="boton boton--plano" type="button"
+              hx-get="{% url 'alertas:alerta_estado' fila.pk %}" hx-target="#modal">
+        {% icono "cheque" %} Actualizar
+      </button>
+    {% endif %}
+  </td>
+</tr>
