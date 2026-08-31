@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div>
+      <h1 class="encabezado__titulo">Reiniciar datos de demostración</h1>
+      <p class="encabezado__bajada">
+        Borra el catálogo, los proveedores, los clientes, los movimientos y las
+        alertas, y vuelve a sembrar el catálogo de demostración desde cero.
+        Usuarios, roles, almacenes y parámetros no se tocan.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel" style="max-width: 480px;">
+    {% if hecho %}
+      <div class="panel__cuerpo">
+        <p>
+          {% icono "cheque" %}
+          Listo: los datos de demostración se reiniciaron y se volvieron a sembrar.
+        </p>
+        <a class="boton boton--secundario" href="{% url 'nucleo:panel' %}">Ir al panel</a>
+      </div>
+    {% else %}
+      <div class="panel__cuerpo">
+        <div class="formulario__errores" style="margin-bottom: var(--e4);">
+          Esta acción no se puede deshacer. Borra todo el catálogo y los
+          movimientos actuales antes de volver a sembrar la demo.
+        </div>
+        <form class="formulario" method="post">
+          {% csrf_token %}
+          {% if formulario.non_field_errors %}
+            <div class="formulario__errores">
+              {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+            </div>
+          {% endif %}
+          {% include "componentes/campo.html" with campo=formulario.confirmacion %}
+          <button class="boton boton--peligro boton--bloque" type="submit">
+            Reiniciar y sembrar la demo
+          </button>
+        </form>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

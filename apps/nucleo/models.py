@@ -15,6 +15,11 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.utils import timezone
 
+# Rol técnico para reiniciar y recargar los datos de demostración (fixture
+# permisos_roles.json). No se ofrece en el selector de «Nuevo usuario» ni en
+# el listado de roles: se asigna a mano, fuera de la interfaz.
+NOMBRE_ROL_OCULTO = "Superadministrador"
+
 
 class ModeloConMarcaDeTiempo(models.Model):
     """Mezcla que añade las fechas de creación y actualización."""

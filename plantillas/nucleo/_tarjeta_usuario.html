@@ -19,5 +19,16 @@
             hx-get="{% url 'nucleo:usuario_editar' fila.pk %}" hx-target="#modal">
       {% icono "editar" %} Editar
     </button>
+    {% if fila.pk != user.pk %}
+      <button class="boton boton--secundario" type="button"
+              hx-post="{% url 'nucleo:usuario_alternar' fila.pk %}" hx-swap="none">
+        {% if fila.activo %}Desactivar{% else %}Activar{% endif %}
+      </button>
+      <button class="boton boton--secundario" type="button"
+              hx-post="{% url 'nucleo:usuario_eliminar' fila.pk %}" hx-swap="none"
+              hx-confirm="¿Eliminar el usuario «{{ fila.username }}»? Esta acción no se puede deshacer.">
+        {% icono "papelera" %} Eliminar
+      </button>
+    {% endif %}
   </div>
 </div>

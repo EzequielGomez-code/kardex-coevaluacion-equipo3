@@ -280,6 +280,31 @@ class ServicioUsuarios:
         )
         return usuario
 
+    @staticmethod
+    @transaction.atomic
+    def eliminar(usuario: Usuario, solicitante: Usuario | None = None) -> None:
+        """
+        Elimina un usuario.
+
+        :raises ValidationError: si intenta eliminarse a sí mismo, o si el
+            usuario ya tiene movimientos registrados (se rompería el kardex
+            que los referencia) — en ese caso, desactivarlo en su lugar.
+        """
+        if solicitante is not None and solicitante.pk == usuario.pk:
+            raise ValidationError("No puede eliminar su propia cuenta.")
+        if usuario.movimientos.exists():
+            raise ValidationError(
+                "Este usuario tiene movimientos registrados. Desactívelo en su lugar."
+            )
+        identificador, username = usuario.pk, usuario.username
+        usuario.delete()
+        ServicioAuditoria.registrar(
+            entidad="Usuario",
+            entidad_id=identificador,
+            accion=RegistroAuditoria.Accion.ELIMINAR,
+            detalle={"username": username},
+        )
+
 
 class ServicioAlmacenes:
     """Alta y edición de almacenes."""
@@ -364,3 +389,26 @@ class ServicioAlmacenes:
             detalle=_diferencias(antes, despues),
         )
         return almacen
+
+    @staticmethod
+    @transaction.atomic
+    def eliminar(almacen: Almacen) -> None:
+        """
+        Elimina un almacén.
+
+        :raises ValidationError: si el almacén ya tiene movimientos (de
+            entrada o de salida) registrados — su existencia se borraría en
+            cascada sin dejar rastro de qué pasó con ese inventario.
+        """
+        if RepositorioAlmacenes.tiene_movimientos(almacen):
+            raise ValidationError(
+                "Este almacén tiene movimientos registrados. No se puede eliminar."
+            )
+        identificador, codigo = almacen.pk, almacen.codigo
+        almacen.delete()
+        ServicioAuditoria.registrar(
+            entidad="Almacen",
+            entidad_id=identificador,
+            accion=RegistroAuditoria.Accion.ELIMINAR,
+            detalle={"codigo": codigo},
+        )

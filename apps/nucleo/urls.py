@@ -16,10 +16,21 @@ urlpatterns = [
     path("almacenes/", views.almacenes, name="almacenes"),
     path("almacenes/nuevo/", views.almacen_formulario, name="almacen_nuevo"),
     path("almacenes/<int:almacen_id>/editar/", views.almacen_formulario, name="almacen_editar"),
+    path(
+        "almacenes/<int:almacen_id>/eliminar/", views.almacen_eliminar, name="almacen_eliminar"
+    ),
     # Usuarios
     path("usuarios/", views.usuarios, name="usuarios"),
     path("usuarios/nuevo/", views.usuario_formulario, name="usuario_nuevo"),
     path("usuarios/<int:usuario_id>/editar/", views.usuario_formulario, name="usuario_editar"),
+    path(
+        "usuarios/<int:usuario_id>/estado/",
+        views.usuario_alternar_estado,
+        name="usuario_alternar",
+    ),
+    path(
+        "usuarios/<int:usuario_id>/eliminar/", views.usuario_eliminar, name="usuario_eliminar"
+    ),
     # Roles
     path("roles/", views.roles, name="roles"),
     path("roles/nuevo/", views.rol_formulario, name="rol_nuevo"),
@@ -30,4 +41,6 @@ urlpatterns = [
     # Perfil y buscador
     path("perfil/", views.perfil, name="perfil"),
     path("buscar/", views.buscador, name="buscador"),
+    # Reinicio de datos de demostración: sin entrada en el menú a propósito.
+    path("sistema/reiniciar-demo/", views.reiniciar_demo, name="reiniciar_demo"),
 ]

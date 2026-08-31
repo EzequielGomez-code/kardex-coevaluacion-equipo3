@@ -12,7 +12,7 @@ from __future__ import annotations
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from apps.nucleo.models import Almacen, Permiso, Rol, Usuario
+from apps.nucleo.models import NOMBRE_ROL_OCULTO, Almacen, Permiso, Rol, Usuario
 
 
 class MezclaEstilos:
@@ -104,7 +104,7 @@ class FormularioUsuario(MezclaEstilos, forms.Form):
     telefono = forms.CharField(label="Teléfono", max_length=30, required=False)
     rol = forms.ModelChoiceField(
         label="Rol",
-        queryset=Rol.objects.all().order_by("nombre"),
+        queryset=Rol.objects.exclude(nombre=NOMBRE_ROL_OCULTO).order_by("nombre"),
         required=False,
         empty_label="— Sin rol asignado —",
     )
@@ -149,6 +149,29 @@ class FormularioUsuario(MezclaEstilos, forms.Form):
             elif len(contrasena) < 10:
                 self.add_error("contrasena", "La contraseña debe tener al menos 10 caracteres.")
         return datos
+
+
+class FormularioReiniciarDemo(MezclaEstilos, forms.Form):
+    """
+    Exige escribir una frase exacta antes de reiniciar los datos de demostración.
+
+    Pantalla completa, no modal: no hay ``hx-confirm`` que la proteja, así que
+    la frase escrita a mano es la confirmación real de una acción irreversible.
+    """
+
+    FRASE_ESPERADA = "REINICIAR"
+
+    confirmacion = forms.CharField(
+        label=f"Escriba «{FRASE_ESPERADA}» para confirmar",
+        max_length=20,
+    )
+
+    def clean_confirmacion(self) -> str:
+        """Exige que el texto coincida exactamente con la frase esperada."""
+        valor = self.cleaned_data["confirmacion"].strip()
+        if valor != self.FRASE_ESPERADA:
+            raise forms.ValidationError(f"Escriba exactamente «{self.FRASE_ESPERADA}».")
+        return valor
 
 
 class FormularioAlmacen(MezclaEstilos, forms.ModelForm):

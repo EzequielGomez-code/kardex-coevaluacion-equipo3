@@ -72,6 +72,7 @@ UNIDADES = [
 MARCAS = [
     "ProBuild", "FerroMax", "TitanFix", "Andina", "DuraTech",
     "ColorMix", "ElectroPlus", "AguaSegura", "RocaFuerte", "MetalCor",
+    "ClimaFrost", "VentoMax",
 ]
 
 # (razón social, primeros 8 dígitos del RNC — el 9.º se calcula)
@@ -233,6 +234,28 @@ CATEGORIAS = [
             ('Cinta de enmascarar 2"', 85, 100),
             ("Lija de agua #120", 25, 35),
             ('Espátula 4"', 90, 108),
+        ]),
+    ]),
+    ("ELEC", "Línea Blanca y Electrodomésticos", "almacen", [
+        ("ELEC-VEN", "Ventilación", "UD", [
+            ('Abanico de pie 18" 3 velocidades', 1200, 1450),
+            ('Abanico de pared 16"', 950, 1150),
+            ('Abanico de techo 52" con luz', 2800, 3300),
+            ("Abanico de torre oscilante", 1650, 1950),
+            ("Extractor de aire para baño", 850, 1050),
+        ]),
+        ("ELEC-REF", "Refrigeración", "UD", [
+            ("Nevera No Frost 14 pies cúbicos", 22000, 26000),
+            ("Nevera No Frost 18 pies cúbicos", 28000, 33000),
+            ("Freezer horizontal 7 pies cúbicos", 15500, 18500),
+            ("Freezer vertical 10 pies cúbicos", 21000, 25000),
+            ("Bebedero de agua fría y caliente", 6800, 8200),
+        ]),
+        ("ELEC-CLI", "Climatización", "UD", [
+            ("Aire acondicionado Inverter 12,000 BTU", 24000, 28000),
+            ("Aire acondicionado Inverter 18,000 BTU", 32000, 37000),
+            ("Aire acondicionado de ventana 12,000 BTU", 18500, 21500),
+            ("Deshumidificador 30 pintas", 9800, 11500),
         ]),
     ]),
     ("HER", "Herramientas", "camion", [

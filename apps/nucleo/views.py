@@ -20,6 +20,7 @@ from apps.nucleo.decoradores import requiere_permiso, requiere_sesion
 from apps.nucleo.forms import (
     FormularioAlmacen,
     FormularioInicioSesion,
+    FormularioReiniciarDemo,
     FormularioRol,
     FormularioUsuario,
 )
@@ -36,6 +37,7 @@ from apps.nucleo.utilidades import (
     fichas_de_filtro,
     ordenar,
     paginar,
+    respuesta_aviso,
     respuesta_exito,
 )
 
@@ -315,6 +317,21 @@ def almacen_formulario(request: HttpRequest, almacen_id: int | None = None) -> H
     return render(request, "nucleo/almacen_formulario.html", contexto)
 
 
+@requiere_permiso("almacen.gestionar")
+@require_http_methods(["POST"])
+def almacen_eliminar(request: HttpRequest, almacen_id: int) -> HttpResponse:
+    """Elimina un almacén sin movimientos registrados."""
+    almacen = ServicioAlmacenes.obtener(almacen_id)
+    if almacen is None:
+        return render(request, "componentes/no_encontrado.html", status=404)
+    try:
+        codigo = almacen.codigo
+        ServicioAlmacenes.eliminar(almacen)
+    except ValidationError as error:
+        return respuesta_aviso(" ".join(error.messages))
+    return respuesta_exito(f"Almacén {codigo} eliminado.")
+
+
 # ---------------------------------------------------------------------------
 # Usuarios
 # ---------------------------------------------------------------------------
@@ -416,6 +433,38 @@ def usuario_formulario(request: HttpRequest, usuario_id: int | None = None) -> H
     return render(request, "nucleo/usuario_formulario.html", contexto)
 
 
+@requiere_permiso("usuario.gestionar")
+@require_http_methods(["POST"])
+def usuario_alternar_estado(request: HttpRequest, usuario_id: int) -> HttpResponse:
+    """Activa o desactiva un usuario."""
+    usuario = ServicioUsuarios.obtener(usuario_id)
+    if usuario is None:
+        return respuesta_aviso("El usuario ya no existe.")
+    try:
+        usuario = ServicioUsuarios.cambiar_estado(
+            usuario, not usuario.activo, solicitante=request.user
+        )
+    except ValidationError as error:
+        return respuesta_aviso(" ".join(error.messages))
+    estado = "activado" if usuario.activo else "desactivado"
+    return respuesta_exito(f"Usuario {usuario.username} {estado}.")
+
+
+@requiere_permiso("usuario.gestionar")
+@require_http_methods(["POST"])
+def usuario_eliminar(request: HttpRequest, usuario_id: int) -> HttpResponse:
+    """Elimina un usuario sin movimientos registrados."""
+    usuario = ServicioUsuarios.obtener(usuario_id)
+    if usuario is None:
+        return render(request, "componentes/no_encontrado.html", status=404)
+    try:
+        username = usuario.username
+        ServicioUsuarios.eliminar(usuario, solicitante=request.user)
+    except ValidationError as error:
+        return respuesta_aviso(" ".join(error.messages))
+    return respuesta_exito(f"Usuario {username} eliminado.")
+
+
 # ---------------------------------------------------------------------------
 # Roles y permisos
 # ---------------------------------------------------------------------------
@@ -502,8 +551,6 @@ def rol_eliminar(request: HttpRequest, rol_id: int) -> HttpResponse:
         nombre = rol.nombre
         ServicioRoles.eliminar(rol)
     except ValidationError as error:
-        from apps.nucleo.utilidades import respuesta_aviso  # pylint: disable=import-outside-toplevel
-
         return respuesta_aviso(" ".join(error.messages))
     return respuesta_exito(f"Rol {nombre} eliminado.")
 
@@ -591,6 +638,44 @@ def buscador(request: HttpRequest) -> HttpResponse:
         request,
         "componentes/resultados_busqueda.html",
         {"resultados": resultados, "termino": termino},
+    )
+
+
+# ---------------------------------------------------------------------------
+# Reinicio de datos de demostración
+#
+# Sin entrada en ningún menú (navegacion.py): solo se llega escribiendo la
+# URL a mano. El permiso «sistema.reiniciar_demo» solo lo trae de fábrica el
+# rol oculto Superadministrador (fixture permisos_roles.json), que tampoco
+# aparece en el selector de «Nuevo usuario» ni en el listado de roles.
+# ---------------------------------------------------------------------------
+@requiere_permiso("sistema.reiniciar_demo")
+@require_http_methods(["GET", "POST"])
+def reiniciar_demo(request: HttpRequest) -> HttpResponse:
+    """Borra el catálogo y los movimientos, y vuelve a sembrar la demo."""
+    hecho = False
+    if request.method == "POST":
+        formulario = FormularioReiniciarDemo(request.POST)
+        if formulario.is_valid():
+            # Importación diferida: evita cargar el comando de siembra en
+            # cada arranque del proceso, solo cuando de verdad se usa.
+            from django.core.management import call_command  # pylint: disable=import-outside-toplevel
+
+            call_command("reiniciar_demo")
+            ServicioAuditoria.registrar(
+                entidad="Sistema",
+                accion=RegistroAuditoria.Accion.EDITAR,
+                detalle={"accion_dominio": "reiniciar_demo"},
+            )
+            hecho = True
+            formulario = FormularioReiniciarDemo()
+    else:
+        formulario = FormularioReiniciarDemo()
+
+    return render(
+        request,
+        "nucleo/reiniciar_demo.html",
+        {"titulo": "Reiniciar datos de demostración", "formulario": formulario, "hecho": hecho},
     )
 
 

@@ -32,8 +32,8 @@ def test_sembrar_carga_todo_lo_minimo(db):
     """La primera siembra deja el sistema utilizable."""
     _sembrar()
 
-    assert Permiso.objects.count() == 24
-    assert Rol.objects.count() == 6
+    assert Permiso.objects.count() == 25
+    assert Rol.objects.count() == 7
     assert Usuario.objects.filter(username="admin").exists()
     assert Almacen.objects.count() == 2
     assert Parametro.objects.count() >= 10
@@ -110,6 +110,101 @@ def test_un_rol_con_usuarios_no_se_puede_eliminar(db):
 
     with pytest.raises(ValidationError, match="usuarios asignados"):
         ServicioRoles.eliminar(rol)
+
+
+# ---------------------------------------------------------------------------
+# Activar/desactivar y eliminar usuarios y almacenes
+# ---------------------------------------------------------------------------
+@pytest.mark.django_db
+def test_no_puede_desactivarse_a_si_mismo(usuario_administrador):
+    """El guardia contra la autodesactivación cubre también a ``cambiar_estado``."""
+    from apps.nucleo.services import ServicioUsuarios  # noqa: PLC0415
+
+    with pytest.raises(ValidationError, match="propia cuenta"):
+        ServicioUsuarios.cambiar_estado(
+            usuario_administrador, False, solicitante=usuario_administrador
+        )
+
+
+@pytest.mark.django_db
+def test_no_puede_eliminarse_a_si_mismo(usuario_administrador):
+    """Nadie puede borrar su propia cuenta desde la pantalla de usuarios."""
+    from apps.nucleo.services import ServicioUsuarios  # noqa: PLC0415
+
+    with pytest.raises(ValidationError, match="propia cuenta"):
+        ServicioUsuarios.eliminar(usuario_administrador, solicitante=usuario_administrador)
+
+
+@pytest.mark.django_db
+def test_eliminar_usuario_con_movimientos_falla(usuario_administrador):
+    """Un usuario que ya registró movimientos no se elimina: rompería el kardex."""
+    from apps.movimientos.models import Movimiento, Naturaleza, TipoMovimiento  # noqa: PLC0415
+    from apps.nucleo.services import ServicioUsuarios  # noqa: PLC0415
+
+    tipo = TipoMovimiento.objects.create(
+        codigo="AJU", nombre="Ajuste", naturaleza=Naturaleza.AJUSTE
+    )
+    Movimiento.objects.create(
+        numero="AJU-000001", tipo=tipo, naturaleza=Naturaleza.AJUSTE,
+        usuario=usuario_administrador,
+    )
+    with pytest.raises(ValidationError, match="movimientos"):
+        ServicioUsuarios.eliminar(usuario_administrador)
+
+
+@pytest.mark.django_db
+def test_eliminar_usuario_sin_movimientos_funciona(usuario_administrador):
+    """Un usuario sin historial se elimina de verdad."""
+    from apps.nucleo.services import ServicioUsuarios  # noqa: PLC0415
+
+    ServicioUsuarios.eliminar(usuario_administrador)
+    assert not Usuario.objects.filter(pk=usuario_administrador.pk).exists()
+
+
+@pytest.mark.django_db
+def test_eliminar_almacen_con_movimientos_falla(almacen, usuario_administrador):
+    """Un almacén con movimientos registrados no se elimina."""
+    from apps.movimientos.models import Movimiento, Naturaleza, TipoMovimiento  # noqa: PLC0415
+    from apps.nucleo.services import ServicioAlmacenes  # noqa: PLC0415
+
+    tipo = TipoMovimiento.objects.create(
+        codigo="ENT", nombre="Entrada", naturaleza=Naturaleza.ENTRADA
+    )
+    Movimiento.objects.create(
+        numero="ENT-000001", tipo=tipo, naturaleza=Naturaleza.ENTRADA,
+        almacen_destino=almacen, usuario=usuario_administrador,
+    )
+    with pytest.raises(ValidationError, match="movimientos"):
+        ServicioAlmacenes.eliminar(almacen)
+
+
+@pytest.mark.django_db
+def test_eliminar_almacen_sin_movimientos_funciona(almacen):
+    """Un almacén sin movimientos se elimina sin problema."""
+    from apps.nucleo.services import ServicioAlmacenes  # noqa: PLC0415
+
+    ServicioAlmacenes.eliminar(almacen)
+    assert not Almacen.objects.filter(pk=almacen.pk).exists()
+
+
+@pytest.mark.django_db
+def test_reiniciar_demo_vacia_y_vuelve_a_sembrar(db):
+    """
+    Tras un reinicio, el catálogo de demostración queda funcionando otra vez.
+
+    ``sembrar_demo`` arma categorías con hijas (Categoria.padre se protege a
+    sí mismo), así que este caso también ejercita esa limpieza previa al
+    borrado en bloque, no solo el circuito feliz.
+    """
+    from apps.catalogo.models import Articulo  # noqa: PLC0415
+
+    call_command("sembrar_demo")
+    total_primera_vez = Articulo.objects.count()
+    assert total_primera_vez > 0
+
+    call_command("reiniciar_demo")
+
+    assert Articulo.objects.count() == total_primera_vez
 
 
 # ---------------------------------------------------------------------------

@@ -12,7 +12,15 @@ from collections.abc import Iterable
 
 from django.db.models import Count, Q, QuerySet
 
-from apps.nucleo.models import Almacen, Permiso, RegistroAuditoria, Rol, RolPermiso, Usuario
+from apps.nucleo.models import (
+    NOMBRE_ROL_OCULTO,
+    Almacen,
+    Permiso,
+    RegistroAuditoria,
+    Rol,
+    RolPermiso,
+    Usuario,
+)
 
 
 class RepositorioRoles:
@@ -20,8 +28,15 @@ class RepositorioRoles:
 
     @staticmethod
     def listar(busqueda: str = "") -> QuerySet[Rol]:
-        """Devuelve los roles, opcionalmente filtrados por nombre o descripción."""
-        consulta = Rol.objects.annotate(total_usuarios=Count("usuarios", distinct=True))
+        """
+        Devuelve los roles, opcionalmente filtrados por nombre o descripción.
+
+        Excluye siempre el rol oculto: no aparece en la pantalla de roles.
+        """
+        consulta = (
+            Rol.objects.exclude(nombre=NOMBRE_ROL_OCULTO)
+            .annotate(total_usuarios=Count("usuarios", distinct=True))
+        )
         if busqueda:
             consulta = consulta.filter(
                 Q(nombre__icontains=busqueda) | Q(descripcion__icontains=busqueda)
@@ -156,6 +171,18 @@ class RepositorioAlmacenes:
         if excluir_id:
             consulta = consulta.exclude(pk=excluir_id)
         return consulta.exists()
+
+    @staticmethod
+    def tiene_movimientos(almacen: Almacen) -> bool:
+        """
+        Indica si el almacén ya tiene movimientos de entrada o salida.
+
+        Usa las relaciones inversas que ``Movimiento`` ya declara sobre
+        ``Almacen`` (``movimientos_salida`` / ``movimientos_entrada``), sin
+        importar el modelo de la app ``movimientos`` aquí — igual que
+        ``RepositorioArticulos.tiene_movimientos`` en el catálogo.
+        """
+        return almacen.movimientos_salida.exists() or almacen.movimientos_entrada.exists()
 
 
 class RepositorioAuditoria:

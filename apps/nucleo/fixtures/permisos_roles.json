@@ -896,5 +896,33 @@
       "rol": 6,
       "permiso": 21
     }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 25,
+    "fields": {
+      "clave": "sistema.reiniciar_demo",
+      "descripcion": "Reiniciar y recargar los datos de demostración",
+      "modulo": "Sistema"
+    }
+  },
+  {
+    "model": "nucleo.rol",
+    "pk": 7,
+    "fields": {
+      "nombre": "Superadministrador",
+      "descripcion": "Acceso técnico para reiniciar y recargar los datos de demostración. No se asigna desde la pantalla de usuarios.",
+      "es_sistema": true,
+      "creado_en": "2026-08-31T00:00:00-04:00",
+      "actualizado_en": "2026-08-31T00:00:00-04:00"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1034,
+    "fields": {
+      "rol": 7,
+      "permiso": 25
+    }
   }
 ]
