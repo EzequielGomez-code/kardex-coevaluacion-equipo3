@@ -14,6 +14,16 @@
       <a class="boton boton--secundario" href="{% url 'catalogo:articulo_detalle' articulo.pk %}">
         Ver artículo
       </a>
+      {% if user|tiene_permiso:"reporte.exportar" %}
+        <a class="boton boton--secundario"
+           href="{% url 'alertas:reporte_kardex_pdf' %}?articulo={{ articulo.pk }}{% if almacen_id %}&almacen={{ almacen_id }}{% endif %}">
+          {% icono "descargar" %} PDF
+        </a>
+        <a class="boton boton--secundario"
+           href="{% url 'alertas:reporte_kardex_excel' %}?articulo={{ articulo.pk }}{% if almacen_id %}&almacen={{ almacen_id }}{% endif %}">
+          {% icono "descargar" %} Excel
+        </a>
+      {% endif %}
     </div>
   </div>
 

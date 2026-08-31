@@ -10,6 +10,18 @@
         {% if total %}<span class="encabezado__contador">· {{ total }} filas · valor total {% moneda valor_total %}</span>{% endif %}
       </p>
     </div>
+    {% if user|tiene_permiso:"reporte.exportar" %}
+      <div class="encabezado__acciones">
+        <a class="boton boton--secundario"
+           href="{% url 'alertas:reporte_existencias_pdf' %}?busqueda={{ busqueda }}{% if almacen_id %}&almacen={{ almacen_id }}{% endif %}">
+          {% icono "descargar" %} PDF
+        </a>
+        <a class="boton boton--secundario"
+           href="{% url 'alertas:reporte_existencias_excel' %}?busqueda={{ busqueda }}{% if almacen_id %}&almacen={{ almacen_id }}{% endif %}">
+          {% icono "descargar" %} Excel
+        </a>
+      </div>
+    {% endif %}
   </div>
 
   <div id="region-tabla" hx-get="{{ request.get_full_path }}"

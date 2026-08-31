@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Reportes</h1>
+      <p class="encabezado__bajada">Cuatro reportes, exportables en PDF y en Excel.</p>
+    </div>
+  </div>
+
+  <div class="rejilla">
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Existencias</h2></div>
+      <div class="panel__cuerpo">
+        <p class="texto-2">Cuánto hay de cada artículo, por almacén, con su valor.</p>
+        <a class="boton boton--secundario" href="{% url 'movimientos:existencias' %}">
+          Ir a existencias y exportar
+        </a>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Valorización del inventario</h2></div>
+      <div class="panel__cuerpo">
+        <p class="texto-2">El valor total del inventario, agrupado por almacén.</p>
+        {% if user|tiene_permiso:"reporte.exportar" %}
+          <div class="encabezado__acciones">
+            <a class="boton boton--secundario" href="{% url 'alertas:reporte_valorizacion_pdf' %}">
+              {% icono "descargar" %} PDF
+            </a>
+            <a class="boton boton--secundario" href="{% url 'alertas:reporte_valorizacion_excel' %}">
+              {% icono "descargar" %} Excel
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Movimientos por fecha</h2></div>
+      <div class="panel__cuerpo">
+        <form class="formulario" id="formulario-movimientos">
+          <div class="formulario__fila">
+            <div class="campo-grupo">
+              <label class="campo-grupo__etiqueta" for="rep-desde">Desde</label>
+              <input class="campo" type="date" id="rep-desde" name="desde">
+            </div>
+            <div class="campo-grupo">
+              <label class="campo-grupo__etiqueta" for="rep-hasta">Hasta</label>
+              <input class="campo" type="date" id="rep-hasta" name="hasta">
+            </div>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-grupo__etiqueta" for="rep-tipo">Tipo</label>
+            <select class="campo campo--seleccion" id="rep-tipo" name="tipo">
+              <option value="">Todos</option>
+              {% for t in tipos_movimiento %}
+                <option value="{{ t.pk }}">{{ t.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="campo-grupo">
+            <label class="campo-grupo__etiqueta" for="rep-almacen">Almacén</label>
+            <select class="campo campo--seleccion" id="rep-almacen" name="almacen">
+              <option value="">Todos</option>
+              {% for a in almacenes %}
+                <option value="{{ a.pk }}">{{ a.nombre }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </form>
+        {% if user|tiene_permiso:"reporte.exportar" %}
+          <div class="encabezado__acciones" style="margin-top:var(--e3);">
+            <button class="boton boton--secundario" type="submit" form="formulario-movimientos"
+                    formaction="{% url 'alertas:reporte_movimientos_pdf' %}" formmethod="get">
+              {% icono "descargar" %} PDF
+            </button>
+            <button class="boton boton--secundario" type="submit" form="formulario-movimientos"
+                    formaction="{% url 'alertas:reporte_movimientos_excel' %}" formmethod="get">
+              {% icono "descargar" %} Excel
+            </button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Kardex de un artículo</h2></div>
+      <div class="panel__cuerpo">
+        <p class="texto-2">
+          El historial cronológico de un artículo se exporta desde su propia pantalla de kardex.
+        </p>
+        <a class="boton boton--secundario" href="{% url 'catalogo:articulos' %}">
+          Ir al catálogo
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

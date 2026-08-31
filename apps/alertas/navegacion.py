@@ -17,4 +17,12 @@ ENTRADAS: list[dict] = [
         "icono": "alertas",
         "orden": 41,
     },
+    {
+        "seccion": "Reportes",
+        "titulo": "Reportes",
+        "url": "alertas:reportes_indice",
+        "permiso": "reporte.ver",
+        "icono": "grafico",
+        "orden": 10,
+    },
 ]

@@ -56,7 +56,7 @@ class RepositorioMovimientos:
     @staticmethod
     def listar(
         busqueda: str = "", tipo_id: int | None = None, almacen_id: int | None = None,
-        estado: str = "",
+        estado: str = "", desde=None, hasta=None,
     ) -> QuerySet[Movimiento]:
         """Devuelve los movimientos filtrados, con sus relaciones precargadas."""
         consulta = Movimiento.objects.select_related(
@@ -76,6 +76,10 @@ class RepositorioMovimientos:
             )
         if estado:
             consulta = consulta.filter(estado=estado)
+        if desde:
+            consulta = consulta.filter(fecha__gte=desde)
+        if hasta:
+            consulta = consulta.filter(fecha__lte=hasta)
         return consulta.order_by("-fecha", "-id")
 
     @staticmethod
