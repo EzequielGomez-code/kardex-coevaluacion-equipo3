@@ -15,32 +15,34 @@
 <body>
   <div class="acceso">
     <section class="acceso__lienzo">
-      <div class="acceso__marca-fila">
-        <span class="acceso__marca-icono">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
-               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="5" width="14" height="16" rx="1.5"></rect>
-            <path d="M7 10h6M7 14h6M7 18h3"></path>
-            <path d="M17 8l4 1.2v11l-4-1.2"></path>
-          </svg>
-        </span>
-        <div>
-          <p class="acceso__marca">Kardex</p>
-          <p class="acceso__nota">{{ nombre_empresa }}</p>
-        </div>
-      </div>
-
-      <div class="acceso__media">
-        {# Secuencia de fotos con paneo y disolvencia lentos, en bucle. #}
-        {# loading="lazy": en móvil este panel queda con display:none y las #}
-        {# fotos nunca llegan a pedirse. #}
+      <div class="acceso__fotos">
+        {# Secuencia de fotos con paneo y disolvencia lentos, en bucle, de #}
+        {# fondo completo. loading="lazy": en móvil este panel queda con #}
+        {# display:none y las fotos nunca llegan a pedirse. #}
         <img class="acceso__foto" src="{% static 'img/acceso/portada-planos.jpg' %}" alt="" aria-hidden="true" loading="lazy">
         <img class="acceso__foto" src="{% static 'img/acceso/portada-taller.jpg' %}" alt="" aria-hidden="true" loading="lazy">
         <img class="acceso__foto" src="{% static 'img/acceso/portada-obra.jpg' %}" alt="" aria-hidden="true" loading="lazy">
         <img class="acceso__foto" src="{% static 'img/acceso/portada-andamios.jpg' %}" alt="" aria-hidden="true" loading="lazy">
       </div>
 
-      <p class="acceso__nota">INF-5250 · Equipo #3 · UASD</p>
+      <div class="acceso__contenido">
+        <div class="acceso__marca-fila">
+          <span class="acceso__marca-icono">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="5" width="14" height="16" rx="1.5"></rect>
+              <path d="M7 10h6M7 14h6M7 18h3"></path>
+              <path d="M17 8l4 1.2v11l-4-1.2"></path>
+            </svg>
+          </span>
+          <div>
+            <p class="acceso__marca">Kardex</p>
+            <p class="acceso__nota">{{ nombre_empresa }}</p>
+          </div>
+        </div>
+
+        <p class="acceso__nota">INF-5250 · Equipo #3 · UASD</p>
+      </div>
     </section>
 
     <section class="acceso__panel">
