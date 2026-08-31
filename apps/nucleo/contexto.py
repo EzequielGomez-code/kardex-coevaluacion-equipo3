@@ -20,7 +20,7 @@ from django.urls import NoReverseMatch, reverse
 registro = logging.getLogger("kardex.nucleo")
 
 # Orden en el que se pintan las secciones de la barra lateral.
-ORDEN_DE_SECCIONES = ["Operación", "Inventario", "Administración", "Sistema"]
+ORDEN_DE_SECCIONES = ["Operación", "Inventario", "Reportes", "Administración", "Sistema"]
 
 
 @functools.lru_cache(maxsize=1)

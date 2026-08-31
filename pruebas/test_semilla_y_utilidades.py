@@ -28,7 +28,7 @@ def test_sembrar_carga_todo_lo_minimo(db):
     """La primera siembra deja el sistema utilizable."""
     _sembrar()
 
-    assert Permiso.objects.count() == 14
+    assert Permiso.objects.count() == 24
     assert Rol.objects.count() == 6
     assert Usuario.objects.filter(username="admin").exists()
     assert Almacen.objects.count() == 2

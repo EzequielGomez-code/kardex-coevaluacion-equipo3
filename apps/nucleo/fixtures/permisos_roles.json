@@ -542,5 +542,359 @@
       "rol": 6,
       "permiso": 13
     }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 15,
+    "fields": {
+      "clave": "categoria.gestionar",
+      "descripcion": "Crear, editar y reordenar categorías, marcas y unidades",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 16,
+    "fields": {
+      "clave": "proveedor.ver",
+      "descripcion": "Consultar proveedores",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 17,
+    "fields": {
+      "clave": "proveedor.gestionar",
+      "descripcion": "Crear y editar proveedores",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 18,
+    "fields": {
+      "clave": "cliente.ver",
+      "descripcion": "Consultar clientes",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 19,
+    "fields": {
+      "clave": "cliente.gestionar",
+      "descripcion": "Crear y editar clientes",
+      "modulo": "Catálogo"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 20,
+    "fields": {
+      "clave": "alerta.configurar",
+      "descripcion": "Crear y editar reglas de alerta",
+      "modulo": "Alertas"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 21,
+    "fields": {
+      "clave": "reporte.exportar",
+      "descripcion": "Descargar reportes en PDF y Excel",
+      "modulo": "Reportes"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 22,
+    "fields": {
+      "clave": "importacion.ejecutar",
+      "descripcion": "Importar datos masivamente desde archivo",
+      "modulo": "Sistema"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 23,
+    "fields": {
+      "clave": "movimiento.ajustar",
+      "descripcion": "Registrar ajustes de inventario",
+      "modulo": "Movimientos"
+    }
+  },
+  {
+    "model": "nucleo.permiso",
+    "pk": 24,
+    "fields": {
+      "clave": "tipo_movimiento.gestionar",
+      "descripcion": "Configurar los tipos de movimiento",
+      "modulo": "Sistema"
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1001,
+    "fields": {
+      "rol": 1,
+      "permiso": 15
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1002,
+    "fields": {
+      "rol": 1,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1003,
+    "fields": {
+      "rol": 1,
+      "permiso": 17
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1004,
+    "fields": {
+      "rol": 1,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1005,
+    "fields": {
+      "rol": 1,
+      "permiso": 19
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1006,
+    "fields": {
+      "rol": 1,
+      "permiso": 20
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1007,
+    "fields": {
+      "rol": 1,
+      "permiso": 21
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1008,
+    "fields": {
+      "rol": 1,
+      "permiso": 22
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1009,
+    "fields": {
+      "rol": 1,
+      "permiso": 23
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1010,
+    "fields": {
+      "rol": 1,
+      "permiso": 24
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1011,
+    "fields": {
+      "rol": 2,
+      "permiso": 15
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1012,
+    "fields": {
+      "rol": 2,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1013,
+    "fields": {
+      "rol": 2,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1014,
+    "fields": {
+      "rol": 2,
+      "permiso": 20
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1015,
+    "fields": {
+      "rol": 2,
+      "permiso": 21
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1016,
+    "fields": {
+      "rol": 2,
+      "permiso": 23
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1017,
+    "fields": {
+      "rol": 2,
+      "permiso": 24
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1018,
+    "fields": {
+      "rol": 3,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1019,
+    "fields": {
+      "rol": 3,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1020,
+    "fields": {
+      "rol": 4,
+      "permiso": 15
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1021,
+    "fields": {
+      "rol": 4,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1022,
+    "fields": {
+      "rol": 4,
+      "permiso": 17
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1023,
+    "fields": {
+      "rol": 4,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1024,
+    "fields": {
+      "rol": 4,
+      "permiso": 20
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1025,
+    "fields": {
+      "rol": 4,
+      "permiso": 21
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1026,
+    "fields": {
+      "rol": 4,
+      "permiso": 22
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1027,
+    "fields": {
+      "rol": 5,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1028,
+    "fields": {
+      "rol": 5,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1029,
+    "fields": {
+      "rol": 5,
+      "permiso": 19
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1030,
+    "fields": {
+      "rol": 5,
+      "permiso": 21
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1031,
+    "fields": {
+      "rol": 6,
+      "permiso": 16
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1032,
+    "fields": {
+      "rol": 6,
+      "permiso": 18
+    }
+  },
+  {
+    "model": "nucleo.rolpermiso",
+    "pk": 1033,
+    "fields": {
+      "rol": 6,
+      "permiso": 21
+    }
   }
 ]
