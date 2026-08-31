@@ -47,7 +47,6 @@
 
     <section class="acceso__panel">
       <h1 class="acceso__titulo">Acceso al sistema</h1>
-      <p class="acceso__ayuda">Use las credenciales que le asignó el administrador de TI.</p>
 
       <form class="formulario" method="post" action="{% url 'nucleo:iniciar_sesion' %}{% if request.GET.siguiente %}?siguiente={{ request.GET.siguiente|urlencode }}{% endif %}">
         {% csrf_token %}
