@@ -56,4 +56,15 @@ ENTRADAS: list[dict] = [
         "icono": "auditoria",
         "orden": 40,
     },
+    {
+        # Solo el rol oculto Superadministrador trae este permiso de fábrica,
+        # así que en la práctica esta entrada solo la ve esa cuenta: no hace
+        # falta ocultarla también del menú a mano.
+        "seccion": "Sistema",
+        "titulo": "Reiniciar demo",
+        "url": "nucleo:reiniciar_demo",
+        "permiso": "sistema.reiniciar_demo",
+        "icono": "aviso",
+        "orden": 50,
+    },
 ]
