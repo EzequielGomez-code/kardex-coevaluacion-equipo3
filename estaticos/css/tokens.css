@@ -25,6 +25,13 @@
   --texto-3: #918C83;
   --texto-invertido: #FFFFFF;
 
+  /* Texto sobre foto: para la portada de acceso, que siempre lleva una
+     imagen oscurecida de fondo sin importar el tema. A diferencia de
+     --texto-invertido (que se invierte en modo oscuro porque ahí el acento
+     se aclara), este se queda fijo — no se redefine en los bloques de modo
+     oscuro más abajo. */
+  --texto-sobre-foto: #FFFFFF;
+
   --acento:       #1F5B4E;
   --acento-hover: #17463C;
   --acento-activo: #103029;
