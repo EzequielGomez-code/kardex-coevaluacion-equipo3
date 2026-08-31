@@ -32,7 +32,12 @@ disable=
     too-many-branches,
     unused-argument,
     # Se usa la anotación diferida de tipos (from __future__ import annotations).
-    consider-using-f-string
+    consider-using-f-string,
+    # Patrón normal de inyección de fixtures de pytest: una prueba recibe como
+    # parámetro un fixture definido más arriba en el mismo archivo, con el
+    # mismo nombre. Pylint no conoce ese mecanismo y lo confunde con una
+    # variable que tapa a otra.
+    redefined-outer-name
 
 [BASIC]
 good-names=i,j,k,ex,pk,id,_,qs,db
