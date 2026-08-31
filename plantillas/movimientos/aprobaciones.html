@@ -13,7 +13,8 @@
   </div>
 
   <div id="region-tabla" hx-get="{{ request.get_full_path }}"
-       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML"
+       hx-disinherit="*">
     {% if movimientos %}
       {% include "componentes/tabla.html" with columnas=columnas_aprobacion filas=movimientos plantilla_filas="movimientos/_fila_aprobacion.html" con_acciones=True %}
       <div class="tarjetas-lista">

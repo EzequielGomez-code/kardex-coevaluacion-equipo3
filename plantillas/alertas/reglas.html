@@ -21,7 +21,8 @@
   </div>
 
   <div id="region-tabla" hx-get="{{ request.get_full_path }}"
-       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML"
+       hx-disinherit="*">
     {% if reglas %}
       {% include "componentes/tabla.html" with columnas=columnas_regla filas=reglas plantilla_filas="alertas/_fila_regla.html" con_acciones=True %}
       <div class="tarjetas-lista">

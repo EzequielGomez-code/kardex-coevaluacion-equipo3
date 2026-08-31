@@ -63,6 +63,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # Registra en la auditoría quién hace cada cambio (Seguridad #8).
     "apps.nucleo.middleware.MiddlewareUsuarioActual",
+    # Reencauza al modal los errores de formulario que hx-swap="none" descartaría.
+    "apps.nucleo.middleware.MiddlewareReenfocarErroresDeModal",
     # Axes va de último para ver la petición ya autenticada (Seguridad #7).
     "axes.middleware.AxesMiddleware",
 ]

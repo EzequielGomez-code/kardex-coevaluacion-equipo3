@@ -73,7 +73,7 @@
   document.body.addEventListener("kardexCerrarModal", cerrarModal);
 
   document.addEventListener("click", function (evento) {
-    if (evento.target.matches("[data-cerrar-modal]")) {
+    if (evento.target.closest("[data-cerrar-modal]")) {
       evento.preventDefault();
       cerrarModal();
     }

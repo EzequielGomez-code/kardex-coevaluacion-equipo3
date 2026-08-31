@@ -20,7 +20,8 @@
   </div>
 
   <div id="region-tabla" hx-get="{{ request.get_full_path }}"
-       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML"
+       hx-disinherit="*">
 
     <form class="filtros" method="get" action="{{ request.path }}">
       <div class="filtros__campo">

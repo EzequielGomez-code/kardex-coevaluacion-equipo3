@@ -171,6 +171,52 @@ def test_registrar_ajuste_sin_motivo_deja_error_en_el_formulario(
 
 
 @pytest.mark.django_db
+def test_error_de_formulario_por_htmx_trae_encabezados_para_reenfocar_el_modal(
+    client, usuario_administrador, tipo_ajuste, almacen, articulo
+):
+    """
+    Con ``hx-swap="none"`` en el formulario, HTMX descarta el cuerpo de una
+    respuesta a menos que ``HX-Retarget``/``HX-Reswap`` le digan lo contrario
+    — sin esos encabezados, el error queda en el HTML pero nunca llega a
+    verse (MiddlewareReenfocarErroresDeModal).
+    """
+    client.force_login(usuario_administrador)
+    respuesta = client.post(
+        reverse("movimientos:ajuste_nuevo"),
+        {
+            "tipo": tipo_ajuste.pk, "almacen": almacen.pk,
+            "form-TOTAL_FORMS": "1", "form-INITIAL_FORMS": "0",
+            "form-MIN_NUM_FORMS": "0", "form-MAX_NUM_FORMS": "1000",
+            "form-0-articulo": articulo.pk, "form-0-cantidad": "1", "form-0-signo": "1",
+        },
+        HTTP_HX_REQUEST="true",
+    )
+    assert respuesta.status_code == 200
+    assert respuesta["HX-Retarget"] == "#modal"
+    assert respuesta["HX-Reswap"] == "innerHTML"
+
+
+@pytest.mark.django_db
+def test_exito_por_htmx_no_trae_encabezados_de_reenfoque(
+    client, usuario_administrador, tipo_entrada, almacen, articulo
+):
+    """Una respuesta ya exitosa (204 + HX-Trigger) no necesita reenfocarse: el middleware no la toca."""
+    client.force_login(usuario_administrador)
+    respuesta = client.post(
+        reverse("movimientos:entrada_nueva"),
+        {
+            "tipo": tipo_entrada.pk, "almacen_destino": almacen.pk,
+            "form-TOTAL_FORMS": "1", "form-INITIAL_FORMS": "0",
+            "form-MIN_NUM_FORMS": "0", "form-MAX_NUM_FORMS": "1000",
+            "form-0-articulo": articulo.pk, "form-0-cantidad": "10", "form-0-costo_unitario": "25",
+        },
+        HTTP_HX_REQUEST="true",
+    )
+    assert respuesta.status_code == 204
+    assert "HX-Retarget" not in respuesta
+
+
+@pytest.mark.django_db
 def test_anular_por_la_url(client, usuario_administrador, tipo_entrada, almacen, articulo):
     """El modal de anulación funciona de punta a punta."""
     movimiento = ServicioMovimientos.registrar_entrada(

@@ -23,7 +23,8 @@
   </div>
 
   <div id="region-arbol" hx-get="{{ request.get_full_path }}"
-       hx-trigger="kardexRecargar from:body" hx-select="#region-arbol" hx-swap="outerHTML">
+       hx-trigger="kardexRecargar from:body" hx-select="#region-arbol" hx-swap="outerHTML"
+       hx-disinherit="*">
     {% if arbol %}
       <div class="tabla-envoltura tabla-envoltura--sola arbol-categorias"
            id="arbol-raiz" data-arbol-categorias data-padre-id=""

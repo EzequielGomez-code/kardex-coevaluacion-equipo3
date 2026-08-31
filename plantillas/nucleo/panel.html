@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load formato %}
+{% load formato l10n %}
 
 {% block contenido %}
   <div class="encabezado">
@@ -119,8 +119,8 @@
             {% for barra in grafico_existencias.barras %}
               <text class="grafico-barras__etiqueta" x="0" y="{{ barra.y|add:20 }}">{{ barra.codigo }}</text>
               <rect class="grafico-barras__barra" x="60" y="{{ barra.y|add:6 }}"
-                    width="{{ barra.ancho }}" height="20" rx="2"></rect>
-              <text class="grafico-barras__valor" x="{{ barra.ancho|add:68 }}" y="{{ barra.y|add:20 }}">
+                    width="{{ barra.ancho|unlocalize }}" height="20" rx="2"></rect>
+              <text class="grafico-barras__valor" x="{{ barra.ancho|add:68|unlocalize }}" y="{{ barra.y|add:20 }}">
                 {% moneda barra.valor %}
               </text>
             {% endfor %}

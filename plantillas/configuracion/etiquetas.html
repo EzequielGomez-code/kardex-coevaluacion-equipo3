@@ -19,7 +19,8 @@
   </div>
 
   <div id="region-tabla" hx-get="{{ request.get_full_path }}"
-       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML"
+       hx-disinherit="*">
     {% if total %}
       {% include "componentes/tabla.html" with columnas=columnas_etiqueta filas=pagina plantilla_filas="configuracion/_fila_etiqueta.html" con_acciones=True sin_filtros=True %}
       <div class="tarjetas-lista">

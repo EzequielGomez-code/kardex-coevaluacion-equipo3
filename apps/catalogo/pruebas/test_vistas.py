@@ -106,6 +106,28 @@ def test_articulo_inexistente_da_404_amable(client, usuario_administrador):
 
 
 @pytest.mark.django_db
+def test_region_tabla_y_region_arbol_no_heredan_su_hx_swap_a_los_botones(
+    client, usuario_administrador, categoria
+):
+    """
+    ``#region-tabla``/``#region-arbol`` fijan su propio hx-swap="outerHTML"
+    para su recarga automática; sin ``hx-disinherit``, cualquier botón
+    «Editar» de adentro lo heredaba y HTMX terminaba reemplazando el modal
+    entero por nada (el fragmento del editar no trae ``#region-tabla``/
+    ``#region-arbol`` que el hx-select heredado busca).
+    """
+    client.force_login(usuario_administrador)
+
+    marcas = client.get(reverse("catalogo:marcas"))
+    assert b'id="region-tabla"' in marcas.content
+    assert b'hx-disinherit="*"' in marcas.content
+
+    categorias = client.get(reverse("catalogo:categorias"))
+    assert b'id="region-arbol"' in categorias.content
+    assert b'hx-disinherit="*"' in categorias.content
+
+
+@pytest.mark.django_db
 def test_crear_categoria_raiz_por_htmx(client, usuario_administrador):
     """El alta de una categoría raíz por HTMX crea el registro con ruta correcta."""
     client.force_login(usuario_administrador)
