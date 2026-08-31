@@ -1,0 +1,20 @@
+INFO 2026-08-31 11:22:49,987 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:50,316 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:50,643 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:50,980 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:51,333 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:51,698 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:52,071 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:52,496 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:52,907 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:53,355 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:53,821 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:54,310 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:54,808 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:55,336 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:55,868 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+INFO 2026-08-31 11:22:56,589 axes.apps AXES: BEGIN version 8.0.0, blocking by ip_address or username
+
+--------------------------------------------------------------------
+Your code has been rated at 10.00/10 (previous run: 10.00/10, +0.00)
+

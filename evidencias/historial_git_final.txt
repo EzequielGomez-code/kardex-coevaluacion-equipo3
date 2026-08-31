@@ -1,0 +1,26 @@
+68acaa8 refactor: simplifica y elimina duplicacion tras la revision de codigo
+17e180d fix: corrige hallazgos de la revision de codigo sobre catalogo, movimientos y alertas
+9a02637 fix: auditoria de botones muertos, ordenamiento roto en marcas y unidades, limpieza de plantillas huerfanas
+4039022 feat: comando de datos de demostracion realistas y verificador de cuadre del inventario
+9fcda28 feat: importacion masiva de articulos con vista previa, validacion y mapeo de columnas guardado
+1562860 feat: reportes exportables en PDF y Excel para existencias, valorizacion, movimientos y kardex
+44dc025 feat: modulo de alertas con evaluador automatico y panel principal completo
+7ffceb7 feat: modulo de movimientos con lotes, valoracion PEPS y anulacion por contrapartida
+ade081f feat: vistas, formularios y plantillas del catalogo
+97d6ead feat: modelos y servicios del catalogo (categorias, articulos, terceros)
+2e3f4fc feat: rehace las pantallas existentes con el sistema visual nuevo
+1c8c14f feat: sistema visual completo con modo oscuro y ordenamiento real
+19ff79c feat: reglas permanentes y contrato de datos para el sistema completo
+c31fe6c refactor: kardex.js baja a 147 lineas
+23f5b2d docs: URLs reales del despliegue y evidencia de produccion
+44ed1c9 fix: elimina config/settings.py huerfano de startproject
+646ea17 docs: README, brief de referencia y evidencias de calidad
+7a56541 docs: despliegue en Render con Neon y guion de construccion
+c0d9a63 test: pruebas de autenticacion, permisos, auditoria y campos
+448db7a feat: comando sembrar y fixture de permisos y roles
+dad53de feat: apps de catalogo, movimientos y alertas con estructura completa
+622d040 feat: vistas, formularios y rutas del nucleo
+0650677 feat: interfaz con sistema de diseno propio, HTMX y Alpine
+1984849 feat: capa de configuracion con campos personalizados y parametros
+72b200b feat: modelos, repositorios y servicios del nucleo
+403fe91 chore: estructura del proyecto Django con ajustes divididos

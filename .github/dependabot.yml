@@ -1,0 +1,10 @@
+# Seguridad #10 del brief: Dependabot activo en el repositorio, además de
+# pip-audit en requirements-dev.txt. Revisa las dependencias de Python cada
+# semana y abre un PR por actualización disponible.
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
