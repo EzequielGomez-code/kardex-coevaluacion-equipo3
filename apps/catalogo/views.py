@@ -20,6 +20,7 @@ from apps.catalogo.forms import (
     FormularioArticulo,
     FormularioCategoria,
     FormularioCliente,
+    FormularioImportacionArticulos,
     FormularioMarca,
     FormularioPrecioProveedor,
     FormularioProveedor,
@@ -31,6 +32,7 @@ from apps.catalogo.services import (
     ServicioArticulos,
     ServicioCategorias,
     ServicioClientes,
+    ServicioImportacionArticulos,
     ServicioMarcas,
     ServicioProveedores,
     ServicioUnidadesMedida,
@@ -517,6 +519,87 @@ def articulo_eliminar(request: HttpRequest, articulo_id: int) -> HttpResponse:
     nombre = articulo.nombre
     ServicioArticulos.dar_de_baja(articulo)
     return respuesta_exito(f"Artículo «{nombre}» dado de baja.")
+
+
+# ---------------------------------------------------------------------------
+# Importación masiva
+#
+# Entre la vista previa, la confirmación y el reporte de errores no se guarda
+# el archivo en el servidor: el mismo <input type="file"> se reenvía en cada
+# paso (tres botones «formaction» distintos sobre un único formulario), y
+# ServicioImportacionArticulos lo vuelve a leer cada vez.
+# ---------------------------------------------------------------------------
+@requiere_permiso("importacion.ejecutar")
+def articulo_importar(request: HttpRequest) -> HttpResponse:
+    """Pantalla de carga masiva: el mapeo de columnas y el archivo."""
+    formulario = FormularioImportacionArticulos(
+        initial=ServicioImportacionArticulos.mapeo_guardado(request.user)
+    )
+    contexto = {
+        "titulo": "Importar artículos",
+        "migas": [{"texto": "Inventario"}, {"texto": "Catálogo", "destino": reverse("catalogo:articulos")},
+                 {"texto": "Importar"}],
+        "formulario": formulario,
+    }
+    return render(request, "catalogo/articulo_importar.html", contexto)
+
+
+@requiere_permiso("importacion.ejecutar")
+@require_http_methods(["POST"])
+def articulo_importar_previsualizar(request: HttpRequest) -> HttpResponse:
+    """Lee el archivo, valida cada fila y devuelve la tabla de vista previa."""
+    formulario = FormularioImportacionArticulos(request.POST, request.FILES)
+    if not formulario.is_valid():
+        return render(request, "catalogo/_importar_resultado.html", {"formulario": formulario})
+
+    filas = ServicioImportacionArticulos.previsualizar(
+        request.FILES["archivo"], formulario.mapeo()
+    )
+    contexto = {
+        "filas": filas[:200],
+        "total_filas": len(filas),
+        "validas": sum(1 for fila in filas if fila.es_valida),
+        "con_error": sum(1 for fila in filas if not fila.es_valida),
+        "formulario": formulario,
+    }
+    return render(request, "catalogo/_importar_resultado.html", contexto)
+
+
+@requiere_permiso("importacion.ejecutar")
+@require_http_methods(["POST"])
+def articulo_importar_confirmar(request: HttpRequest) -> HttpResponse:
+    """Crea los artículos válidos del archivo y guarda el mapeo para la próxima vez."""
+    formulario = FormularioImportacionArticulos(request.POST, request.FILES)
+    if not formulario.is_valid():
+        return render(request, "catalogo/_importar_resultado.html", {"formulario": formulario})
+
+    creados, con_error, filas = ServicioImportacionArticulos.confirmar(
+        request.FILES["archivo"], formulario.mapeo(), request.user
+    )
+    contexto = {
+        "titulo": "Importar artículos",
+        "migas": [{"texto": "Inventario"}, {"texto": "Catálogo", "destino": reverse("catalogo:articulos")},
+                 {"texto": "Importar"}],
+        "confirmado": True, "creados": creados, "con_error": con_error,
+        "filas_con_error": [fila for fila in filas if not fila.es_valida][:200],
+    }
+    return render(request, "catalogo/articulo_importar_confirmado.html", contexto)
+
+
+@requiere_permiso("importacion.ejecutar")
+@require_http_methods(["POST"])
+def articulo_importar_errores(request: HttpRequest) -> HttpResponse:
+    """Descarga un CSV con solo las filas que fallaron la validación."""
+    formulario = FormularioImportacionArticulos(request.POST, request.FILES)
+    if not formulario.is_valid():
+        return render(request, "catalogo/_importar_resultado.html", {"formulario": formulario})
+
+    contenido = ServicioImportacionArticulos.reporte_de_errores(
+        request.FILES["archivo"], formulario.mapeo()
+    )
+    respuesta = HttpResponse(contenido, content_type="text/csv; charset=utf-8")
+    respuesta["Content-Disposition"] = 'attachment; filename="errores_importacion.csv"'
+    return respuesta
 
 
 # ---------------------------------------------------------------------------

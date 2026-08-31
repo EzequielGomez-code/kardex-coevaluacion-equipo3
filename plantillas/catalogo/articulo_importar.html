@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Importar artículos</h1>
+      <p class="encabezado__bajada">
+        Suba un archivo CSV y diga en qué columna está cada dato. El mapeo se
+        guarda para la próxima vez.
+      </p>
+    </div>
+  </div>
+
+  <div class="panel">
+    {% comment %}
+      «enctype» es el que rige los envíos nativos (Confirmar, Descargar errores);
+      «hx-encoding» es su equivalente para el envío que sí intercepta HTMX
+      (Vista previa) — hacen falta los dos, uno no sustituye al otro.
+    {% endcomment %}
+    <form id="formulario-importar" method="post" enctype="multipart/form-data"
+          hx-encoding="multipart/form-data">
+      {% csrf_token %}
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        {% for campo in formulario %}
+          {% if campo.name != "archivo" %}
+            {% include "componentes/campo.html" with campo=campo %}
+          {% endif %}
+        {% endfor %}
+        {% include "componentes/campo.html" with campo=formulario.archivo %}
+      </div>
+
+      <div class="modal__pie" style="padding:0; margin-top:var(--e4);">
+        <button class="boton boton--secundario" type="submit"
+                hx-post="{% url 'catalogo:articulo_importar_previsualizar' %}"
+                hx-target="#resultado-importacion" hx-encoding="multipart/form-data">
+          Vista previa
+        </button>
+      </div>
+    </form>
+
+    <div id="resultado-importacion" style="margin-top:var(--e4);"></div>
+  </div>
+{% endblock %}

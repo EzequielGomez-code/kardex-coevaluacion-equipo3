@@ -188,6 +188,37 @@ class FormularioCliente(_FormularioTercero):
     """Alta y edición de un cliente."""
 
 
+class FormularioImportacionArticulos(MezclaEstilos, forms.Form):
+    """
+    Mapeo de columnas para la carga masiva de artículos.
+
+    Cada campo es el nombre exacto de la columna en el archivo del usuario —
+    no una lista desplegable de encabezados detectados, para no necesitar un
+    primer viaje al servidor solo para leer la fila 1.
+    """
+
+    archivo = forms.FileField(label="Archivo CSV")
+
+    def __init__(self, *args, **kwargs):
+        from apps.catalogo.importacion import COLUMNAS_SISTEMA  # pylint: disable=import-outside-toplevel
+
+        super().__init__(*args, **kwargs)
+        for campo, etiqueta, obligatoria in COLUMNAS_SISTEMA:
+            self.fields[campo] = forms.CharField(
+                label=f"Columna para «{etiqueta}»", required=obligatoria,
+            )
+        # El archivo va al final del marcado a propósito: el mapeo se lee de
+        # arriba hacia abajo antes de pedir el archivo.
+        self.order_fields([campo for campo, *_ in COLUMNAS_SISTEMA] + ["archivo"])
+        self.aplicar_estilos()
+
+    def mapeo(self) -> dict:
+        """Traduce los datos limpios del formulario a ``{campo: encabezado}``."""
+        from apps.catalogo.importacion import COLUMNAS_SISTEMA  # pylint: disable=import-outside-toplevel
+
+        return {campo: self.cleaned_data.get(campo, "") for campo, *_ in COLUMNAS_SISTEMA}
+
+
 class FormularioPrecioProveedor(MezclaEstilos, forms.Form):
     """Precio de compra de un proveedor para un artículo."""
 

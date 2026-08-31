@@ -33,6 +33,19 @@ urlpatterns = [
     # Artículos
     path("articulos/", views.articulos, name="articulos"),
     path("articulos/nuevo/", views.articulo_formulario, name="articulo_nuevo"),
+    path("articulos/importar/", views.articulo_importar, name="articulo_importar"),
+    path(
+        "articulos/importar/previsualizar/", views.articulo_importar_previsualizar,
+        name="articulo_importar_previsualizar",
+    ),
+    path(
+        "articulos/importar/confirmar/", views.articulo_importar_confirmar,
+        name="articulo_importar_confirmar",
+    ),
+    path(
+        "articulos/importar/errores/", views.articulo_importar_errores,
+        name="articulo_importar_errores",
+    ),
     path("articulos/<int:articulo_id>/", views.articulo_detalle, name="articulo_detalle"),
     path(
         "articulos/<int:articulo_id>/editar/", views.articulo_formulario, name="articulo_editar"

@@ -1,0 +1,58 @@
+{% load formato %}
+{% if formulario.errors %}
+  <div class="formulario__errores">
+    {% for campo in formulario %}
+      {% for error in campo.errors %}<p>{{ campo.label }}: {{ error }}</p>{% endfor %}
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="texto-2">
+    {{ total_filas }} fila(s) leídas ·
+    <strong>{{ validas }} lista(s) para crear</strong>
+    {% if con_error %} · <strong>{{ con_error }} con error</strong>{% endif %}
+  </p>
+
+  {% if filas %}
+    <div class="tabla-envoltura">
+      <table class="tabla">
+        <thead>
+          <tr><th>Fila</th><th>Estado</th><th>Nombre</th><th>Categoría</th><th>Unidad</th><th>Detalle</th></tr>
+        </thead>
+        <tbody>
+          {% for fila in filas %}
+            <tr>
+              <td class="num">{{ fila.numero }}</td>
+              <td>
+                {% if fila.es_valida %}
+                  {% include "componentes/badge.html" with texto="Lista" variante="ok" con_punto=True %}
+                {% else %}
+                  {% include "componentes/badge.html" with texto="Con error" variante="alerta" con_punto=True %}
+                {% endif %}
+              </td>
+              <td>{{ fila.datos.nombre|default:"—" }}</td>
+              <td class="texto-2">{{ fila.crudo.categoria_codigo|default:"—" }}</td>
+              <td class="texto-2">{{ fila.crudo.unidad_codigo|default:"—" }}</td>
+              <td class="texto-2">{{ fila.errores|join:" · " }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <div class="modal__pie" style="padding:0; margin-top:var(--e3);">
+    {% if con_error %}
+      <button class="boton boton--secundario" type="submit" form="formulario-importar"
+              formaction="{% url 'catalogo:articulo_importar_errores' %}" formmethod="post">
+        {% icono "descargar" %} Descargar errores
+      </button>
+    {% endif %}
+    {% if validas %}
+      <button class="boton boton--primario" type="submit" form="formulario-importar"
+              formaction="{% url 'catalogo:articulo_importar_confirmar' %}" formmethod="post"
+              hx-boost="false">
+        {% icono "cheque" %} Confirmar e importar {{ validas }} artículo(s)
+      </button>
+    {% endif %}
+  </div>
+{% endif %}

@@ -17,6 +17,7 @@ from apps.catalogo.models import (
     ProveedorArticulo,
     UnidadMedida,
 )
+from apps.configuracion.models import MapeoImportacion
 
 
 class RepositorioCategorias:
@@ -266,3 +267,25 @@ class RepositorioProveedorArticulo:
         if excluir_id:
             consulta = consulta.exclude(pk=excluir_id)
         return consulta.exists()
+
+
+class RepositorioMapeoImportacion:
+    """Acceso a datos de :class:`~apps.configuracion.models.MapeoImportacion`."""
+
+    @staticmethod
+    def ultimo_de(usuario, entidad: str) -> MapeoImportacion | None:
+        """Devuelve el mapeo de columnas más reciente que guardó ese usuario para esa entidad."""
+        return (
+            MapeoImportacion.objects.filter(usuario=usuario, entidad=entidad)
+            .order_by("-actualizado_en")
+            .first()
+        )
+
+    @staticmethod
+    def guardar(usuario, entidad: str, nombre: str, mapeo_columnas: dict) -> MapeoImportacion:
+        """Crea o actualiza el mapeo de columnas con ese nombre, para la próxima vez."""
+        objeto, _ = MapeoImportacion.objects.update_or_create(
+            usuario=usuario, entidad=entidad, nombre=nombre,
+            defaults={"mapeo_columnas": mapeo_columnas},
+        )
+        return objeto

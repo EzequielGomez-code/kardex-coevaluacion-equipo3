@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Importación completa</h1>
+      <p class="encabezado__bajada">
+        {{ creados }} artículo(s) creado(s)
+        {% if con_error %} · {{ con_error }} fila(s) con error, sin crear{% endif %}.
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      <a class="boton boton--primario" href="{% url 'catalogo:articulos' %}">Ver artículos</a>
+      <a class="boton boton--secundario" href="{% url 'catalogo:articulo_importar' %}">
+        Importar otro archivo
+      </a>
+    </div>
+  </div>
+
+  {% if filas_con_error %}
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Filas que no se crearon</h2></div>
+      <table class="tabla">
+        <thead><tr><th>Fila</th><th>Nombre</th><th>Detalle</th></tr></thead>
+        <tbody>
+          {% for fila in filas_con_error %}
+            <tr>
+              <td class="num">{{ fila.numero }}</td>
+              <td>{{ fila.datos.nombre|default:"—" }}</td>
+              <td class="texto-2">{{ fila.errores|join:" · " }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -13,6 +13,7 @@ from typing import Any
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+from apps.catalogo.importacion import COLUMNAS_SISTEMA, leer_texto, procesar, reporte_de_errores_csv
 from apps.catalogo.models import (
     Articulo,
     Categoria,
@@ -25,6 +26,7 @@ from apps.catalogo.models import (
 from apps.catalogo.repositories import (
     RepositorioArticulos,
     RepositorioCategorias,
+    RepositorioMapeoImportacion,
     RepositorioMarcas,
     RepositorioProveedorArticulo,
     RepositorioTerceros,
@@ -637,3 +639,73 @@ class ServicioClientes(_ServicioTercero):
     """Alta, edición y baja de clientes."""
 
     modelo = Cliente
+
+
+ENTIDAD_IMPORTACION_ARTICULOS = "Articulo"
+NOMBRE_MAPEO_ARTICULOS = "Importación de artículos"
+
+
+class ServicioImportacionArticulos:
+    """
+    Importación masiva de artículos desde un archivo CSV.
+
+    No guarda el archivo entre pasos: la vista se lo vuelve a pasar en cada
+    llamada (vista previa, confirmación, reporte de errores). Este servicio
+    solo se encarga de qué se guarda entre archivos — el mapeo de columnas.
+    """
+
+    @staticmethod
+    def mapeo_guardado(usuario) -> dict:
+        """Devuelve el último mapeo de columnas que guardó este usuario, o uno vacío."""
+        guardado = RepositorioMapeoImportacion.ultimo_de(usuario, ENTIDAD_IMPORTACION_ARTICULOS)
+        if guardado:
+            return guardado.mapeo_columnas
+        return {campo: "" for campo, _etiqueta, _obligatoria in COLUMNAS_SISTEMA}
+
+    @staticmethod
+    @transaction.atomic
+    def previsualizar(archivo, mapeo: dict) -> list:
+        """Lee el archivo y valida cada fila, sin crear nada todavía."""
+        return procesar(leer_texto(archivo), mapeo)
+
+    @staticmethod
+    @transaction.atomic
+    def confirmar(archivo, mapeo: dict, usuario) -> tuple[int, int, list]:
+        """
+        Procesa el archivo de nuevo y crea un artículo por cada fila válida.
+        Guarda el mapeo para la próxima vez, haya salido bien o mal la
+        importación.
+
+        Una fila que pasó la validación de campos pero choca con una regla
+        de negocio (SKU repetido, por ejemplo) no interrumpe el resto del
+        lote: se marca con su propio error y sigue con la siguiente.
+
+        :returns: ``(creados, con_error, filas)``.
+        """
+        filas = procesar(leer_texto(archivo), mapeo)
+        creados = 0
+        for fila in filas:
+            if not fila.es_valida:
+                continue
+            try:
+                ServicioArticulos.crear(**fila.datos)
+                creados += 1
+            except ValidationError as error:
+                mensaje = "; ".join(error.messages) if hasattr(error, "messages") else str(error)
+                fila.errores.append(mensaje)
+        con_error = sum(1 for fila in filas if not fila.es_valida)
+
+        RepositorioMapeoImportacion.guardar(
+            usuario, ENTIDAD_IMPORTACION_ARTICULOS, NOMBRE_MAPEO_ARTICULOS, mapeo
+        )
+        ServicioAuditoria.registrar(
+            entidad="Articulo", accion=RegistroAuditoria.Accion.CREAR,
+            detalle={"accion_dominio": "importacion_masiva", "creados": creados, "con_error": con_error},
+        )
+        return creados, con_error, filas
+
+    @staticmethod
+    def reporte_de_errores(archivo, mapeo: dict) -> str:
+        """Vuelve a procesar el archivo y arma el CSV de las filas con error."""
+        filas = procesar(leer_texto(archivo), mapeo)
+        return reporte_de_errores_csv(filas)

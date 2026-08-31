@@ -13,6 +13,11 @@
       </p>
     </div>
     <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"importacion.ejecutar" %}
+        <a class="boton boton--secundario" href="{% url 'catalogo:articulo_importar' %}">
+          {% icono "importar" %} Importar
+        </a>
+      {% endif %}
       {% if user|tiene_permiso:"articulo.crear" %}
         <button class="boton boton--primario" type="button"
                 hx-get="{% url 'catalogo:articulo_nuevo' %}" hx-target="#modal">
