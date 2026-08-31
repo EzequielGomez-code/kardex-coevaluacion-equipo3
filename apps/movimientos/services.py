@@ -22,6 +22,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils import timezone
 
+from apps.catalogo.repositories import RepositorioArticulos
 from apps.configuracion.services import ServicioParametros
 from apps.movimientos.models import (
     ConsumoLote,
@@ -423,6 +424,65 @@ class ServicioMovimientos:
     def existencias(**filtros) -> Any:
         """Devuelve las existencias filtradas."""
         return RepositorioExistencias.listar(**filtros)
+
+    @staticmethod
+    def lineas_solicitadas_para_mostrar(movimiento: Movimiento) -> dict:
+        """
+        Resuelve ``lineas_solicitadas`` a algo que la ficha pueda pintar,
+        para un movimiento todavía ``PENDIENTE``.
+
+        La entrada trae su propio costo (lo escribió quien la registró); la
+        salida, la transferencia y el ajuste sin costo explícito no lo
+        tienen todavía — el costo real depende de qué lotes se consuman, y
+        eso solo se sabe al aprobar. Para esas líneas se muestra el costo
+        promedio actual como estimado, marcado como tal, para que quien
+        aprueba no vea un total en cero.
+
+        :returns: ``{"lineas": [...], "total_cantidad": Decimal,
+            "total_costo": Decimal, "costo_estimado": bool}``
+        """
+        almacen_id = (
+            movimiento.almacen_destino_id
+            if movimiento.naturaleza == Naturaleza.ENTRADA
+            else movimiento.almacen_origen_id
+        )
+        lineas = []
+        total_cantidad = Decimal("0")
+        total_costo = Decimal("0")
+        costo_estimado = False
+
+        for solicitada in movimiento.lineas_solicitadas:
+            articulo = RepositorioArticulos.obtener(solicitada["articulo_id"])
+            cantidad = _decimal(solicitada["cantidad"])
+            costo_provisto = solicitada.get("costo_unitario")
+            if costo_provisto is not None:
+                costo_unitario = _decimal(costo_provisto)
+                es_estimado = False
+            else:
+                existencia = next(
+                    (
+                        e for e in RepositorioExistencias.de_articulo(solicitada["articulo_id"])
+                        if e.almacen_id == almacen_id
+                    ),
+                    None,
+                )
+                costo_unitario = existencia.costo_promedio if existencia else Decimal("0")
+                es_estimado = True
+                costo_estimado = True
+
+            costo_total = (cantidad * costo_unitario).quantize(CUATRO_DECIMALES)
+            lineas.append({
+                "articulo": articulo, "cantidad": cantidad, "costo_unitario": costo_unitario,
+                "costo_total": costo_total, "signo": solicitada.get("signo", 1),
+                "estimado": es_estimado,
+            })
+            total_cantidad += cantidad
+            total_costo += costo_total
+
+        return {
+            "lineas": lineas, "total_cantidad": total_cantidad, "total_costo": total_costo,
+            "costo_estimado": costo_estimado,
+        }
 
     @staticmethod
     @transaction.atomic

@@ -33,6 +33,50 @@ def test_ajuste_pendiente_no_toca_el_inventario(
 
 
 @pytest.mark.django_db
+def test_lineas_solicitadas_con_costo_propio_no_se_marcan_estimadas(
+    tipo_ajuste_con_aprobacion, almacen, articulo, usuario_administrador
+):
+    """Un costo que la propia línea trae (no depende de la existencia) no es un estimado."""
+    movimiento = ServicioMovimientos.registrar_ajuste(
+        tipo=tipo_ajuste_con_aprobacion, almacen=almacen, usuario=usuario_administrador,
+        motivo="Conteo físico",
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("6"), "signo": 1,
+                "costo_unitario": Decimal("15")}],
+    )
+
+    solicitado = ServicioMovimientos.lineas_solicitadas_para_mostrar(movimiento)
+
+    assert solicitado["costo_estimado"] is False
+    assert solicitado["total_cantidad"] == Decimal("6")
+    assert solicitado["total_costo"] == Decimal("90.0000")
+    assert solicitado["lineas"][0]["estimado"] is False
+    assert solicitado["lineas"][0]["articulo"] == articulo
+
+
+@pytest.mark.django_db
+def test_lineas_solicitadas_sin_costo_usan_el_promedio_como_estimado(
+    tipo_entrada, tipo_ajuste_con_aprobacion, almacen, articulo, usuario_administrador
+):
+    """Una salida (o un ajuste sin costo) todavía no sabe qué lote va a consumir — se estima."""
+    ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("10"), "costo_unitario": Decimal("20")}],
+    )
+    movimiento = ServicioMovimientos.registrar_ajuste(
+        tipo=tipo_ajuste_con_aprobacion, almacen=almacen, usuario=usuario_administrador,
+        motivo="Merma detectada",
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("3"), "signo": -1}],
+    )
+
+    solicitado = ServicioMovimientos.lineas_solicitadas_para_mostrar(movimiento)
+
+    assert solicitado["costo_estimado"] is True
+    assert solicitado["lineas"][0]["estimado"] is True
+    assert solicitado["lineas"][0]["costo_unitario"] == Decimal("20")
+    assert solicitado["total_costo"] == Decimal("60.0000")
+
+
+@pytest.mark.django_db
 def test_aprobar_aplica_los_efectos(
     tipo_ajuste_con_aprobacion, almacen, articulo, usuario_administrador
 ):

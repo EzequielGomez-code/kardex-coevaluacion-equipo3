@@ -547,6 +547,17 @@
   box-shadow: var(--sombra-flotante);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .modal-fondo { animation: kardex-velo-entra var(--duracion-media) var(--fx); }
+  .modal-fondo .modal { animation: kardex-modal-entra var(--duracion-media) var(--fx); }
+}
+@keyframes kardex-velo-entra {
+  from { background: rgba(23, 22, 20, 0); }
+}
+@keyframes kardex-modal-entra {
+  from { transform: translateY(-8px) scale(.98); opacity: 0; }
+}
+
 .modal--ancho { max-width: 760px; }
 
 .modal__cabecera {
@@ -628,7 +639,8 @@
 .estado-vacio__texto { font-size: var(--t-s); color: var(--texto-2); margin-bottom: var(--e2); }
 
 /* --------------------------------------------------------------------------
-   Confirmación
+   Confirmación — reemplaza el confirm() nativo del navegador; se arma en
+   kardex.js al interceptar htmx:confirm, con las mismas piezas del modal.
    -------------------------------------------------------------------------- */
 .confirmacion__mensaje { font-size: var(--t-base); margin-bottom: var(--e2); }
 .confirmacion__detalle { font-size: var(--t-s); color: var(--texto-2); }

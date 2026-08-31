@@ -79,6 +79,51 @@
     }
   });
 
+  /* Diálogo de confirmación propio en vez del confirm() del navegador.
+     hx-confirm sigue siendo la fuente del texto — solo se reemplaza cómo se
+     pregunta, no qué se pregunta. Reutiliza el mismo #modal (mismo cierre,
+     misma trampa de foco, misma animación de entrada). */
+  var PALABRAS_DELICADAS = /elimina|anula|borra|no se puede deshacer|rechaza/i;
+
+  function mostrarConfirmacion(mensaje, alConfirmar) {
+    var contenedor = document.getElementById("modal");
+    if (!contenedor) return;
+    elementoConFocoAntesDelModal = document.activeElement;
+
+    var claseBoton = PALABRAS_DELICADAS.test(mensaje) ? "boton--peligro" : "boton--primario";
+    contenedor.innerHTML =
+      '<div class="modal-fondo" @click.self="$el.remove()">' +
+        '<div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="confirmacion-titulo">' +
+          '<div class="modal__cabecera">' +
+            '<h2 class="modal__titulo" id="confirmacion-titulo">Confirmar acción</h2>' +
+            '<button class="modal__cerrar" type="button" data-cerrar-modal aria-label="Cerrar">' +
+              '<svg class="icono" aria-hidden="true"><use href="#i-cerrar"></use></svg>' +
+            "</button>" +
+          "</div>" +
+          '<div class="modal__cuerpo"><p class="confirmacion__mensaje"></p></div>' +
+          '<div class="modal__pie">' +
+            '<button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>' +
+            '<button class="boton ' + claseBoton + '" type="button" data-confirmar-accion>Confirmar</button>' +
+          "</div>" +
+        "</div>" +
+      "</div>";
+    contenedor.querySelector(".confirmacion__mensaje").textContent = mensaje;
+    contenedor.querySelector("[data-confirmar-accion]").addEventListener("click", function () {
+      cerrarModal();
+      alConfirmar();
+    });
+    var botonConfirmar = contenedor.querySelector("[data-confirmar-accion]");
+    if (botonConfirmar) botonConfirmar.focus();
+  }
+
+  document.body.addEventListener("htmx:confirm", function (evento) {
+    if (!evento.detail.question) return; // sin hx-confirm: nada que preguntar, que siga solo
+    evento.preventDefault();
+    mostrarConfirmacion(evento.detail.question, function () {
+      evento.detail.issueRequest(true);
+    });
+  });
+
   /* El modal atrapa el foco: Tab no se escapa hacia la página de atrás. */
   document.addEventListener("keydown", function (evento) {
     if (evento.key === "Escape") {

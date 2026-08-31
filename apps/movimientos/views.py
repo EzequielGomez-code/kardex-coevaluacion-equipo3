@@ -121,6 +121,8 @@ def movimiento_detalle(request: HttpRequest, movimiento_id: int) -> HttpResponse
         "lineas": movimiento.lineas.select_related("articulo", "almacen").order_by("id"),
         "etiquetas_estado": ETIQUETAS_ESTADO, "variantes_estado": VARIANTES_ESTADO,
     }
+    if movimiento.estado == EstadoMovimiento.PENDIENTE:
+        contexto["solicitado"] = ServicioMovimientos.lineas_solicitadas_para_mostrar(movimiento)
     return render(request, "movimientos/movimiento_detalle.html", contexto)
 
 

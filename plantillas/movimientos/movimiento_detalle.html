@@ -66,11 +66,17 @@
           <span class="definiciones__valor">{{ movimiento.metodo_valoracion|default:"—" }}</span>
           <span class="definiciones__etiqueta">Registrado por</span>
           <span class="definiciones__valor">{{ movimiento.usuario.nombre_completo }}</span>
-          <span class="definiciones__etiqueta">Cantidad total</span>
-          <span class="definiciones__valor num">{{ movimiento.total_cantidad|cantidad }}</span>
-          <span class="definiciones__etiqueta">Costo total</span>
-          <span class="definiciones__valor num">{% moneda movimiento.total_costo %}</span>
+          <span class="definiciones__etiqueta">Cantidad {% if solicitado %}solicitada{% else %}total{% endif %}</span>
+          <span class="definiciones__valor num">{% if solicitado %}{{ solicitado.total_cantidad|cantidad }}{% else %}{{ movimiento.total_cantidad|cantidad }}{% endif %}</span>
+          <span class="definiciones__etiqueta">Costo {% if solicitado %}estimado{% else %}total{% endif %}</span>
+          <span class="definiciones__valor num">{% if solicitado %}{% moneda solicitado.total_costo %}{% else %}{% moneda movimiento.total_costo %}{% endif %}</span>
         </div>
+        {% if solicitado.costo_estimado %}
+          <p class="campos-dinamicos" style="border-top:1px dashed var(--borde-fuerte); margin-top:var(--e4); padding-top:var(--e3);">
+            El costo de alguna línea todavía no está fijado — se muestra el promedio actual, a título de
+            estimado. El costo real se calcula al aprobar, según los lotes que se consuman ese momento.
+          </p>
+        {% endif %}
         {% if movimiento.motivo %}
           <p class="campos-dinamicos" style="border-top:1px dashed var(--borde-fuerte); margin-top:var(--e4); padding-top:var(--e3);">
             <strong>Motivo:</strong> {{ movimiento.motivo }}
@@ -103,7 +109,9 @@
   </div>
 
   <div class="panel">
-    <div class="panel__cabecera"><h2 class="panel__titulo">Líneas</h2></div>
+    <div class="panel__cabecera">
+      <h2 class="panel__titulo">{% if solicitado %}Líneas solicitadas{% else %}Líneas{% endif %}</h2>
+    </div>
     {% if lineas %}
       <table class="tabla">
         <thead>
@@ -124,6 +132,29 @@
               <td class="num">{% moneda linea.costo_unitario %}</td>
               <td class="num">{% moneda linea.costo_total %}</td>
               <td class="num">{{ linea.saldo_posterior|cantidad }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% elif solicitado %}
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Artículo</th><th class="num">Cantidad</th>
+            <th class="num">Costo unitario</th><th class="num">Costo total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for linea in solicitado.lineas %}
+            <tr>
+              <td>
+                <a href="{% url 'movimientos:kardex' linea.articulo.pk %}">{{ linea.articulo.sku }} — {{ linea.articulo.nombre }}</a>
+              </td>
+              <td class="num">{% if linea.signo > 0 %}+{% else %}−{% endif %}{{ linea.cantidad|cantidad }}</td>
+              <td class="num">
+                {% moneda linea.costo_unitario %}{% if linea.estimado %} <span class="texto-3">(estimado)</span>{% endif %}
+              </td>
+              <td class="num">{% moneda linea.costo_total %}</td>
             </tr>
           {% endfor %}
         </tbody>
