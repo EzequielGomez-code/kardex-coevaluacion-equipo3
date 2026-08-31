@@ -134,6 +134,35 @@ def url_con(context: dict, **cambios) -> str:
 
 
 @register.filter
+def sangria(nivel: Any, marca: str = "— ") -> str:
+    """
+    Repite una marca tantas veces como el nivel indica, para insinuar
+    profundidad en un árbol dentro de un elemento que no admite sangría real
+    (por ejemplo, las opciones de un ``<select>``).
+    """
+    try:
+        return mark_safe(marca * int(nivel))  # nosec B308 — la marca es fija, no viene del usuario
+    except (TypeError, ValueError):
+        return ""
+
+
+@register.filter
+def tiene_permiso(usuario: Any, clave: str) -> bool:
+    """
+    Comprueba en la plantilla si el usuario tiene una clave de permiso.
+
+    El ``perms`` que trae Django de fábrica lee el sistema de permisos
+    integrado; este proyecto tiene el suyo propio (``Rol`` → ``Permiso``), así
+    que hace falta este filtro para preguntarlo desde una plantilla.
+    Recuerde que esto solo oculta un enlace: el permiso que manda es el que
+    verifica ``@requiere_permiso`` en el servidor (Seguridad #4).
+    """
+    if not getattr(usuario, "is_authenticated", False):
+        return False
+    return usuario.tiene_permiso(clave)
+
+
+@register.filter
 def get_item(diccionario: Any, clave: Any) -> Any:
     """
     Devuelve ``diccionario[clave]`` desde una plantilla.

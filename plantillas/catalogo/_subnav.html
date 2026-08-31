@@ -1,0 +1,24 @@
+{% load formato %}
+{% comment %}
+Navegación interna del catálogo: en vez de seis entradas en la barra
+lateral, el módulo entero cuelga de una sola ("Catálogo") y se mueve por
+dentro con pestañas, filtradas por el permiso de cada sección.
+{% endcomment %}
+<nav class="pestanas" aria-label="Secciones del catálogo">
+  <a class="pestana{% if seccion_activa == 'articulos' %} pestana--activa{% endif %}"
+     href="{% url 'catalogo:articulos' %}">Artículos</a>
+  <a class="pestana{% if seccion_activa == 'categorias' %} pestana--activa{% endif %}"
+     href="{% url 'catalogo:categorias' %}">Categorías</a>
+  <a class="pestana{% if seccion_activa == 'marcas' %} pestana--activa{% endif %}"
+     href="{% url 'catalogo:marcas' %}">Marcas</a>
+  <a class="pestana{% if seccion_activa == 'unidades' %} pestana--activa{% endif %}"
+     href="{% url 'catalogo:unidades' %}">Unidades</a>
+  {% if user|tiene_permiso:"proveedor.ver" %}
+    <a class="pestana{% if seccion_activa == 'proveedores' %} pestana--activa{% endif %}"
+       href="{% url 'catalogo:proveedores' %}">Proveedores</a>
+  {% endif %}
+  {% if user|tiene_permiso:"cliente.ver" %}
+    <a class="pestana{% if seccion_activa == 'clientes' %} pestana--activa{% endif %}"
+       href="{% url 'catalogo:clientes' %}">Clientes</a>
+  {% endif %}
+</nav>

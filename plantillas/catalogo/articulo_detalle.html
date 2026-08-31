@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">{{ articulo.nombre }}</h1>
+      <p class="encabezado__bajada">{{ articulo.sku|mono }} · {{ articulo.categoria.nombre }}</p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"articulo.editar" %}
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'catalogo:articulo_editar' articulo.pk %}" hx-target="#modal">
+          {% icono "editar" %} Editar
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <nav class="pestanas" aria-label="Datos del artículo">
+    <a class="pestana{% if pestana == 'general' %} pestana--activa{% endif %}"
+       href="?pestana=general">General</a>
+    <a class="pestana{% if pestana == 'proveedores' %} pestana--activa{% endif %}"
+       href="?pestana=proveedores">Proveedores</a>
+    <a class="pestana{% if pestana == 'kardex' %} pestana--activa{% endif %}"
+       href="?pestana=kardex">Kardex</a>
+  </nav>
+
+  {% if pestana == "proveedores" %}
+    <div class="panel">
+      <div class="panel__cabecera">
+        <h2 class="panel__titulo">Proveedores de este artículo</h2>
+        {% if user|tiene_permiso:"proveedor.gestionar" %}
+          <button class="boton boton--primario" type="button"
+                  hx-get="{% url 'catalogo:precio_nuevo' articulo.pk %}" hx-target="#modal">
+            {% icono "mas" %} Agregar proveedor
+          </button>
+        {% endif %}
+      </div>
+      {% if proveedores_articulo %}
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Proveedor</th><th>Código</th><th class="num">Precio</th>
+              <th class="num">Entrega (días)</th><th>Preferido</th><th class="tabla__acciones"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for rel in proveedores_articulo %}
+              <tr>
+                <td class="tabla__principal">{{ rel.proveedor.razon_social }}</td>
+                <td class="mono">{{ rel.codigo_proveedor|default:"—" }}</td>
+                <td class="num">{% moneda rel.precio_compra %}</td>
+                <td class="num">{{ rel.tiempo_entrega_dias }}</td>
+                <td>{% if rel.es_preferido %}{% include "componentes/badge.html" with texto="Preferido" variante="acento" %}{% endif %}</td>
+                <td class="tabla__acciones">
+                  {% if user|tiene_permiso:"proveedor.gestionar" %}
+                    <button class="boton boton--plano" type="button"
+                            hx-get="{% url 'catalogo:precio_editar' rel.pk %}" hx-target="#modal">
+                      {% icono "editar" %} Editar
+                    </button>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Este artículo no tiene proveedores registrados" texto_vacio="Agregue un proveedor para llevar el precio de compra y el tiempo de entrega." %}
+      {% endif %}
+    </div>
+  {% elif pestana == "kardex" %}
+    <div class="panel">
+      {% include "componentes/estado_vacio.html" with titulo_vacio="El kardex de este artículo se activa con el módulo de movimientos" texto_vacio="En cuanto se registre la primera entrada, aquí aparecerá el historial de cantidad, costo y saldo corrido." %}
+    </div>
+  {% else %}
+    <div class="rejilla">
+      <div class="panel">
+        <div class="panel__cabecera"><h2 class="panel__titulo">Datos generales</h2></div>
+        <div class="panel__cuerpo">
+          <div class="definiciones">
+            <span class="definiciones__etiqueta">SKU</span>
+            <span class="definiciones__valor mono">{{ articulo.sku }}</span>
+            <span class="definiciones__etiqueta">Código de barras</span>
+            <span class="definiciones__valor mono">{{ articulo.codigo_barras|default:"—" }}</span>
+            <span class="definiciones__etiqueta">Categoría</span>
+            <span class="definiciones__valor">{{ articulo.categoria.nombre }}</span>
+            <span class="definiciones__etiqueta">Marca</span>
+            <span class="definiciones__valor">{{ articulo.marca|default:"Sin marca" }}</span>
+            <span class="definiciones__etiqueta">Unidad</span>
+            <span class="definiciones__valor">{{ articulo.unidad.nombre }}</span>
+            <span class="definiciones__etiqueta">Costo de referencia</span>
+            <span class="definiciones__valor num">{% moneda articulo.costo_referencia %}</span>
+            <span class="definiciones__etiqueta">Precio de venta</span>
+            <span class="definiciones__valor num">{% moneda articulo.precio_venta %}</span>
+            <span class="definiciones__etiqueta">ITBIS</span>
+            <span class="definiciones__valor num">{{ articulo.tasa_itbis }}%</span>
+            <span class="definiciones__etiqueta">Existencia mínima</span>
+            <span class="definiciones__valor num">{{ articulo.stock_minimo_defecto|cantidad }}</span>
+            <span class="definiciones__etiqueta">Estado</span>
+            <span class="definiciones__valor">
+              {% if articulo.activo %}
+                {% include "componentes/badge.html" with texto="Activo" variante="ok" con_punto=True %}
+              {% else %}
+                {% include "componentes/badge.html" with texto="Inactivo" variante="neutro" con_punto=True %}
+              {% endif %}
+            </span>
+          </div>
+          {% if articulo.descripcion %}
+            <p class="campos-dinamicos" style="border-top:1px dashed var(--borde-fuerte); margin-top:var(--e4); padding-top:var(--e3);">
+              {{ articulo.descripcion }}
+            </p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if campos_personalizados %}
+        <div class="panel">
+          <div class="panel__cabecera"><h2 class="panel__titulo">Campos de la categoría</h2></div>
+          <div class="panel__cuerpo">
+            <div class="definiciones">
+              {% for campo in campos_personalizados %}
+                <span class="definiciones__etiqueta">{{ campo.etiqueta }}</span>
+                <span class="definiciones__valor">{{ campo.valor|default:"—" }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

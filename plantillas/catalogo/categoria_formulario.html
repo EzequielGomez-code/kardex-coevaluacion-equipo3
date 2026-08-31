@@ -1,0 +1,33 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+      {% if padre %}
+        <p class="campo-grupo__ayuda" style="margin-bottom: var(--e2);">
+          Se crea dentro de <strong>{{ padre.nombre }}</strong>.
+        </p>
+      {% endif %}
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.codigo %}
+          {% include "componentes/campo.html" with campo=formulario.nombre %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.descripcion %}
+        {% include "componentes/campo.html" with campo=formulario.icono %}
+        {% include "componentes/campo.html" with campo=formulario.activo %}
+      </div>
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

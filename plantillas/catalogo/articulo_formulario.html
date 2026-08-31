@@ -1,0 +1,70 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none" hx-encoding="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.sku %}
+          {% include "componentes/campo.html" with campo=formulario.codigo_barras %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.nombre %}
+        {% include "componentes/campo.html" with campo=formulario.descripcion %}
+        <div class="formulario__fila">
+          <div id="campo-categoria-envoltura">
+            <label class="campo-grupo__etiqueta" for="{{ formulario.categoria.id_for_label }}">
+              Categoría<span class="campo-grupo__obligatorio">*</span>
+            </label>
+            <select name="categoria" id="{{ formulario.categoria.id_for_label }}" class="campo campo--seleccion"
+                    hx-get="{% url 'catalogo:articulo_campos' %}" hx-target="#campos-dinamicos-articulo"
+                    hx-trigger="change">
+              <option value="">— Seleccione —</option>
+              {% for opcion in formulario.categoria.field.queryset %}
+                <option value="{{ opcion.pk }}" {% if formulario.categoria.value|stringformat:"s" == opcion.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ opcion.nombre }}
+                </option>
+              {% endfor %}
+            </select>
+            {% for error in formulario.categoria.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}
+          </div>
+          {% include "componentes/campo.html" with campo=formulario.marca %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.unidad %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.costo_referencia %}
+          {% include "componentes/campo.html" with campo=formulario.precio_venta %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.tasa_itbis %}
+          {% include "componentes/campo.html" with campo=formulario.stock_minimo_defecto %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.imagen %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.es_inventariable %}
+          {% include "componentes/campo.html" with campo=formulario.maneja_lotes %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.maneja_vencimiento %}
+          {% include "componentes/campo.html" with campo=formulario.activo %}
+        </div>
+
+        <div class="campos-dinamicos" id="campos-dinamicos-articulo">
+          {% include "catalogo/_campos_dinamicos_articulo.html" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

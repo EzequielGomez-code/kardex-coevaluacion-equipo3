@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  {% include "catalogo/_subnav.html" with seccion_activa="marcas" %}
+
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Marcas</h1>
+      <p class="encabezado__bajada">
+        {% if total %}<span class="encabezado__contador">{{ total }} en total</span>{% endif %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"categoria.gestionar" %}
+        <button class="boton boton--primario" type="button"
+                hx-get="{% url 'catalogo:marca_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Nueva marca
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-busqueda">Buscar</label>
+        <input class="campo filtros__texto" type="search" id="f-busqueda" name="busqueda"
+               value="{{ busqueda }}" placeholder="Nombre de la marca">
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_marca filas=pagina plantilla_filas="catalogo/_fila_marca.html" con_acciones=True %}
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay marcas registradas" %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

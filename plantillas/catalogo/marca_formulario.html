@@ -1,0 +1,22 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      <div class="formulario">
+        {% include "componentes/campo.html" with campo=formulario.nombre %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.pais %}
+          {% include "componentes/campo.html" with campo=formulario.sitio_web %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.activo %}
+      </div>
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

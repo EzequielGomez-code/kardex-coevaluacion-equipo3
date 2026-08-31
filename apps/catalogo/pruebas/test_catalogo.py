@@ -13,5 +13,5 @@ from django.urls import reverse
 def test_el_modulo_exige_permiso(client, usuario_sin_permisos):
     """Sin el permiso del módulo, la pantalla responde 403 (Seguridad #4)."""
     client.force_login(usuario_sin_permisos)
-    respuesta = client.get(reverse("catalogo:indice"))
+    respuesta = client.get(reverse("catalogo:articulos"))
     assert respuesta.status_code == 403

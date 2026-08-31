@@ -1,0 +1,12 @@
+{% comment %}
+Campos personalizados de la categoría elegida — se recarga por HTMX cada vez
+que cambia el selector de categoría del formulario de artículo (BRIEF 02,
+fase 3: "formulario con los campos personalizados de su categoría
+cargándose de forma dinámica al elegirla").
+{% endcomment %}
+{% if campos_personalizados.fields %}
+  <p class="campos-dinamicos__titulo">Campos personalizados de esta categoría</p>
+  {% for campo in campos_personalizados %}
+    {% include "componentes/campo_dinamico.html" with campo=campo %}
+  {% endfor %}
+{% endif %}

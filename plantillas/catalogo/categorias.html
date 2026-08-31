@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  {% include "catalogo/_subnav.html" with seccion_activa="categorias" %}
+
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Categorías</h1>
+      <p class="encabezado__bajada">
+        Arrastre una fila por su asa para reordenarla entre sus hermanas, o suéltela
+        sobre otra categoría para moverla ahí dentro.
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if puede_gestionar %}
+        <button class="boton boton--primario" type="button"
+                hx-get="{% url 'catalogo:categoria_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Nueva categoría raíz
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="region-arbol" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-arbol" hx-swap="outerHTML">
+    {% if arbol %}
+      <div class="tabla-envoltura tabla-envoltura--sola arbol-categorias"
+           id="arbol-raiz" data-arbol-categorias data-padre-id=""
+           {% if puede_gestionar %}data-reordenar-url="{% url 'catalogo:categorias_reordenar' %}"
+           data-mover-url="{% url 'catalogo:categorias_mover' %}"{% endif %}>
+        {% for cat in arbol %}
+          <div class="arbol-fila" draggable="{{ puede_gestionar|yesno:'true,false' }}"
+               data-categoria-id="{{ cat.pk }}" data-padre-id="{{ cat.padre_id|default:'' }}">
+            <span class="arbol-fila__sangria" style="width: calc({{ cat.nivel }} * 20px); flex: 0 0 auto;"
+                  aria-hidden="true"></span>
+            {% if puede_gestionar %}
+              <span class="arbol-fila__asa" title="Arrastrar">{% icono "arrastrar" %}</span>
+            {% endif %}
+            {% icono cat.icono %}
+            <span class="arbol-fila__nombre">{{ cat.nombre }}</span>
+            <span class="arbol-fila__codigo">{{ cat.codigo }}</span>
+            {% if not cat.activo %}
+              {% include "componentes/badge.html" with texto="Inactiva" variante="neutro" %}
+            {% endif %}
+            <span class="arbol-fila__acciones">
+              {% if puede_gestionar %}
+                <button class="boton boton--plano" type="button"
+                        hx-get="{% url 'catalogo:categoria_nueva' %}?padre={{ cat.pk }}" hx-target="#modal">
+                  {% icono "mas" %} Subcategoría
+                </button>
+                <button class="boton boton--plano" type="button"
+                        hx-get="{% url 'catalogo:categoria_editar' cat.pk %}" hx-target="#modal">
+                  {% icono "editar" %} Editar
+                </button>
+                <button class="boton boton--plano" type="button"
+                        hx-post="{% url 'catalogo:categoria_eliminar' cat.pk %}" hx-swap="none"
+                        hx-confirm="¿Eliminar la categoría «{{ cat.nombre }}»? Solo se puede si no tiene subcategorías ni artículos.">
+                  {% icono "papelera" %} Eliminar
+                </button>
+              {% endif %}
+            </span>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="tabla-envoltura tabla-envoltura--sola">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay categorías" texto_vacio="Cree la primera categoría para empezar a clasificar los artículos." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block guion %}
+<script>
+  /* Arrastrar para reordenar entre hermanas, o soltar sobre otra fila para
+     moverse dentro de ella. El árbol se recarga desde el servidor tras cada
+     cambio: la ruta materializada la recalcula el backend, nunca el navegador. */
+  (function () {
+    var origen = null;
+
+    function raiz() { return document.querySelector("[data-arbol-categorias]"); }
+
+    document.addEventListener("dragstart", function (evento) {
+      var fila = evento.target.closest(".arbol-fila");
+      if (!fila || fila.getAttribute("draggable") !== "true") return;
+      origen = fila;
+      fila.classList.add("arbol-fila--arrastrando");
+      evento.dataTransfer.effectAllowed = "move";
+    });
+
+    document.addEventListener("dragend", function () {
+      if (origen) origen.classList.remove("arbol-fila--arrastrando");
+      document.querySelectorAll(".arbol-fila--destino").forEach(function (f) {
+        f.classList.remove("arbol-fila--destino");
+      });
+      origen = null;
+    });
+
+    document.addEventListener("dragover", function (evento) {
+      var fila = evento.target.closest(".arbol-fila");
+      if (!fila || !origen || fila === origen) return;
+      evento.preventDefault();
+    });
+
+    document.addEventListener("dragenter", function (evento) {
+      var fila = evento.target.closest(".arbol-fila");
+      if (!fila || !origen || fila === origen) return;
+      fila.classList.add("arbol-fila--destino");
+    });
+
+    document.addEventListener("dragleave", function (evento) {
+      var fila = evento.target.closest(".arbol-fila");
+      if (fila) fila.classList.remove("arbol-fila--destino");
+    });
+
+    function csrf() {
+      return ("; " + document.cookie).split("; csrftoken=").pop().split(";").shift();
+    }
+
+    document.addEventListener("drop", function (evento) {
+      var destino = evento.target.closest(".arbol-fila");
+      if (!destino || !origen || destino === origen) return;
+      evento.preventDefault();
+      destino.classList.remove("arbol-fila--destino");
+
+      var contenedor = raiz();
+      var mismoPadre = destino.dataset.padreId === origen.dataset.padreId;
+
+      if (mismoPadre) {
+        // Reordenar entre hermanas: se calcula la posición según el punto donde se soltó.
+        var caja = destino.getBoundingClientRect();
+        var despues = (evento.clientY - caja.top) / caja.height > 0.5;
+        destino.parentNode.insertBefore(origen, despues ? destino.nextSibling : destino);
+        var hermanas = Array.from(contenedor.querySelectorAll(
+          '.arbol-fila[data-padre-id="' + (origen.dataset.padreId || "") + '"]'
+        ));
+        fetch(contenedor.dataset.reordenarUrl, {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "X-CSRFToken": csrf()},
+          body: JSON.stringify({
+            padre_id: origen.dataset.padreId || null,
+            orden: hermanas.map(function (f) { return parseInt(f.dataset.categoriaId, 10); }),
+          }),
+        }).then(function () { document.body.dispatchEvent(new CustomEvent("kardexRecargar")); });
+      } else {
+        // Mover a otro padre: el propio destino pasa a ser el nuevo padre.
+        fetch(contenedor.dataset.moverUrl, {
+          method: "POST",
+          headers: {"Content-Type": "application/json", "X-CSRFToken": csrf()},
+          body: JSON.stringify({
+            categoria_id: parseInt(origen.dataset.categoriaId, 10),
+            nuevo_padre_id: parseInt(destino.dataset.categoriaId, 10),
+          }),
+        }).then(function (respuesta) {
+          document.body.dispatchEvent(new CustomEvent("kardexRecargar"));
+          if (!respuesta.ok) {
+            respuesta.json().then(function (datos) {
+              document.body.dispatchEvent(new CustomEvent("kardexToast", {
+                detail: {texto: datos.error || "No se pudo mover la categoría.", tipo: "alerta"},
+              }));
+            });
+          }
+        });
+      }
+    });
+  })();
+</script>
+{% endblock %}

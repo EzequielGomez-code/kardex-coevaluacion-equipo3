@@ -1,0 +1,58 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+      <p class="campo-grupo__ayuda" style="margin-bottom: var(--e2);">
+        Artículo: <strong>{{ articulo.sku }} — {{ articulo.nombre }}</strong>
+      </p>
+      <div class="formulario">
+        {% if relacion %}
+          <div class="campo-grupo">
+            <span class="campo-grupo__etiqueta">Proveedor</span>
+            <p>{{ relacion.proveedor.razon_social }}</p>
+          </div>
+        {% else %}
+          <div class="campo-grupo">
+            <label class="campo-grupo__etiqueta" for="id_proveedor">
+              Proveedor<span class="campo-grupo__obligatorio">*</span>
+            </label>
+            <select class="campo campo--seleccion" name="proveedor" id="id_proveedor">
+              <option value="">— Seleccione —</option>
+              {% for p in proveedores_disponibles %}
+                <option value="{{ p.pk }}">{{ p.razon_social }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+        {% include "componentes/campo.html" with campo=formulario.codigo_proveedor %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.precio_compra %}
+          {% include "componentes/campo.html" with campo=formulario.tiempo_entrega_dias %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.cantidad_minima %}
+        {% include "componentes/campo.html" with campo=formulario.es_preferido %}
+        {% include "componentes/campo.html" with campo=formulario.activo %}
+      </div>
+    </div>
+    <div class="modal__pie">
+      {% if relacion %}
+        <button class="boton boton--peligro" type="button"
+                hx-post="{% url 'catalogo:precio_eliminar' relacion.pk %}" hx-swap="none"
+                hx-confirm="¿Quitar a {{ relacion.proveedor.razon_social }} como proveedor de este artículo?"
+                style="margin-right: auto;">
+          {% icono "papelera" %} Quitar
+        </button>
+      {% endif %}
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}
