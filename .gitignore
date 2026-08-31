@@ -33,6 +33,9 @@ coverage.xml
 .ruff_cache/
 .mypy_cache/
 
+# Configuración local de herramientas de desarrollo
+.claude/
+
 # Editores y sistema operativo
 .vscode/
 .idea/
