@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Tipos de movimiento</h1>
+      <p class="encabezado__bajada">
+        Los verbos con los que se registra el inventario: compra, venta, merma, ajuste…
+        {% if tipos %}<span class="encabezado__contador">· {{ tipos|length }} en total</span>{% endif %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"tipo_movimiento.gestionar" %}
+        <button class="boton boton--primario" type="button"
+                hx-get="{% url 'movimientos:tipo_nuevo' %}" hx-target="#modal">
+          {% icono "mas" %} Nuevo tipo
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+    {% if tipos %}
+      {% include "componentes/tabla.html" with columnas=columnas_tipo filas=tipos plantilla_filas="movimientos/_fila_tipo.html" con_acciones=True %}
+      <div class="tarjetas-lista">
+        {% for fila in tipos %}{% include "movimientos/_tarjeta_tipo.html" %}{% endfor %}
+      </div>
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="Todavía no hay tipos de movimiento" texto_vacio="Cree el primero para poder registrar entradas, salidas, transferencias o ajustes." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

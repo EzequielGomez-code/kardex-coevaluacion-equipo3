@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">{{ movimiento.numero|mono }}</h1>
+      <p class="encabezado__bajada">
+        {{ movimiento.tipo.nombre }} ·
+        {% include "componentes/badge.html" with texto=etiquetas_estado|get_item:movimiento.estado variante=variantes_estado|get_item:movimiento.estado con_punto=True %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if movimiento.estado == "confirmado" and movimiento.tipo.permite_anulacion and user|tiene_permiso:"movimiento.anular" %}
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'movimientos:anular' movimiento.pk %}" hx-target="#modal">
+          {% icono "papelera" %} Anular
+        </button>
+      {% endif %}
+      {% if movimiento.estado == "pendiente" and user|tiene_permiso:"movimiento.aprobar" %}
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'movimientos:rechazar' movimiento.pk %}" hx-target="#modal">
+          {% icono "cerrar" %} Rechazar
+        </button>
+        <button class="boton boton--primario" type="button"
+                hx-post="{% url 'movimientos:aprobar' movimiento.pk %}" hx-swap="none"
+                hx-confirm="¿Aprobar este movimiento? Se aplicará sobre el inventario de inmediato.">
+          {% icono "cheque" %} Aprobar
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="rejilla">
+    <div class="panel">
+      <div class="panel__cabecera"><h2 class="panel__titulo">Datos generales</h2></div>
+      <div class="panel__cuerpo">
+        <div class="definiciones">
+          <span class="definiciones__etiqueta">Fecha</span>
+          <span class="definiciones__valor">{{ movimiento.fecha|fecha_hora }}</span>
+          {% if movimiento.almacen_origen %}
+            <span class="definiciones__etiqueta">Almacén de origen</span>
+            <span class="definiciones__valor">{{ movimiento.almacen_origen.nombre }}</span>
+          {% endif %}
+          {% if movimiento.almacen_destino %}
+            <span class="definiciones__etiqueta">Almacén de destino</span>
+            <span class="definiciones__valor">{{ movimiento.almacen_destino.nombre }}</span>
+          {% endif %}
+          {% if movimiento.proveedor %}
+            <span class="definiciones__etiqueta">Proveedor</span>
+            <span class="definiciones__valor">{{ movimiento.proveedor.razon_social }}</span>
+          {% endif %}
+          {% if movimiento.cliente %}
+            <span class="definiciones__etiqueta">Cliente</span>
+            <span class="definiciones__valor">{{ movimiento.cliente.razon_social }}</span>
+          {% endif %}
+          {% if movimiento.documento_numero %}
+            <span class="definiciones__etiqueta">Documento</span>
+            <span class="definiciones__valor mono">{{ movimiento.documento_tipo }} {{ movimiento.documento_numero }}</span>
+          {% endif %}
+          {% if movimiento.ncf %}
+            <span class="definiciones__etiqueta">NCF</span>
+            <span class="definiciones__valor mono">{{ movimiento.ncf }}</span>
+          {% endif %}
+          <span class="definiciones__etiqueta">Método de valoración</span>
+          <span class="definiciones__valor">{{ movimiento.metodo_valoracion|default:"—" }}</span>
+          <span class="definiciones__etiqueta">Registrado por</span>
+          <span class="definiciones__valor">{{ movimiento.usuario.nombre_completo }}</span>
+          <span class="definiciones__etiqueta">Cantidad total</span>
+          <span class="definiciones__valor num">{{ movimiento.total_cantidad|cantidad }}</span>
+          <span class="definiciones__etiqueta">Costo total</span>
+          <span class="definiciones__valor num">{% moneda movimiento.total_costo %}</span>
+        </div>
+        {% if movimiento.motivo %}
+          <p class="campos-dinamicos" style="border-top:1px dashed var(--borde-fuerte); margin-top:var(--e4); padding-top:var(--e3);">
+            <strong>Motivo:</strong> {{ movimiento.motivo }}
+          </p>
+        {% endif %}
+        {% if movimiento.observaciones %}
+          <p class="campos-dinamicos">{{ movimiento.observaciones }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if movimiento.anula %}
+      <div class="panel">
+        <div class="panel__cabecera"><h2 class="panel__titulo">Anula al movimiento</h2></div>
+        <div class="panel__cuerpo">
+          <a href="{% url 'movimientos:detalle' movimiento.anula.pk %}">{{ movimiento.anula.numero }}</a>
+        </div>
+      </div>
+    {% endif %}
+    {% if movimiento.anulaciones.all %}
+      <div class="panel">
+        <div class="panel__cabecera"><h2 class="panel__titulo">Contrapartida de anulación</h2></div>
+        <div class="panel__cuerpo">
+          {% for anulacion in movimiento.anulaciones.all %}
+            <a href="{% url 'movimientos:detalle' anulacion.pk %}">{{ anulacion.numero }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <div class="panel__cabecera"><h2 class="panel__titulo">Líneas</h2></div>
+    {% if lineas %}
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Artículo</th><th>Almacén</th><th class="num">Cantidad</th>
+            <th class="num">Costo unitario</th><th class="num">Costo total</th>
+            <th class="num">Saldo posterior</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for linea in lineas %}
+            <tr>
+              <td>
+                <a href="{% url 'movimientos:kardex' linea.articulo.pk %}">{{ linea.articulo.sku }} — {{ linea.articulo.nombre }}</a>
+              </td>
+              <td class="texto-2">{{ linea.almacen.codigo }}</td>
+              <td class="num">{% if linea.signo > 0 %}+{% else %}−{% endif %}{{ linea.cantidad|cantidad }}</td>
+              <td class="num">{% moneda linea.costo_unitario %}</td>
+              <td class="num">{% moneda linea.costo_total %}</td>
+              <td class="num">{{ linea.saldo_posterior|cantidad }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      {% include "componentes/estado_vacio.html" with titulo_vacio="Este movimiento todavía no tiene líneas" texto_vacio="Está pendiente de aprobación: sus líneas se crean recién al aprobarse." %}
+    {% endif %}
+  </div>
+{% endblock %}

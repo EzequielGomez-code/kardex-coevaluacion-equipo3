@@ -1,0 +1,18 @@
+{% load formato %}
+<tr>
+  <td class="mono"><a href="{% url 'movimientos:detalle' fila.pk %}">{{ fila.numero }}</a></td>
+  <td>{{ fila.tipo.nombre }}</td>
+  <td class="texto-2">{{ fila.fecha|fecha_hora }}</td>
+  <td class="texto-2">{{ fila.usuario.nombre_completo }}</td>
+  <td class="tabla__acciones">
+    <button class="boton boton--plano" type="button"
+            hx-get="{% url 'movimientos:rechazar' fila.pk %}" hx-target="#modal">
+      {% icono "cerrar" %} Rechazar
+    </button>
+    <button class="boton boton--plano" type="button"
+            hx-post="{% url 'movimientos:aprobar' fila.pk %}" hx-swap="none"
+            hx-confirm="¿Aprobar «{{ fila.numero }}»? Se aplicará sobre el inventario de inmediato.">
+      {% icono "cheque" %} Aprobar
+    </button>
+  </td>
+</tr>

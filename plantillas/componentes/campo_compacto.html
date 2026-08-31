@@ -1,0 +1,7 @@
+{% comment %} Campo sin etiqueta visible, para una celda de tabla donde la columna ya lo
+   nombra (evita que la fila crezca más de los 40 px que fija el sistema de diseño).
+   La etiqueta sigue ahí para lectores de pantalla.
+   Uso: {% include "componentes/campo_compacto.html" with campo=formulario.cantidad %} {% endcomment %}
+<label class="solo-lectores" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+{{ campo }}
+{% for error in campo.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}

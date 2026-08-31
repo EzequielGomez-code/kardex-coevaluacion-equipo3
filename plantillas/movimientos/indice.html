@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Movimientos</h1>
+      <p class="encabezado__bajada">
+        Entradas, salidas, transferencias y ajustes de inventario.
+        {% if total %}<span class="encabezado__contador">· {{ total }} en total</span>{% endif %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      {% if user|tiene_permiso:"movimiento.crear" %}
+        <button class="boton boton--primario" type="button"
+                hx-get="{% url 'movimientos:entrada_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Entrada
+        </button>
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'movimientos:salida_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Salida
+        </button>
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'movimientos:transferencia_nueva' %}" hx-target="#modal">
+          {% icono "mas" %} Transferencia
+        </button>
+      {% endif %}
+      {% if user|tiene_permiso:"movimiento.ajustar" %}
+        <button class="boton boton--secundario" type="button"
+                hx-get="{% url 'movimientos:ajuste_nuevo' %}" hx-target="#modal">
+          {% icono "mas" %} Ajuste
+        </button>
+      {% endif %}
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-busqueda">Buscar</label>
+        <input class="campo filtros__texto" type="search" id="f-busqueda" name="busqueda"
+               value="{{ busqueda }}" placeholder="Número, documento o NCF">
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-tipo">Tipo</label>
+        <select class="campo filtros__seleccion" id="f-tipo" name="tipo">
+          <option value="">Todos</option>
+          {% for t in tipos %}
+            <option value="{{ t.pk }}" {% if tipo_id == t.pk %}selected{% endif %}>{{ t.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-almacen">Almacén</label>
+        <select class="campo filtros__seleccion" id="f-almacen" name="almacen">
+          <option value="">Todos</option>
+          {% for a in almacenes %}
+            <option value="{{ a.pk }}" {% if almacen_id == a.pk %}selected{% endif %}>{{ a.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-estado">Estado</label>
+        <select class="campo filtros__seleccion" id="f-estado" name="estado">
+          <option value="">Todos</option>
+          {% for valor, etiqueta in estados %}
+            <option value="{{ valor }}" {% if estado == valor %}selected{% endif %}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_movimiento filas=pagina plantilla_filas="movimientos/_fila_movimiento.html" %}
+      <div class="tarjetas-lista">
+        {% for fila in pagina %}{% include "movimientos/_tarjeta_movimiento.html" %}{% endfor %}
+      </div>
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No hay movimientos que coincidan con el filtro" texto_vacio="Ajuste los criterios o registre un movimiento nuevo." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

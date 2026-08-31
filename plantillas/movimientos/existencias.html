@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Existencias</h1>
+      <p class="encabezado__bajada">
+        Cuánto hay de cada artículo, por almacén.
+        {% if total %}<span class="encabezado__contador">· {{ total }} filas · valor total {% moneda valor_total %}</span>{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+
+    <form class="filtros" method="get" action="{{ request.path }}">
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-busqueda">Buscar</label>
+        <input class="campo filtros__texto" type="search" id="f-busqueda" name="busqueda"
+               value="{{ busqueda }}" placeholder="SKU o nombre">
+      </div>
+      <div class="filtros__campo">
+        <label class="filtros__etiqueta" for="f-almacen">Almacén</label>
+        <select class="campo filtros__seleccion" id="f-almacen" name="almacen">
+          <option value="">Todos</option>
+          {% for a in almacenes %}
+            <option value="{{ a.pk }}" {% if almacen_id == a.pk %}selected{% endif %}>{{ a.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="filtros__campo">
+        <label class="casilla-linea" for="f-bajo-minimo">
+          <input class="casilla" type="checkbox" id="f-bajo-minimo" name="bajo_minimo" value="1"
+                 {% if solo_bajo_minimo %}checked{% endif %}>
+          <span>Solo bajo el mínimo</span>
+        </label>
+      </div>
+      <div class="filtros__acciones">
+        <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+        {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+      </div>
+    </form>
+
+    {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+
+    {% if total %}
+      {% include "componentes/tabla.html" with columnas=columnas_existencia filas=pagina plantilla_filas="movimientos/_fila_existencia.html" %}
+      <div class="tarjetas-lista">
+        {% for fila in pagina %}{% include "movimientos/_tarjeta_existencia.html" %}{% endfor %}
+      </div>
+      {% include "componentes/paginacion.html" %}
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No hay existencias que coincidan con el filtro" texto_vacio="Registre una entrada para que un artículo aparezca aquí." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

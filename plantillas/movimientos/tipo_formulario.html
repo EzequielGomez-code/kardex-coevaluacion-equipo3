@@ -1,0 +1,47 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if formulario.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in formulario.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.codigo %}
+          {% include "componentes/campo.html" with campo=formulario.nombre %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.naturaleza %}
+          {% include "componentes/campo.html" with campo=formulario.prefijo_numeracion %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.color %}
+          {% include "componentes/campo.html" with campo=formulario.orden %}
+        </div>
+        {% include "componentes/campo.html" with campo=formulario.tipo_contrapartida %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.exige_documento %}
+          {% include "componentes/campo.html" with campo=formulario.exige_ncf %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.exige_motivo %}
+          {% include "componentes/campo.html" with campo=formulario.exige_aprobacion %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=formulario.permite_anulacion %}
+          {% include "componentes/campo.html" with campo=formulario.activo %}
+        </div>
+      </div>
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

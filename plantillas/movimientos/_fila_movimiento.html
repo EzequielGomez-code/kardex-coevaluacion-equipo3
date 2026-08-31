@@ -1,0 +1,24 @@
+{% load formato %}
+<tr>
+  <td class="mono"><a href="{% url 'movimientos:detalle' fila.pk %}">{{ fila.numero }}</a></td>
+  <td>
+    <span class="badge badge--acento" style="border-color:{{ fila.tipo.color }};color:{{ fila.tipo.color }}">
+      {{ fila.tipo.nombre }}
+    </span>
+  </td>
+  <td class="texto-2">{{ fila.fecha|fecha_hora }}</td>
+  <td class="texto-2">
+    {% if fila.almacen_origen and fila.almacen_destino %}
+      {{ fila.almacen_origen.codigo }} → {{ fila.almacen_destino.codigo }}
+    {% elif fila.almacen_destino %}
+      {{ fila.almacen_destino.codigo }}
+    {% elif fila.almacen_origen %}
+      {{ fila.almacen_origen.codigo }}
+    {% else %}—{% endif %}
+  </td>
+  <td class="num">{{ fila.total_cantidad|cantidad }}</td>
+  <td class="num">{% moneda fila.total_costo %}</td>
+  <td>
+    {% include "componentes/badge.html" with texto=etiquetas_estado|get_item:fila.estado variante=variantes_estado|get_item:fila.estado con_punto=True %}
+  </td>
+</tr>

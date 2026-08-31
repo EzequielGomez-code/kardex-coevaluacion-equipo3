@@ -273,6 +273,26 @@
   });
 
   /* ------------------------------------- Selector con búsqueda (punto 2.4) */
+  /* La lista se posiciona con «fixed», calculada desde el campo, en vez de
+     dejarla flotar con «absolute»: dentro de un modal o de una celda de
+     tabla hay un ancestro con overflow que, si no, la recorta por debajo. */
+  function posicionarListaCombo(campo, lista) {
+    var rect = campo.getBoundingClientRect();
+    lista.style.position = "fixed";
+    lista.style.left = rect.left + "px";
+    lista.style.top = rect.bottom + 2 + "px";
+    lista.style.width = rect.width + "px";
+  }
+
+  document.addEventListener("focus", function (evento) {
+    if (!evento.target.matches || !evento.target.matches("[data-combo-buscador]")) return;
+    var campo = evento.target;
+    var lista = document.getElementById(campo.getAttribute("data-combo-buscador"));
+    if (!lista) return;
+    posicionarListaCombo(campo, lista);
+    lista.hidden = false;
+  }, true);
+
   document.addEventListener("input", function (evento) {
     if (!evento.target.matches("[data-combo-buscador]")) return;
     var campo = evento.target;
@@ -287,8 +307,18 @@
     });
     var vacio = lista.querySelector(".combo__vacio");
     if (vacio) vacio.hidden = visibles > 0;
+    posicionarListaCombo(campo, lista);
     lista.hidden = false;
   });
+
+  document.addEventListener("scroll", function (evento) {
+    var lista = document.querySelector(".combo__lista:not([hidden])");
+    if (!lista) return;
+    var combo = lista.closest(".combo");
+    if (!combo || (evento.target !== document && !evento.target.contains(combo))) return;
+    var campo = combo.querySelector("[data-combo-buscador]");
+    if (campo) posicionarListaCombo(campo, lista);
+  }, true);
 
   document.addEventListener("click", function (evento) {
     var opcion = evento.target.closest(".combo__opcion");
@@ -307,6 +337,40 @@
     document.querySelectorAll(".combo__lista:not([hidden])").forEach(function (lista) {
       if (!lista.closest(".combo").contains(evento.target)) lista.hidden = true;
     });
+  });
+
+  /* --------------------------------------- Líneas dinámicas (formularios) */
+  /* Todo formset nace sin datos iniciales (extra=1 en cada fila), así que
+     Django ya trata como opcional cualquier fila que quede vacía o que se
+     quite del DOM — no hace falta más que clonar la plantilla y mover el
+     contador de TOTAL_FORMS; no hace falta un checkbox de «eliminar». */
+  document.addEventListener("click", function (evento) {
+    var boton = evento.target.closest("[data-formset-agregar]");
+    if (!boton) return;
+    evento.preventDefault();
+    var contenedor = document.querySelector(
+      '[data-formset="' + boton.getAttribute("data-formset-agregar") + '"]'
+    );
+    if (!contenedor) return;
+    var totalCampo = contenedor.querySelector('input[name$="-TOTAL_FORMS"]');
+    var plantilla = contenedor.querySelector("template[data-formset-vacio]");
+    var filas = contenedor.querySelector("[data-formset-filas]");
+    if (!totalCampo || !plantilla || !filas) return;
+
+    var indice = parseInt(totalCampo.value, 10);
+    var html = plantilla.innerHTML.split("__prefix__").join(String(indice));
+    var envoltura = document.createElement("tbody");
+    envoltura.innerHTML = html.trim();
+    if (envoltura.firstElementChild) filas.appendChild(envoltura.firstElementChild);
+    totalCampo.value = String(indice + 1);
+  });
+
+  document.addEventListener("click", function (evento) {
+    var boton = evento.target.closest("[data-formset-quitar]");
+    if (!boton) return;
+    evento.preventDefault();
+    var fila = boton.closest("[data-formset-fila]");
+    if (fila) fila.remove();
   });
 
   /* ------------------------------------------------------------- Arranque */

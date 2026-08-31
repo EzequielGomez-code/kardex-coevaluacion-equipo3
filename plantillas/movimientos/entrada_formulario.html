@@ -1,0 +1,92 @@
+{% extends "componentes/modal.html" %}
+{% load formato %}
+
+{% block modal_cuerpo %}
+  <form hx-post="{{ destino }}" hx-swap="none">
+    {% csrf_token %}
+    <div class="modal__cuerpo">
+      {% if cabecera.non_field_errors %}
+        <div class="formulario__errores">
+          {% for error in cabecera.non_field_errors %}<p>{{ error }}</p>{% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="formulario">
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=cabecera.tipo %}
+          {% include "componentes/campo.html" with campo=cabecera.almacen_destino %}
+        </div>
+        {% include "componentes/combo.html" with campo=cabecera.proveedor opciones=proveedores_disponibles %}
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=cabecera.documento_tipo %}
+          {% include "componentes/campo.html" with campo=cabecera.documento_numero %}
+        </div>
+        <div class="formulario__fila">
+          {% include "componentes/campo.html" with campo=cabecera.ncf %}
+          {% include "componentes/campo.html" with campo=cabecera.fecha_documento %}
+        </div>
+        {% include "componentes/campo.html" with campo=cabecera.fecha %}
+        {% include "componentes/campo.html" with campo=cabecera.motivo %}
+        {% include "componentes/campo.html" with campo=cabecera.observaciones %}
+      </div>
+
+      <h3 class="panel__titulo" style="margin-top:var(--e5);">Líneas — cada una crea su lote</h3>
+      <div data-formset="lineas">
+        {{ formset.management_form }}
+        {% if formset.non_form_errors %}
+          <div class="formulario__errores">
+            {% for error in formset.non_form_errors %}<p>{{ error }}</p>{% endfor %}
+          </div>
+        {% endif %}
+        <div class="tabla-envoltura">
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th>Artículo</th><th class="num">Cantidad</th><th class="num">Costo unitario</th>
+                <th>N.º de lote</th><th>Vencimiento</th><th class="tabla__acciones"></th>
+              </tr>
+            </thead>
+            <tbody data-formset-filas>
+              {% for linea in formset %}
+                <tr data-formset-fila>
+                  <td>{% include "componentes/combo.html" with campo=linea.articulo opciones=articulos_disponibles ocultar_etiqueta=True %}</td>
+                  <td>{% include "componentes/campo_compacto.html" with campo=linea.cantidad %}</td>
+                  <td>{% include "componentes/campo_compacto.html" with campo=linea.costo_unitario %}</td>
+                  <td>{% include "componentes/campo_compacto.html" with campo=linea.numero_lote %}</td>
+                  <td>{% include "componentes/campo_compacto.html" with campo=linea.fecha_vencimiento %}</td>
+                  <td class="tabla__acciones">
+                    <button class="boton boton--plano" type="button" data-formset-quitar aria-label="Quitar línea">
+                      {% icono "cerrar" %}
+                    </button>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <template data-formset-vacio>
+          <tr data-formset-fila>
+            <td>{% include "componentes/combo.html" with campo=formset.empty_form.articulo opciones=articulos_disponibles ocultar_etiqueta=True %}</td>
+            <td>{% include "componentes/campo_compacto.html" with campo=formset.empty_form.cantidad %}</td>
+            <td>{% include "componentes/campo_compacto.html" with campo=formset.empty_form.costo_unitario %}</td>
+            <td>{% include "componentes/campo_compacto.html" with campo=formset.empty_form.numero_lote %}</td>
+            <td>{% include "componentes/campo_compacto.html" with campo=formset.empty_form.fecha_vencimiento %}</td>
+            <td class="tabla__acciones">
+              <button class="boton boton--plano" type="button" data-formset-quitar aria-label="Quitar línea">
+                {% icono "cerrar" %}
+              </button>
+            </td>
+          </tr>
+        </template>
+        <button class="boton boton--secundario" type="button" data-formset-agregar="lineas"
+                style="margin-top:var(--e2);">
+          {% icono "mas" %} Agregar línea
+        </button>
+      </div>
+    </div>
+    <div class="modal__pie">
+      <button class="boton boton--secundario" type="button" data-cerrar-modal>Cancelar</button>
+      <button class="boton boton--primario" type="submit">{{ etiqueta_envio }}</button>
+    </div>
+  </form>
+{% endblock %}

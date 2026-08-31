@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Aprobaciones pendientes</h1>
+      <p class="encabezado__bajada">
+        Movimientos que esperan una decisión antes de aplicarse al inventario.
+        {% if movimientos %}<span class="encabezado__contador">· {{ movimientos|length }} en total</span>{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <div id="region-tabla" hx-get="{{ request.get_full_path }}"
+       hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
+    {% if movimientos %}
+      {% include "componentes/tabla.html" with columnas=columnas_aprobacion filas=movimientos plantilla_filas="movimientos/_fila_aprobacion.html" con_acciones=True %}
+      <div class="tarjetas-lista">
+        {% for fila in movimientos %}{% include "movimientos/_tarjeta_aprobacion.html" %}{% endfor %}
+      </div>
+    {% else %}
+      <div class="tabla-envoltura">
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No hay movimientos esperando aprobación" texto_vacio="Los tipos configurados con «exige aprobación» aparecerán aquí al registrarse." %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

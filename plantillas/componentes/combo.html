@@ -1,0 +1,30 @@
+{% comment %} Selector con búsqueda para campos con más de diez opciones (punto 2.4).
+   El campo real es un <input type="hidden">; kardex.js filtra la lista al escribir
+   y llena el oculto al elegir una opción.
+
+   Uso:
+     {% include "componentes/combo.html" with campo=formulario.articulo opciones=articulos_disponibles %}
+
+   «opciones» es una lista o queryset de objetos con «.pk» y texto en «__str__».
+   «etiqueta_inicial», si se da, es el texto visible al cargar (edición).
+   «ocultar_etiqueta»: la etiqueta queda solo para lectores de pantalla — útil
+   dentro de una fila de tabla, donde la columna ya la nombra. {% endcomment %}
+<div class="campo-grupo combo">
+  <label class="campo-grupo__etiqueta{% if ocultar_etiqueta %} solo-lectores{% endif %}"
+         for="{{ campo.id_for_label }}-texto">
+    {{ campo.label }}{% if campo.field.required %}<span class="campo-grupo__obligatorio">*</span>{% endif %}
+  </label>
+  <input type="text" class="campo combo__campo" id="{{ campo.id_for_label }}-texto"
+         autocomplete="off" placeholder="Escriba para buscar…"
+         value="{{ etiqueta_inicial|default:"" }}"
+         data-combo-buscador="{{ campo.id_for_label }}-lista">
+  {{ campo }}
+  <div class="combo__lista" id="{{ campo.id_for_label }}-lista" hidden>
+    {% for opcion in opciones %}
+      <div class="combo__opcion" data-valor="{{ opcion.pk }}">{{ opcion }}</div>
+    {% endfor %}
+    <div class="combo__vacio" hidden>Sin resultados.</div>
+  </div>
+  {% if campo.help_text %}<p class="campo-grupo__ayuda">{{ campo.help_text }}</p>{% endif %}
+  {% for error in campo.errors %}<p class="campo-grupo__error">{{ error }}</p>{% endfor %}
+</div>

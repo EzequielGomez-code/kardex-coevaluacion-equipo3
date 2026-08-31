@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load formato %}
+
+{% block contenido %}
+  <div class="encabezado">
+    <div class="encabezado__migas-contador">
+      <h1 class="encabezado__titulo">Kardex — {{ articulo.nombre }}</h1>
+      <p class="encabezado__bajada">
+        {{ articulo.sku|mono }}
+        {% if total %}<span class="encabezado__contador">· {{ total }} movimientos</span>{% endif %}
+      </p>
+    </div>
+    <div class="encabezado__acciones">
+      <a class="boton boton--secundario" href="{% url 'catalogo:articulo_detalle' articulo.pk %}">
+        Ver artículo
+      </a>
+    </div>
+  </div>
+
+  {% if existencias %}
+    <div class="tabla-envoltura" style="margin-bottom:var(--e4);">
+      <table class="tabla">
+        <thead><tr><th>Almacén</th><th class="num">Existencia</th><th class="num">Valor</th></tr></thead>
+        <tbody>
+          {% for existencia in existencias %}
+            <tr>
+              <td>{{ existencia.almacen.nombre }}</td>
+              <td class="num">{{ existencia.cantidad|cantidad }}</td>
+              <td class="num">{% moneda existencia.valor %}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+
+  <form class="filtros" method="get" action="{{ request.path }}">
+    <div class="filtros__campo">
+      <label class="filtros__etiqueta" for="f-almacen">Almacén</label>
+      <select class="campo filtros__seleccion" id="f-almacen" name="almacen">
+        <option value="">Todos</option>
+        {% for a in almacenes %}
+          <option value="{{ a.pk }}" {% if almacen_id == a.pk %}selected{% endif %}>{{ a.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="filtros__acciones">
+      <button class="boton boton--secundario" type="submit">{% icono "filtro" %} Filtrar</button>
+      {% if request.GET %}<a class="boton boton--plano" href="{{ request.path }}">Limpiar</a>{% endif %}
+    </div>
+  </form>
+
+  {% if total %}
+    {% include "componentes/tabla.html" with columnas=columnas_kardex filas=pagina plantilla_filas="movimientos/_fila_kardex.html" %}
+    <div class="tarjetas-lista">
+      {% for fila in pagina %}{% include "movimientos/_tarjeta_kardex.html" %}{% endfor %}
+    </div>
+    {% include "componentes/paginacion.html" %}
+  {% else %}
+    <div class="tabla-envoltura">
+      {% include "componentes/estado_vacio.html" with titulo_vacio="Este artículo todavía no tiene movimientos" texto_vacio="En cuanto se registre una entrada o salida, aparecerá aquí." %}
+    </div>
+  {% endif %}
+{% endblock %}

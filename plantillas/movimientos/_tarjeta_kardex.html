@@ -1,0 +1,19 @@
+{% load formato %}
+<div class="tarjeta-fila">
+  <div class="tarjeta-fila__principal">
+    <a href="{% url 'movimientos:detalle' fila.movimiento.pk %}">{{ fila.movimiento.numero|mono }}</a>
+    <span class="texto-3">{{ fila.movimiento.tipo.nombre }}</span>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-2">{{ fila.almacen.codigo }}</span>
+    <span class="texto-3">{{ fila.movimiento.fecha|fecha_hora }}</span>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Cantidad · Costo</span>
+    <span class="num">{% if fila.signo > 0 %}+{% else %}−{% endif %}{{ fila.cantidad|cantidad }} · {% moneda fila.costo_unitario %}</span>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Saldo</span>
+    <span class="num">{{ fila.saldo_posterior|cantidad }}</span>
+  </div>
+</div>

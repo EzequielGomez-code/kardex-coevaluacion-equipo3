@@ -1,0 +1,18 @@
+{% load formato %}
+<div class="tarjeta-fila">
+  <div class="tarjeta-fila__principal">
+    <a href="{% url 'movimientos:detalle' fila.pk %}">{{ fila.numero|mono }}</a>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-2">{{ fila.tipo.nombre }}</span>
+    {% include "componentes/badge.html" with texto=etiquetas_estado|get_item:fila.estado variante=variantes_estado|get_item:fila.estado con_punto=True %}
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Fecha</span>
+    <span class="texto-2">{{ fila.fecha|fecha_hora }}</span>
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Cantidad · Costo</span>
+    <span class="num">{{ fila.total_cantidad|cantidad }} · {% moneda fila.total_costo %}</span>
+  </div>
+</div>

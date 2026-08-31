@@ -1,0 +1,27 @@
+{% load formato %}
+<tr>
+  <td>
+    <span class="badge badge--acento" style="border-color:{{ fila.color }};color:{{ fila.color }}">
+      {{ fila.codigo }}
+    </span>
+  </td>
+  <td class="tabla__principal">{{ fila.nombre }}</td>
+  <td class="texto-2">{{ fila.get_naturaleza_display }}</td>
+  <td class="mono">{{ fila.prefijo_numeracion }}</td>
+  <td>{% if fila.exige_aprobacion %}{% include "componentes/badge.html" with texto="Sí" variante="aviso" %}{% else %}—{% endif %}</td>
+  <td>
+    {% if fila.activo %}
+      {% include "componentes/badge.html" with texto="Activo" variante="ok" con_punto=True %}
+    {% else %}
+      {% include "componentes/badge.html" with texto="Inactivo" variante="neutro" con_punto=True %}
+    {% endif %}
+  </td>
+  <td class="tabla__acciones">
+    {% if user|tiene_permiso:"tipo_movimiento.gestionar" %}
+      <button class="boton boton--plano" type="button"
+              hx-get="{% url 'movimientos:tipo_editar' fila.pk %}" hx-target="#modal">
+        {% icono "editar" %} Editar
+      </button>
+    {% endif %}
+  </td>
+</tr>

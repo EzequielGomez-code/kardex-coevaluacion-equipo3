@@ -1,9 +1,4 @@
-"""
-Entrada de menú que aporta la app ``movimientos``.
-
-El layout la recoge sola desde ``apps/*/navegacion.py``; no hay que tocar
-``base.html`` (punto 5.1 del brief).
-"""
+"""Entradas de menú que aporta la app ``movimientos``."""
 
 ENTRADAS: list[dict] = [
     {
@@ -13,5 +8,29 @@ ENTRADAS: list[dict] = [
         "permiso": "movimiento.ver",
         "icono": "movimientos",
         "orden": 20,
+    },
+    {
+        "seccion": "Inventario",
+        "titulo": "Existencias",
+        "url": "movimientos:existencias",
+        "permiso": "movimiento.ver",
+        "icono": "almacen",
+        "orden": 21,
+    },
+    {
+        "seccion": "Inventario",
+        "titulo": "Aprobaciones",
+        "url": "movimientos:aprobaciones",
+        "permiso": "movimiento.aprobar",
+        "icono": "candado",
+        "orden": 22,
+    },
+    {
+        "seccion": "Sistema",
+        "titulo": "Tipos de movimiento",
+        "url": "movimientos:tipos",
+        "permiso": "tipo_movimiento.gestionar",
+        "icono": "movimientos",
+        "orden": 40,
     },
 ]

@@ -1,0 +1,18 @@
+{% load formato %}
+<tr>
+  <td class="tabla__principal">
+    <a href="{% url 'movimientos:kardex' fila.articulo.pk %}">{{ fila.articulo.sku }} — {{ fila.articulo.nombre }}</a>
+  </td>
+  <td class="texto-2">{{ fila.almacen.codigo }}</td>
+  <td class="num">{{ fila.cantidad|cantidad }}</td>
+  <td class="num">{% moneda fila.costo_promedio %}</td>
+  <td class="num">{% moneda fila.valor %}</td>
+  <td class="num">{{ fila.stock_minimo|cantidad }}</td>
+  <td>
+    {% if fila.bajo_minimo %}
+      {% include "componentes/badge.html" with texto="Bajo mínimo" variante="alerta" con_punto=True %}
+    {% else %}
+      {% include "componentes/badge.html" with texto="Normal" variante="ok" con_punto=True %}
+    {% endif %}
+  </td>
+</tr>

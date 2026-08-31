@@ -71,7 +71,26 @@
     </div>
   {% elif pestana == "kardex" %}
     <div class="panel">
-      {% include "componentes/estado_vacio.html" with titulo_vacio="El kardex de este artículo se activa con el módulo de movimientos" texto_vacio="En cuanto se registre la primera entrada, aquí aparecerá el historial de cantidad, costo y saldo corrido." %}
+      {% if user|tiene_permiso:"movimiento.ver" %}
+        <div class="panel__cabecera">
+          <h2 class="panel__titulo">Kardex</h2>
+          <a class="boton boton--secundario" href="{% url 'movimientos:kardex' articulo.pk %}">
+            {% icono "movimientos" %} Ver el historial completo
+          </a>
+        </div>
+        <div class="panel__cuerpo">
+          <p class="texto-2">
+            Existencia actual:
+            {% for existencia in articulo.existencias.all %}
+              {{ existencia.almacen.codigo }} {{ existencia.cantidad|cantidad }}{% if not forloop.last %} · {% endif %}
+            {% empty %}
+              sin movimientos todavía.
+            {% endfor %}
+          </p>
+        </div>
+      {% else %}
+        {% include "componentes/estado_vacio.html" with titulo_vacio="No tiene permiso para ver el kardex" texto_vacio="Pida el permiso «movimiento.ver» a un administrador." %}
+      {% endif %}
     </div>
   {% else %}
     <div class="rejilla">

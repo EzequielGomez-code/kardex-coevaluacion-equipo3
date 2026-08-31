@@ -1,0 +1,12 @@
+{% load formato %}
+<tr>
+  <td class="texto-2">{{ fila.movimiento.fecha|fecha_hora }}</td>
+  <td class="tabla__principal">
+    <a href="{% url 'movimientos:detalle' fila.movimiento.pk %}">{{ fila.movimiento.numero }}</a>
+    <span class="texto-3">{{ fila.movimiento.tipo.nombre }}</span>
+  </td>
+  <td class="texto-2">{{ fila.almacen.codigo }}</td>
+  <td class="num">{% if fila.signo > 0 %}+{% else %}−{% endif %}{{ fila.cantidad|cantidad }}</td>
+  <td class="num">{% moneda fila.costo_unitario %}</td>
+  <td class="num">{{ fila.saldo_posterior|cantidad }}</td>
+</tr>
