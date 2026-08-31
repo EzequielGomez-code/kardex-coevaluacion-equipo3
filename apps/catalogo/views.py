@@ -57,6 +57,8 @@ COLUMNAS_MARCA = [
     {"etiqueta": "Artículos", "clase": "num"},
     {"etiqueta": "Estado"},
 ]
+PERMITIDAS_MARCA = {"nombre": "nombre"}
+PERMITIDAS_UNIDAD = {"codigo": "codigo", "nombre": "nombre"}
 
 COLUMNAS_UNIDAD = [
     {"etiqueta": "Código", "clave": "codigo"},
@@ -239,6 +241,7 @@ def marcas(request: HttpRequest) -> HttpResponse:
     consulta = ServicioMarcas.listar()
     if busqueda:
         consulta = consulta.filter(nombre__icontains=busqueda)
+    consulta = ordenar(consulta, request, PERMITIDAS_MARCA)
     contexto = {
         "titulo": "Marcas",
         "migas": [{"texto": "Inventario"}, {"texto": "Catálogo"}, {"texto": "Marcas"}],
@@ -295,11 +298,12 @@ def marca_formulario(request: HttpRequest, marca_id: int | None = None) -> HttpR
 @requiere_permiso("articulo.ver")
 def unidades(request: HttpRequest) -> HttpResponse:
     """Listado de unidades de medida."""
+    consulta = ordenar(ServicioUnidadesMedida.listar(), request, PERMITIDAS_UNIDAD)
     contexto = {
         "titulo": "Unidades de medida",
         "migas": [{"texto": "Inventario"}, {"texto": "Catálogo"}, {"texto": "Unidades"}],
         "columnas_unidad": COLUMNAS_UNIDAD,
-        **paginar(request, ServicioUnidadesMedida.listar()),
+        **paginar(request, consulta),
     }
     return render(request, "catalogo/unidades.html", contexto)
 
