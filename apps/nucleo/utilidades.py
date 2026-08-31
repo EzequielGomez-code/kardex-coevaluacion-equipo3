@@ -21,15 +21,23 @@ POR_PAGINA_POR_OMISION = 25
 
 
 def paginar(request: HttpRequest, consulta: Any,
-            por_pagina: int = POR_PAGINA_POR_OMISION) -> dict:
+            por_pagina: int | None = None) -> dict:
     """
     Pagina un conjunto de resultados y arma los datos que usa ``paginacion.html``.
 
     :param request: petición en curso; se lee ``?pagina=`` de la URL.
     :param consulta: cualquier iterable o ``QuerySet``.
-    :param por_pagina: cantidad de filas por página.
+    :param por_pagina: cantidad de filas por página. Si se omite, se toma del
+        parámetro del sistema ``filas_por_pagina``, editable desde pantalla.
     :returns: diccionario con la página, el rango mostrado y el total.
     """
+    if por_pagina is None:
+        # Importación diferida: evita un ciclo entre nucleo y configuracion,
+        # igual que en decoradores.py.
+        from apps.configuracion.services import ServicioParametros
+
+        por_pagina = ServicioParametros.obtener("filas_por_pagina", POR_PAGINA_POR_OMISION)
+
     paginador = Paginator(consulta, por_pagina)
     numero = request.GET.get("pagina", "1")
     try:
@@ -100,6 +108,36 @@ def entero_o_none(valor: Any) -> int | None:
         return int(valor)
     except (TypeError, ValueError):
         return None
+
+
+def ordenar(consulta: Any, request: HttpRequest, permitidas: dict[str, str]) -> Any:
+    """
+    Ordena un ``QuerySet`` según ``?orden=`` en la URL, validado contra una
+    lista blanca de columnas.
+
+    El formato del parámetro es el que ya pinta ``componentes/tabla.html``:
+    ``?orden=<clave>`` para ascendente y ``?orden=<clave>-desc`` para
+    descendente. Una clave que no está en ``permitidas`` se ignora en
+    silencio y la consulta vuelve sin ordenar, para que una URL manipulada
+    no permita ordenar por una columna no expuesta.
+
+    :param consulta: ``QuerySet`` a ordenar.
+    :param request: petición en curso.
+    :param permitidas: diccionario ``clave pública -> campo real del modelo``.
+    :returns: el mismo ``QuerySet``, ordenado si la clave es válida.
+    """
+    clave = request.GET.get("orden", "")
+    if not clave:
+        return consulta
+
+    descendente = clave.endswith("-desc")
+    clave_base = clave[: -len("-desc")] if descendente else clave
+
+    campo = permitidas.get(clave_base)
+    if campo is None:
+        return consulta
+
+    return consulta.order_by(f"-{campo}" if descendente else campo)
 
 
 # ---------------------------------------------------------------------------

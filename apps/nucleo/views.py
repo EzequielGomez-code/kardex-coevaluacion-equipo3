@@ -31,7 +31,7 @@ from apps.nucleo.services import (
     ServicioRoles,
     ServicioUsuarios,
 )
-from apps.nucleo.utilidades import entero_o_none, paginar, respuesta_exito
+from apps.nucleo.utilidades import entero_o_none, ordenar, paginar, respuesta_exito
 
 # Importación diferida en tiempo de carga del módulo: ``configuracion`` depende
 # de ``nucleo`` para sus formularios, así que se toma solo lo necesario.
@@ -53,26 +53,34 @@ COLUMNAS_ALMACEN = [
     {"etiqueta": "Encargado"},
     {"etiqueta": "Estado"},
 ]
+PERMITIDAS_ALMACEN = {"codigo": "codigo", "nombre": "nombre"}
 
 COLUMNAS_USUARIO = [
     {"etiqueta": "Acceso", "clave": "username"},
-    {"etiqueta": "Nombre completo"},
-    {"etiqueta": "Correo"},
+    {"etiqueta": "Nombre completo", "clave": "nombre_completo"},
+    {"etiqueta": "Correo", "clave": "email"},
     {"etiqueta": "Rol"},
-    {"etiqueta": "Último acceso"},
+    {"etiqueta": "Último acceso", "clave": "ultimo_acceso"},
     {"etiqueta": "Estado"},
 ]
+PERMITIDAS_USUARIO = {
+    "username": "username",
+    "nombre_completo": "nombre_completo",
+    "email": "email",
+    "ultimo_acceso": "last_login",
+}
 
 COLUMNAS_ROL = [
     {"etiqueta": "Rol", "clave": "nombre"},
     {"etiqueta": "Descripción"},
     {"etiqueta": "Permisos", "clase": "num"},
-    {"etiqueta": "Usuarios", "clase": "num"},
+    {"etiqueta": "Usuarios", "clase": "num", "clave": "usuarios"},
     {"etiqueta": "Origen"},
 ]
+PERMITIDAS_ROL = {"nombre": "nombre", "usuarios": "total_usuarios"}
 
 COLUMNAS_AUDITORIA = [
-    {"etiqueta": "Fecha y hora"},
+    {"etiqueta": "Fecha y hora", "clave": "fecha"},
     {"etiqueta": "Usuario"},
     {"etiqueta": "Acción"},
     {"etiqueta": "Entidad"},
@@ -80,6 +88,7 @@ COLUMNAS_AUDITORIA = [
     {"etiqueta": "Detalle"},
     {"etiqueta": "IP"},
 ]
+PERMITIDAS_AUDITORIA = {"fecha": "creado_en"}
 
 
 # ---------------------------------------------------------------------------
@@ -162,7 +171,9 @@ def almacenes(request: HttpRequest) -> HttpResponse:
     """Listado de almacenes con filtros en la URL."""
     busqueda = request.GET.get("busqueda", "").strip()
     estado = request.GET.get("estado", "")
-    consulta = ServicioAlmacenes.listar(busqueda=busqueda, estado=estado)
+    consulta = ordenar(
+        ServicioAlmacenes.listar(busqueda=busqueda, estado=estado), request, PERMITIDAS_ALMACEN
+    )
 
     contexto = {
         "titulo": "Almacenes",
@@ -250,7 +261,11 @@ def usuarios(request: HttpRequest) -> HttpResponse:
     busqueda = request.GET.get("busqueda", "").strip()
     rol_id = entero_o_none(request.GET.get("rol"))
     estado = request.GET.get("estado", "")
-    consulta = ServicioUsuarios.listar(busqueda=busqueda, rol_id=rol_id, estado=estado)
+    consulta = ordenar(
+        ServicioUsuarios.listar(busqueda=busqueda, rol_id=rol_id, estado=estado),
+        request,
+        PERMITIDAS_USUARIO,
+    )
 
     contexto = {
         "titulo": "Usuarios",
@@ -336,12 +351,13 @@ def usuario_formulario(request: HttpRequest, usuario_id: int | None = None) -> H
 def roles(request: HttpRequest) -> HttpResponse:
     """Listado de roles con la cantidad de usuarios de cada uno."""
     busqueda = request.GET.get("busqueda", "").strip()
+    consulta = ordenar(ServicioRoles.listar(busqueda=busqueda), request, PERMITIDAS_ROL)
     contexto = {
         "titulo": "Roles y permisos",
         "migas": [{"texto": "Administración"}, {"texto": "Roles y permisos"}],
         "busqueda": busqueda,
         "columnas_rol": COLUMNAS_ROL,
-        **paginar(request, ServicioRoles.listar(busqueda=busqueda)),
+        **paginar(request, consulta),
     }
     return render(request, "nucleo/roles.html", contexto)
 
@@ -429,7 +445,11 @@ def auditoria(request: HttpRequest) -> HttpResponse:
     accion = request.GET.get("accion", "")
     busqueda = request.GET.get("busqueda", "").strip()
 
-    consulta = ServicioAuditoria.listar(entidad=entidad, accion=accion, busqueda=busqueda)
+    consulta = ordenar(
+        ServicioAuditoria.listar(entidad=entidad, accion=accion, busqueda=busqueda),
+        request,
+        PERMITIDAS_AUDITORIA,
+    )
     contexto = {
         "titulo": "Auditoría",
         "migas": [{"texto": "Administración"}, {"texto": "Auditoría"}],

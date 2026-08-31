@@ -1,47 +1,195 @@
 /*
  * Kardex — variables de diseño.
- * Punto 5.2 del brief. Ningún color, tamaño ni espacio se escribe suelto en
- * otro archivo: todo sale de aquí.
+ * Punto 2.2 del BRIEF 02. Ningún color, tamaño ni espacio se escribe suelto
+ * en otro archivo: todo sale de aquí.
+ *
+ * Modo oscuro: mismas variables invertidas, sin archivo aparte. Se activa
+ * por preferencia del sistema (prefers-color-scheme) o por el interruptor
+ * manual del menú de usuario, que fija data-tema="oscuro" en <html> y lo
+ * recuerda en localStorage (ver kardex.js).
  */
 
 :root {
+  /* ---------------------------------------------------------------------
+     Modo claro — valores base
+     --------------------------------------------------------------------- */
   --fondo:          #F5F4F0;
   --superficie:     #FFFFFF;
   --superficie-alt: #FAF9F6;
+  --superficie-hover: #F0EEE8;
   --borde:          #DCD9D1;
   --borde-fuerte:   #C2BEB4;
 
   --texto:   #23211E;
   --texto-2: #6A665F;
   --texto-3: #918C83;
+  --texto-invertido: #FFFFFF;
 
   --acento:       #1F5B4E;
   --acento-hover: #17463C;
+  --acento-activo: #103029;
   --acento-suave: #E7EFEC;
+  --acento-borde: #BFD6CE;
 
-  --alerta: #A03A22;
-  --aviso:  #8A6410;
-  --ok:     #3B6E2A;
+  /* Terracota, mostaza y verde oliva — estados (prohibido saturado, prohibido morado/índigo). */
+  --alerta:        #A03A22;
+  --alerta-hover:  #7E2E1A;
+  --alerta-suave:  #F6E9E5;
+  --alerta-borde:  #E3BEB1;
+
+  --aviso:        #8A6410;
+  --aviso-hover:  #6E500D;
+  --aviso-suave:  #F5EEDD;
+  --aviso-borde:  #E0CE9D;
+
+  --ok:        #3B6E2A;
+  --ok-hover:  #2E5620;
+  --ok-suave:  #E9F0E5;
+  --ok-borde:  #C4DAB9;
+
+  --info:       #3A5F72;
+  --info-suave: #E6EEF1;
+  --info-borde: #BCD2DB;
 
   --radio:   4px;
   --radio-s: 3px;
 
   --fuente: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --mono:   "IBM Plex Mono", ui-monospace, monospace;
-  --t-xs: 12px; --t-s: 13px; --t-base: 14px; --t-m: 16px; --t-l: 20px; --t-xl: 26px;
 
-  --e1: 4px; --e2: 8px; --e3: 12px; --e4: 16px; --e6: 24px; --e8: 32px;
+  /* Escala tipográfica de seis tamaños, base 14 px, con su altura de línea. */
+  --t-xs: 12px;   --lh-xs: 16px;
+  --t-s: 13px;    --lh-s: 18px;
+  --t-base: 14px; --lh-base: 20px;
+  --t-m: 16px;    --lh-m: 22px;
+  --t-l: 20px;    --lh-l: 26px;
+  --t-xl: 26px;   --lh-xl: 32px;
 
-  /* Medidas del armazón (punto 5.1). */
+  --peso-normal: 400;
+  --peso-semi:   600;
+
+  /* Escala de espaciado, base 4 px. */
+  --e1: 4px;  --e2: 8px;  --e3: 12px; --e4: 16px;
+  --e5: 20px; --e6: 24px; --e7: 28px; --e8: 32px;
+  --e10: 40px; --e12: 48px; --e16: 64px;
+
+  /* Medidas del armazón. */
   --ancho-lateral: 220px;
+  --ancho-lateral-colapsada: 56px;
   --alto-superior: 48px;
   --alto-fila: 36px;
+  --alto-control: 32px;
 
   /* Única sombra permitida: menús desplegables y modales. */
-  --sombra-flotante: 0 2px 8px rgba(35, 33, 30, .12);
+  --sombra-flotante: 0 2px 8px rgba(35, 33, 30, .14);
 
-  /* Tintes de fondo para los estados, derivados de los colores de estado. */
-  --alerta-suave: #F6E9E5;
-  --aviso-suave:  #F5EEDD;
-  --ok-suave:     #E9F0E5;
+  /* Anillo de foco: visible en todo elemento navegable con teclado. */
+  --anillo-foco: 0 0 0 2px var(--superficie), 0 0 0 4px var(--acento);
+
+  /* Transiciones: cortas y utilitarias, nunca decorativas. */
+  --duracion-rapida: 120ms;
+  --duracion-media:  200ms;
+  --fx: ease-out;
+
+  /* Capas. */
+  --z-superior: 20;
+  --z-desplegable: 40;
+  --z-modal: 60;
+  --z-toast: 80;
+}
+
+/* ---------------------------------------------------------------------
+   Modo oscuro por preferencia del sistema — solo si no hay elección manual
+   --------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-tema="claro"]) {
+    --fondo:          #1A1917;
+    --superficie:     #23221F;
+    --superficie-alt: #2A2926;
+    --superficie-hover: #302F2B;
+    --borde:          #3A3833;
+    --borde-fuerte:   #4A4740;
+
+    --texto:   #EDEBE6;
+    --texto-2: #B3AEA4;
+    --texto-3: #837E74;
+    --texto-invertido: #1A1917;
+
+    --acento:       #4E9683;
+    --acento-hover: #62AB97;
+    --acento-activo: #3D8071;
+    --acento-suave: #1E322C;
+    --acento-borde: #35564C;
+
+    --alerta:        #D97B5F;
+    --alerta-hover:  #E4917A;
+    --alerta-suave:  #382420;
+    --alerta-borde:  #5C382E;
+
+    --aviso:        #D1A94A;
+    --aviso-hover:  #DDBC6C;
+    --aviso-suave:  #362D1B;
+    --aviso-borde:  #5B4A2A;
+
+    --ok:        #7FB369;
+    --ok-hover:  #94C280;
+    --ok-suave:  #223420;
+    --ok-borde:  #3C5738;
+
+    --info:       #7FA8BD;
+    --info-suave: #1F2C32;
+    --info-borde: #3A4F59;
+
+    --sombra-flotante: 0 4px 14px rgba(0, 0, 0, .45);
+    --anillo-foco: 0 0 0 2px var(--superficie), 0 0 0 4px var(--acento);
+  }
+}
+
+/* Interruptor manual: gana siempre sobre la preferencia del sistema. */
+:root[data-tema="oscuro"] {
+  --fondo:          #1A1917;
+  --superficie:     #23221F;
+  --superficie-alt: #2A2926;
+  --superficie-hover: #302F2B;
+  --borde:          #3A3833;
+  --borde-fuerte:   #4A4740;
+
+  --texto:   #EDEBE6;
+  --texto-2: #B3AEA4;
+  --texto-3: #837E74;
+  --texto-invertido: #1A1917;
+
+  --acento:       #4E9683;
+  --acento-hover: #62AB97;
+  --acento-activo: #3D8071;
+  --acento-suave: #1E322C;
+  --acento-borde: #35564C;
+
+  --alerta:        #D97B5F;
+  --alerta-hover:  #E4917A;
+  --alerta-suave:  #382420;
+  --alerta-borde:  #5C382E;
+
+  --aviso:        #D1A94A;
+  --aviso-hover:  #DDBC6C;
+  --aviso-suave:  #362D1B;
+  --aviso-borde:  #5B4A2A;
+
+  --ok:        #7FB369;
+  --ok-hover:  #94C280;
+  --ok-suave:  #223420;
+  --ok-borde:  #3C5738;
+
+  --info:       #7FA8BD;
+  --info-suave: #1F2C32;
+  --info-borde: #3A4F59;
+
+  --sombra-flotante: 0 4px 14px rgba(0, 0, 0, .45);
+}
+
+:root[data-tema="claro"] {
+  color-scheme: light;
+}
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
 }

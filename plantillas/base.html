@@ -7,6 +7,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}{{ titulo|default:"Panel" }}{% endblock %} · {{ nombre_sistema }}</title>
 
+  {% comment %} Fija el tema antes del primer pintado, para que no haya parpadeo
+     al pasar de claro a oscuro en la carga de la página. {% endcomment %}
+  <script>
+    (function () {
+      try {
+        var t = window.localStorage.getItem("kardex-tema");
+        if (t === "oscuro" || t === "claro") document.documentElement.setAttribute("data-tema", t);
+      } catch (e) { /* almacenamiento no disponible: se usa la preferencia del sistema */ }
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"
@@ -23,7 +34,11 @@
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
   {% include "componentes/iconos.html" %}
 
+  <a class="saltar-al-contenido" href="#contenido-principal">Saltar al contenido</a>
+
   <div class="armazon">
+    <div class="velo-lateral"></div>
+
     <aside class="lateral">
       <div class="lateral__marca">
         <span class="lateral__nombre">{{ nombre_sistema }}</span>
@@ -44,7 +59,7 @@
         {% endfor %}
       </nav>
 
-      {# Pie con versión y commit corto (punto 5.4). #}
+      {% comment %} Pie con versión y commit corto (punto 2.5). {% endcomment %}
       <div class="lateral__pie">
         <div>{{ nombre_sistema }} v{{ version_kardex }}</div>
         {% if commit_corto %}<div class="mono">{{ commit_corto }}</div>{% endif %}
@@ -52,6 +67,10 @@
     </aside>
 
     <header class="superior">
+      <button class="boton-menu" type="button" aria-label="Abrir el menú">
+        {% icono "menu" %}
+      </button>
+
       <nav class="migas" aria-label="Migas de pan">
         <a href="{% url 'nucleo:panel' %}">Inicio</a>
         {% for miga in migas %}
@@ -94,6 +113,11 @@
             <div class="usuario__rol">{{ user.rol.nombre|default:"Sin rol asignado" }}</div>
           </div>
           <a class="usuario__item" href="{% url 'nucleo:perfil' %}">{% icono "usuarios" %} Mi perfil</a>
+          <button class="usuario__item" type="button" id="interruptor-tema" aria-pressed="false">
+            {% icono "luna" "icono-luna" %}{% icono "sol" "icono-sol" %}
+            <span>Cambiar tema</span>
+          </button>
+          <div class="usuario__separador"></div>
           <form method="post" action="{% url 'nucleo:cerrar_sesion' %}">
             {% csrf_token %}
             <button class="usuario__item" type="submit">{% icono "salir" %} Cerrar sesión</button>
@@ -102,7 +126,7 @@
       </div>
     </header>
 
-    <main class="principal">
+    <main class="principal" id="contenido-principal" tabindex="-1">
       {% block contenido %}{% endblock %}
 
       <footer class="pie">
@@ -114,7 +138,7 @@
     </main>
   </div>
 
-  {# Contenedor único de modales y de avisos. #}
+  {% comment %} Contenedor único de modales y de avisos. {% endcomment %}
   <div id="modal"></div>
   <div class="toasts" id="toasts" aria-live="polite"></div>
 

@@ -23,7 +23,7 @@ from apps.configuracion.services import ServicioDefinicionesCampo, ServicioParam
 from apps.nucleo.decoradores import requiere_permiso
 from apps.nucleo.models import RegistroAuditoria
 from apps.nucleo.services import ServicioAuditoria
-from apps.nucleo.utilidades import paginar, respuesta_aviso, respuesta_exito
+from apps.nucleo.utilidades import ordenar, paginar, respuesta_aviso, respuesta_exito
 
 # Columnas de la tabla de etiquetas (ver nota en apps/nucleo/views.py).
 COLUMNAS_ETIQUETA = [
@@ -32,6 +32,7 @@ COLUMNAS_ETIQUETA = [
     {"etiqueta": "Asignaciones", "clase": "num"},
     {"etiqueta": "Estado"},
 ]
+PERMITIDAS_ETIQUETA = {"nombre": "nombre"}
 
 
 # ---------------------------------------------------------------------------
@@ -192,11 +193,12 @@ def campos_reordenar(request: HttpRequest) -> HttpResponse:
 @requiere_permiso("configuracion.gestionar")
 def etiquetas(request: HttpRequest) -> HttpResponse:
     """Listado de etiquetas de color."""
+    consulta = ordenar(RepositorioEtiquetas.listar(), request, PERMITIDAS_ETIQUETA)
     contexto = {
         "titulo": "Etiquetas",
         "migas": [{"texto": "Sistema"}, {"texto": "Etiquetas"}],
         "columnas_etiqueta": COLUMNAS_ETIQUETA,
-        **paginar(request, RepositorioEtiquetas.listar()),
+        **paginar(request, consulta),
     }
     return render(request, "configuracion/etiquetas.html", contexto)
 

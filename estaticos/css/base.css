@@ -1,14 +1,20 @@
 /*
  * Kardex — reinicio y armazón de pantalla.
  * Barra lateral fija de 220 px, barra superior de 48 px, contenido a ancho
- * completo sin columna centrada (punto 5.1 del brief).
+ * completo sin columna centrada (BRIEF 02, punto 2.3). En pantallas
+ * angostas la barra lateral se colapsa a una franja de íconos y, en
+ * teléfono, a un panel que se desliza desde la izquierda (punto 2.6).
  */
 
 *,
 *::before,
 *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  color-scheme: light;
+}
+html[data-tema="oscuro"] { color-scheme: dark; }
 
 body {
   margin: 0;
@@ -30,12 +36,14 @@ a:hover { text-decoration: underline; }
 
 button, input, select, textarea { font: inherit; color: inherit; }
 
+/* Anillo de foco visible en todo elemento navegable con teclado (punto 2.5). */
 :focus-visible {
-  outline: 2px solid var(--acento);
-  outline-offset: 1px;
+  outline: none;
+  box-shadow: var(--anillo-foco);
+  border-radius: var(--radio-s);
 }
 
-/* Toda columna de cantidad o dinero usa cifras de ancho fijo (punto 5.4). */
+/* Toda columna de cantidad o dinero usa cifras de ancho fijo (punto 2.5). */
 .num,
 .tabla td.num,
 .tabla th.num {
@@ -51,8 +59,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .texto-2 { color: var(--texto-2); }
 .texto-3 { color: var(--texto-3); }
+.texto-ok { color: var(--ok); }
+.texto-alerta { color: var(--alerta); }
+.texto-aviso { color: var(--aviso); }
 .t-xs    { font-size: var(--t-xs); }
 .t-s     { font-size: var(--t-s); }
+.t-semi  { font-weight: var(--peso-semi); }
 
 .icono {
   width: 16px;
@@ -65,6 +77,30 @@ button, input, select, textarea { font: inherit; color: inherit; }
   stroke-linejoin: round;
   vertical-align: -3px;
 }
+
+.icono--girando { animation: kardex-girar 0.8s linear infinite; }
+
+@keyframes kardex-girar {
+  to { transform: rotate(360deg); }
+}
+
+/*
+ * Interruptor de tema: se muestra el sol cuando el tema activo es oscuro
+ * (para volver a claro) y la luna cuando es claro (para pasar a oscuro).
+ * Sigue la misma cascada que tokens.css: primero la preferencia del
+ * sistema, luego la elección manual del usuario, que siempre gana.
+ */
+.icono-sol { display: none; }
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-tema="claro"]) .icono-sol { display: block; }
+  html:not([data-tema="claro"]) .icono-luna { display: none; }
+}
+
+html[data-tema="oscuro"] .icono-sol { display: block; }
+html[data-tema="oscuro"] .icono-luna { display: none; }
+html[data-tema="claro"] .icono-sol { display: none; }
+html[data-tema="claro"] .icono-luna { display: block; }
 
 /* El atributo hidden debe ganarle a cualquier display de componente. */
 [hidden] { display: none !important; }
@@ -80,6 +116,19 @@ button, input, select, textarea { font: inherit; color: inherit; }
   white-space: nowrap;
 }
 
+.saltar-al-contenido {
+  position: absolute;
+  left: var(--e2);
+  top: -48px;
+  z-index: 100;
+  padding: var(--e2) var(--e3);
+  background: var(--acento);
+  color: var(--texto-invertido);
+  border-radius: var(--radio-s);
+  transition: top var(--duracion-rapida) var(--fx);
+}
+.saltar-al-contenido:focus { top: var(--e2); }
+
 /* --------------------------------------------------------------------------
    Armazón
    -------------------------------------------------------------------------- */
@@ -91,6 +140,31 @@ button, input, select, textarea { font: inherit; color: inherit; }
     "lateral superior"
     "lateral principal";
   min-height: 100vh;
+}
+
+/* Botón de hamburguesa: solo aparece en teléfono (ver breakpoint al final). */
+.boton-menu {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--radio-s);
+  color: var(--texto);
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+.boton-menu:hover { background: var(--superficie-hover); }
+
+/* Fondo oscuro detrás del panel deslizante, solo en teléfono. */
+.velo-lateral {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(23, 22, 20, .45);
+  z-index: calc(var(--z-modal) - 1);
 }
 
 /* --------------------------------------------------------------------------
@@ -106,6 +180,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: var(--superficie);
   border-right: 1px solid var(--borde);
   overflow-y: auto;
+  overflow-x: hidden;
+  transition: width var(--duracion-media) var(--fx);
 }
 
 .lateral__marca {
@@ -116,11 +192,12 @@ button, input, select, textarea { font: inherit; color: inherit; }
   padding: 0 var(--e4);
   border-bottom: 1px solid var(--borde);
   flex: 0 0 var(--alto-superior);
+  white-space: nowrap;
 }
 
 .lateral__nombre {
   font-size: var(--t-m);
-  font-weight: 600;
+  font-weight: var(--peso-semi);
   letter-spacing: -.01em;
 }
 
@@ -136,10 +213,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .menu__titulo {
   padding: 0 var(--e4) var(--e1);
   font-size: var(--t-xs);
-  font-weight: 600;
+  font-weight: var(--peso-semi);
   letter-spacing: .06em;
   text-transform: uppercase;
   color: var(--texto-3);
+  white-space: nowrap;
 }
 
 .menu__enlace {
@@ -150,10 +228,11 @@ button, input, select, textarea { font: inherit; color: inherit; }
   color: var(--texto-2);
   border-left: 2px solid transparent;
   font-size: var(--t-base);
+  white-space: nowrap;
 }
 
 .menu__enlace:hover {
-  background: var(--superficie-alt);
+  background: var(--superficie-hover);
   color: var(--texto);
   text-decoration: none;
 }
@@ -162,7 +241,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   background: var(--acento-suave);
   border-left-color: var(--acento);
   color: var(--acento);
-  font-weight: 600;
+  font-weight: var(--peso-semi);
 }
 
 .lateral__pie {
@@ -171,6 +250,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-size: var(--t-xs);
   color: var(--texto-3);
   line-height: 1.6;
+  white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------
@@ -180,7 +260,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   grid-area: superior;
   position: sticky;
   top: 0;
-  z-index: 20;
+  z-index: var(--z-superior);
   display: flex;
   align-items: center;
   gap: var(--e4);
@@ -200,7 +280,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 .migas__separador { color: var(--texto-3); }
-.migas__actual { color: var(--texto); font-weight: 600; }
+.migas__actual {
+  color: var(--texto);
+  font-weight: var(--peso-semi);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .superior__buscador {
   margin-left: auto;
@@ -210,12 +296,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .buscador__campo {
   width: 100%;
-  height: 30px;
+  height: var(--alto-control);
   padding: 0 var(--e2) 0 30px;
   background: var(--superficie-alt);
   border: 1px solid var(--borde);
   border-radius: var(--radio-s);
   font-size: var(--t-s);
+  transition: background var(--duracion-rapida) var(--fx), border-color var(--duracion-rapida) var(--fx);
 }
 
 .buscador__campo:focus {
@@ -226,7 +313,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .buscador__icono {
   position: absolute;
   left: var(--e2);
-  top: 7px;
+  top: 8px;
   color: var(--texto-3);
   pointer-events: none;
 }
@@ -234,7 +321,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .buscador__atajo {
   position: absolute;
   right: var(--e2);
-  top: 6px;
+  top: 7px;
   padding: 1px 5px;
   border: 1px solid var(--borde);
   border-radius: var(--radio-s);
@@ -249,14 +336,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .buscador__resultados {
   position: absolute;
-  top: 34px;
+  top: 36px;
   left: 0;
   right: 0;
   background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   box-shadow: var(--sombra-flotante);
-  z-index: 40;
+  z-index: var(--z-desplegable);
   max-height: 320px;
   overflow-y: auto;
 }
@@ -264,7 +351,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .buscador__grupo {
   padding: var(--e1) var(--e3);
   font-size: var(--t-xs);
-  font-weight: 600;
+  font-weight: var(--peso-semi);
   text-transform: uppercase;
   letter-spacing: .06em;
   color: var(--texto-3);
@@ -294,7 +381,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   display: flex;
   align-items: center;
   gap: var(--e2);
-  height: 30px;
+  height: var(--alto-control);
   padding: 0 var(--e2);
   background: none;
   border: 1px solid transparent;
@@ -303,7 +390,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   font-size: var(--t-s);
 }
 
-.usuario__boton:hover { border-color: var(--borde); background: var(--superficie-alt); }
+.usuario__boton:hover { border-color: var(--borde); background: var(--superficie-hover); }
 
 .usuario__iniciales {
   display: grid;
@@ -312,23 +399,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
   height: 22px;
   border-radius: var(--radio-s);
   background: var(--acento);
-  color: #fff;
+  color: var(--texto-invertido);
   font-size: 11px;
-  font-weight: 600;
+  font-weight: var(--peso-semi);
   letter-spacing: .02em;
 }
 
 .usuario__menu {
   position: absolute;
   right: 0;
-  top: 36px;
-  min-width: 210px;
+  top: 38px;
+  min-width: 220px;
   background: var(--superficie);
   border: 1px solid var(--borde);
   border-radius: var(--radio);
   box-shadow: var(--sombra-flotante);
   padding: var(--e1) 0;
-  z-index: 40;
+  z-index: var(--z-desplegable);
 }
 
 .usuario__cabecera {
@@ -336,7 +423,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--borde);
 }
 
-.usuario__nombre { font-weight: 600; font-size: var(--t-s); }
+.usuario__nombre { font-weight: var(--peso-semi); font-size: var(--t-s); }
 .usuario__rol { font-size: var(--t-xs); color: var(--texto-2); }
 
 .usuario__item {
@@ -353,7 +440,9 @@ button, input, select, textarea { font: inherit; color: inherit; }
   cursor: pointer;
 }
 
-.usuario__item:hover { background: var(--superficie-alt); text-decoration: none; }
+.usuario__item:hover { background: var(--superficie-hover); text-decoration: none; }
+
+.usuario__separador { height: 1px; background: var(--borde); margin: var(--e1) 0; }
 
 /* --------------------------------------------------------------------------
    Zona principal
@@ -372,11 +461,23 @@ button, input, select, textarea { font: inherit; color: inherit; }
   margin-bottom: var(--e4);
 }
 
+.encabezado__migas-contador {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .encabezado__titulo {
   font-size: var(--t-xl);
-  font-weight: 600;
+  font-weight: var(--peso-semi);
   letter-spacing: -.02em;
-  line-height: 1.15;
+  line-height: var(--lh-xl);
+}
+
+.encabezado__contador {
+  font-size: var(--t-s);
+  color: var(--texto-3);
+  font-variant-numeric: tabular-nums;
 }
 
 .encabezado__bajada {
@@ -409,14 +510,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 .acceso__lienzo {
   background: var(--acento);
-  color: #fff;
+  color: var(--texto-invertido);
   padding: var(--e8);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.acceso__marca { font-size: var(--t-xl); font-weight: 600; letter-spacing: -.02em; }
+.acceso__marca { font-size: var(--t-xl); font-weight: var(--peso-semi); letter-spacing: -.02em; }
 .acceso__lema { font-size: var(--t-m); max-width: 30ch; line-height: 1.5; opacity: .9; }
 .acceso__nota { font-size: var(--t-xs); opacity: .75; }
 
@@ -429,15 +530,50 @@ button, input, select, textarea { font: inherit; color: inherit; }
   justify-content: center;
 }
 
-.acceso__titulo { font-size: var(--t-l); font-weight: 600; margin-bottom: var(--e1); }
+.acceso__titulo { font-size: var(--t-l); font-weight: var(--peso-semi); margin-bottom: var(--e1); }
 .acceso__ayuda { font-size: var(--t-s); color: var(--texto-2); margin-bottom: var(--e6); }
 
-@media (max-width: 900px) {
+/* ============================================================================
+   Adaptación a móvil (punto 2.6 del BRIEF 02)
+   ============================================================================ */
+
+/* Tablet: la barra lateral se reduce a una franja de íconos. */
+@media (max-width: 1024px) and (min-width: 641px) {
   .acceso { grid-template-columns: 1fr; }
   .acceso__lienzo { display: none; }
-  .armazon { grid-template-columns: 64px 1fr; }
+  .armazon { grid-template-columns: var(--ancho-lateral-colapsada) 1fr; }
   .lateral__nombre, .lateral__empresa, .menu__titulo,
-  .menu__enlace span, .lateral__pie { display: none; }
+  .menu__enlace span, .lateral__pie span:not(.mono) { display: none; }
   .menu__enlace { justify-content: center; padding: 8px 0; }
-  .superior__buscador { width: 180px; }
+  .superior__buscador { width: 200px; }
+}
+
+/* Teléfono: la barra lateral se convierte en un panel deslizante. */
+@media (max-width: 640px) {
+  .acceso { grid-template-columns: 1fr; }
+  .acceso__lienzo { display: none; }
+  .acceso__panel { padding: var(--e6) var(--e4); }
+
+  .boton-menu { display: flex; }
+
+  .armazon { grid-template-columns: 0 1fr; }
+
+  .lateral {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--ancho-lateral);
+    z-index: var(--z-modal);
+    transform: translateX(-100%);
+    transition: transform var(--duracion-media) var(--fx);
+  }
+  .lateral--abierta { transform: translateX(0); }
+  .velo-lateral--visible { display: block; }
+
+  .superior { padding: 0 var(--e4); gap: var(--e2); }
+  .migas { display: none; }
+  .superior__buscador { width: auto; flex: 1 1 auto; }
+  .principal { padding: var(--e4); }
+  .encabezado { flex-wrap: wrap; }
 }
