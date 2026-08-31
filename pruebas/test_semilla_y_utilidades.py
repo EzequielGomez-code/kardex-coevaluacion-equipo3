@@ -13,7 +13,11 @@ from django.core.management import call_command
 
 from apps.configuracion.models import DefinicionCampo, Parametro
 from apps.nucleo.models import Almacen, Permiso, Rol, Usuario
-from apps.nucleo.utilidades import sanear_nombre_archivo, validar_archivo_subido
+from apps.nucleo.utilidades import (
+    sanear_celda_hoja_de_calculo,
+    sanear_nombre_archivo,
+    validar_archivo_subido,
+)
 
 
 def _sembrar() -> str:
@@ -124,6 +128,24 @@ def test_un_rol_con_usuarios_no_se_puede_eliminar(db):
 def test_el_nombre_de_archivo_se_sanea(entrada, esperado):
     """Se quitan rutas, espacios y puntos iniciales."""
     assert sanear_nombre_archivo(entrada) == esperado
+
+
+# ---------------------------------------------------------------------------
+# Inyección de fórmulas en reportes Excel/CSV
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "entrada,esperado",
+    [
+        ('=HYPERLINK("http://evil","x")', "'=HYPERLINK(\"http://evil\",\"x\")"),
+        ("+cmd|'/c calc'!A1", "'+cmd|'/c calc'!A1"),
+        ("-2+3", "'-2+3"),
+        ("@SUM(A1)", "'@SUM(A1)"),
+        ("Martillo de uña 16oz", "Martillo de uña 16oz"),
+    ],
+)
+def test_una_celda_que_empieza_como_formula_se_neutraliza(entrada, esperado):
+    """Un nombre de artículo que arranca como fórmula no debe ejecutarse al abrir el archivo."""
+    assert sanear_celda_hoja_de_calculo(entrada) == esperado
 
 
 class _ArchivoFalso:

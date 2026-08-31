@@ -14,7 +14,8 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
-from apps.catalogo.models import Articulo, Cliente, Proveedor
+from apps.catalogo.models import Cliente, Proveedor
+from apps.catalogo.repositories import RepositorioArticulos
 from apps.movimientos.forms import (
     FormsetLineaAjuste,
     FormsetLineaEntrada,
@@ -32,7 +33,7 @@ from apps.movimientos.models import EstadoMovimiento, Naturaleza
 from apps.movimientos.repositories import RepositorioExistencias, RepositorioTiposMovimiento
 from apps.movimientos.services import ServicioAprobaciones, ServicioMovimientos, ServicioTiposMovimiento
 from apps.nucleo.decoradores import requiere_permiso
-from apps.nucleo.models import Almacen
+from apps.nucleo.repositories import RepositorioAlmacenes
 from apps.nucleo.utilidades import (
     entero_o_none,
     fichas_de_filtro,
@@ -87,7 +88,7 @@ def indice(request: HttpRequest) -> HttpResponse:
         "migas": [{"texto": "Inventario"}, {"texto": "Movimientos"}],
         "busqueda": busqueda, "tipo_id": tipo_id, "almacen_id": almacen_id, "estado": estado,
         "tipos": RepositorioTiposMovimiento.listar(solo_activos=True),
-        "almacenes": Almacen.objects.filter(activo=True).order_by("codigo"),
+        "almacenes": RepositorioAlmacenes.activos(),
         "estados": EstadoMovimiento.choices,
         "columnas_movimiento": [
             {"etiqueta": "Número", "clave": "numero"}, {"etiqueta": "Tipo", "clave": "tipo"},
@@ -173,7 +174,7 @@ def existencias(request: HttpRequest) -> HttpResponse:
         "titulo": "Existencias",
         "migas": [{"texto": "Inventario"}, {"texto": "Existencias"}],
         "busqueda": busqueda, "almacen_id": almacen_id, "solo_bajo_minimo": solo_bajo_minimo,
-        "almacenes": Almacen.objects.filter(activo=True).order_by("codigo"),
+        "almacenes": RepositorioAlmacenes.activos(),
         "valor_total": RepositorioExistencias.total_valor(),
         "columnas_existencia": [
             {"etiqueta": "Artículo"}, {"etiqueta": "Almacén"}, {"etiqueta": "Cantidad", "clase": "num"},
@@ -191,7 +192,7 @@ def existencias(request: HttpRequest) -> HttpResponse:
 @requiere_permiso("movimiento.ver")
 def kardex(request: HttpRequest, articulo_id: int) -> HttpResponse:
     """Historial cronológico de un artículo: cantidad, costo y saldo corrido."""
-    articulo = Articulo.objects.filter(pk=articulo_id).first()
+    articulo = RepositorioArticulos.obtener(articulo_id)
     if articulo is None:
         return render(request, "componentes/no_encontrado.html", status=404)
 
@@ -203,7 +204,7 @@ def kardex(request: HttpRequest, articulo_id: int) -> HttpResponse:
         "migas": [{"texto": "Inventario"}, {"texto": "Movimientos", "destino": reverse("movimientos:indice")},
                  {"texto": f"Kardex de {articulo.sku}"}],
         "articulo": articulo, "almacen_id": almacen_id,
-        "almacenes": Almacen.objects.filter(activo=True).order_by("codigo"),
+        "almacenes": RepositorioAlmacenes.activos(),
         "existencias": RepositorioExistencias.de_articulo(articulo_id),
         "columnas_kardex": [
             {"etiqueta": "Fecha"}, {"etiqueta": "Movimiento"}, {"etiqueta": "Almacén"},
@@ -283,7 +284,7 @@ def movimiento_rechazar(request: HttpRequest, movimiento_id: int) -> HttpRespons
 
 def _articulos_disponibles():
     """Artículos activos para el selector con búsqueda de las líneas."""
-    return Articulo.objects.filter(activo=True).order_by("nombre")
+    return RepositorioArticulos.listar(estado="activo")
 
 
 @requiere_permiso("movimiento.crear")

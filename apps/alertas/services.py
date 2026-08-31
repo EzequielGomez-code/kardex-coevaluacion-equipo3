@@ -214,17 +214,28 @@ def _evaluar_sin_movimiento(regla: ReglaAlerta, existencia) -> None:
         _cerrar_si_ya_no_aplica(regla.pk, existencia.articulo_id, existencia.almacen_id)
 
 
-def _evaluar_vencimiento(regla: ReglaAlerta) -> None:
+def _evaluar_vencimiento(regla: ReglaAlerta, almacenes_por_regla: dict,
+                         categorias_por_regla: dict) -> None:
     """Evalúa los lotes con saldo que vencen dentro del margen de la regla."""
     from apps.movimientos.repositories import RepositorioLotes  # pylint: disable=import-outside-toplevel
 
+    pares_vigentes = set()
     for lote in RepositorioLotes.por_vencer(regla.dias_umbral):
+        if not _regla_aplica(
+            regla, lote.articulo, lote.almacen_id, almacenes_por_regla, categorias_por_regla
+        ):
+            continue
+        pares_vigentes.add((lote.articulo_id, lote.almacen_id))
         _abrir_o_actualizar(
             regla.pk, lote.articulo_id, lote.almacen_id,
             f"El lote {lote.codigo} de {lote.articulo.sku} vence el "
             f"{lote.fecha_vencimiento:%d/%m/%Y}.",
             {"lote": lote.codigo, "vencimiento": lote.fecha_vencimiento.isoformat()},
         )
+
+    pares_abiertos = RepositorioAlertas.pares_abiertos_de_regla(regla.pk)
+    for articulo_id, almacen_id in pares_abiertos - pares_vigentes:
+        _cerrar_si_ya_no_aplica(regla.pk, articulo_id, almacen_id)
 
 
 class ServicioEvaluador:
@@ -254,11 +265,17 @@ class ServicioEvaluador:
         almacenes_por_regla = {r.pk: set(r.almacenes.values_list("id", flat=True)) for r in reglas}
         categorias_por_regla = {r.pk: set(r.categorias.values_list("id", flat=True)) for r in reglas}
 
+        existencias_por_par = {
+            (existencia.articulo_id, existencia.almacen_id): existencia
+            for existencia in Existencia.objects.select_related("articulo", "almacen").filter(
+                articulo_id__in={articulo_id for articulo_id, _ in pares},
+                almacen_id__in={almacen_id for _, almacen_id in pares},
+            )
+        }
+
         contadas = 0
         for articulo_id, almacen_id in pares:
-            existencia = Existencia.objects.select_related("articulo", "almacen").filter(
-                articulo_id=articulo_id, almacen_id=almacen_id
-            ).first()
+            existencia = existencias_por_par.get((articulo_id, almacen_id))
             if existencia is None:
                 continue
             for regla in reglas:
@@ -295,7 +312,7 @@ class ServicioEvaluador:
 
         for regla in reglas:
             if regla.tipo == TipoRegla.VENCIMIENTO_PROXIMO:
-                _evaluar_vencimiento(regla)
+                _evaluar_vencimiento(regla, almacenes_por_regla, categorias_por_regla)
                 contadas += 1
                 continue
             for existencia in existencias:

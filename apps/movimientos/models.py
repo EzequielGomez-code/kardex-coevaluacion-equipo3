@@ -225,7 +225,9 @@ class Movimiento(ModeloConMarcaDeTiempo):
         """
         if self.pk is not None:
             anterior = Movimiento.objects.filter(pk=self.pk).values_list("estado", flat=True).first()
-            if anterior in (EstadoMovimiento.CONFIRMADO, EstadoMovimiento.ANULADO):
+            if anterior in (
+                EstadoMovimiento.CONFIRMADO, EstadoMovimiento.ANULADO, EstadoMovimiento.RECHAZADO,
+            ):
                 campos_permitidos = {
                     "estado", "anulado_en", "motivo_anulacion", "actualizado_en",
                     "aprobado_por", "aprobado_en",
@@ -291,6 +293,16 @@ class MovimientoLinea(models.Model):
 
     def __str__(self) -> str:
         return f"{self.movimiento.numero} · {self.articulo.sku} · {self.cantidad}"
+
+    def save(self, *args, **kwargs):
+        """Una línea es libro mayor: se crea una sola vez y nunca se reescribe."""
+        if self.pk is not None:
+            raise ValueError("Una línea de movimiento no se edita: es el libro mayor del kardex.")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        """Impide borrar una línea directamente; solo cae en cascada con su movimiento."""
+        raise ValueError("Una línea de movimiento no se elimina directamente.")
 
 
 class Lote(ModeloConMarcaDeTiempo):

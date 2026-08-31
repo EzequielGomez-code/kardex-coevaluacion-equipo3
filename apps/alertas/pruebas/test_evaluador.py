@@ -5,9 +5,11 @@ de alertas.
 
 from __future__ import annotations
 
+from datetime import timedelta
 from decimal import Decimal
 
 import pytest
+from django.utils import timezone
 
 from apps.alertas.models import Alerta, EstadoAlerta, ReglaAlerta, TipoRegla
 from apps.alertas.services import ServicioEvaluador
@@ -137,3 +139,52 @@ def test_evaluar_todo_recorre_reglas_inactivas_sin_generar_alertas(
         lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("3"), "costo_unitario": Decimal("10")}],
     )
     assert not Alerta.objects.filter(regla=regla).exists()
+
+
+@pytest.mark.django_db
+def test_regla_de_vencimiento_respeta_el_almacen_de_la_regla(
+    tipo_entrada, almacen, articulo, usuario_administrador
+):
+    """Un lote por vencer en un almacén no debe disparar una regla limitada a otro."""
+    otro_almacen = Almacen.objects.create(codigo="ALM-88", nombre="Otro almacén")
+    regla = ReglaAlerta.objects.create(
+        nombre="Vence pronto", tipo=TipoRegla.VENCIMIENTO_PROXIMO, dias_umbral=30,
+    )
+    regla.almacenes.add(otro_almacen)
+
+    ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{
+            "articulo_id": articulo.pk, "cantidad": Decimal("5"), "costo_unitario": Decimal("10"),
+            "fecha_vencimiento": timezone.localdate() + timedelta(days=5),
+        }],
+    )
+    ServicioEvaluador.evaluar_todo()
+    assert not Alerta.objects.filter(regla=regla).exists()
+
+
+@pytest.mark.django_db
+def test_regla_de_vencimiento_se_cierra_sola_cuando_el_lote_se_agota(
+    tipo_entrada, tipo_salida, almacen, articulo, usuario_administrador
+):
+    """Consumir por completo el lote que disparó la alerta la resuelve en la siguiente pasada."""
+    regla = ReglaAlerta.objects.create(
+        nombre="Vence pronto", tipo=TipoRegla.VENCIMIENTO_PROXIMO, dias_umbral=30,
+    )
+    ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{
+            "articulo_id": articulo.pk, "cantidad": Decimal("5"), "costo_unitario": Decimal("10"),
+            "fecha_vencimiento": timezone.localdate() + timedelta(days=5),
+        }],
+    )
+    ServicioEvaluador.evaluar_todo()
+    assert Alerta.objects.filter(regla=regla, estado=EstadoAlerta.ABIERTA).exists()
+
+    ServicioMovimientos.registrar_salida(
+        tipo=tipo_salida, almacen_origen=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("5")}],
+    )
+    ServicioEvaluador.evaluar_todo()
+    alerta = Alerta.objects.get(regla=regla, articulo=articulo, almacen=almacen)
+    assert alerta.estado == EstadoAlerta.RESUELTA

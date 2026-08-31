@@ -38,7 +38,9 @@ class AdminMovimiento(admin.ModelAdmin):
     list_display = ["numero", "tipo", "estado", "fecha", "total_cantidad", "total_costo"]
     list_filter = ["estado", "tipo", "naturaleza"]
     search_fields = ["numero", "documento_numero", "ncf"]
-    readonly_fields = ["naturaleza", "total_cantidad", "total_costo", "metodo_valoracion"]
+    readonly_fields = [
+        "estado", "naturaleza", "total_cantidad", "total_costo", "metodo_valoracion",
+    ]
     inlines = [LineaInline]
 
 

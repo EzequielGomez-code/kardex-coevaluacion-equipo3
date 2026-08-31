@@ -67,6 +67,20 @@ def test_procesar_fila_sin_nombre_queda_marcada(categoria, unidad):
     assert any("nombre" in error.lower() for error in filas[0].errores)
 
 
+@pytest.mark.django_db
+def test_procesar_respeta_tasa_itbis_y_minimo_explicitos_en_cero(categoria, unidad):
+    """Un 0 escrito a propósito (exento de ITBIS, sin mínimo) no debe caer al valor por defecto."""
+    mapeo = dict(MAPEO, tasa_itbis="itbis", stock_minimo_defecto="minimo")
+    texto = (
+        "sku,nombre,categoria,unidad,costo,precio,itbis,minimo\n"
+        ",Cemento gris,FER,UD,150,200,0,0\n"
+    )
+    filas = procesar(texto, mapeo)
+    assert filas[0].es_valida
+    assert filas[0].datos["tasa_itbis"] == 0
+    assert filas[0].datos["stock_minimo_defecto"] == 0
+
+
 def test_leer_texto_decodifica_utf8_con_bom():
     """Un archivo con BOM UTF-8 (Excel) se lee sin dejar el BOM pegado al primer encabezado."""
     archivo = io.BytesIO("nombre\nCemento\n".encode("utf-8-sig"))

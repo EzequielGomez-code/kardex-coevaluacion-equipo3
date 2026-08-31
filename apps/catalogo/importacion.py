@@ -17,7 +17,12 @@ import io
 from dataclasses import dataclass, field
 from decimal import Decimal, InvalidOperation
 
-from apps.catalogo.models import Categoria, Marca, UnidadMedida
+from apps.catalogo.repositories import (
+    RepositorioCategorias,
+    RepositorioMarcas,
+    RepositorioUnidadesMedida,
+)
+from apps.nucleo.utilidades import sanear_celda_hoja_de_calculo
 
 # Columnas del sistema que la persona puede mapear a los encabezados de su
 # archivo. El orden es el que se muestra en el formulario de mapeo.
@@ -76,9 +81,9 @@ def procesar(texto: str, mapeo: dict[str, str]) -> list[FilaImportada]:
     categoría y unidad existentes.
     """
     lector = csv.DictReader(io.StringIO(texto))
-    categorias = {categoria.codigo: categoria for categoria in Categoria.objects.all()}
-    unidades = {unidad.codigo: unidad for unidad in UnidadMedida.objects.all()}
-    marcas = {marca.nombre.lower(): marca for marca in Marca.objects.all()}
+    categorias = {categoria.codigo: categoria for categoria in RepositorioCategorias.arbol()}
+    unidades = {unidad.codigo: unidad for unidad in RepositorioUnidadesMedida.listar()}
+    marcas = {marca.nombre.lower(): marca for marca in RepositorioMarcas.listar()}
 
     filas = []
     for numero, fila_cruda in enumerate(lector, start=2):  # la fila 1 es el encabezado
@@ -106,6 +111,10 @@ def procesar(texto: str, mapeo: dict[str, str]) -> list[FilaImportada]:
         if nombre_marca and not marca:
             errores.append(f"No existe la marca «{nombre_marca}».")
 
+        costo_referencia = _decimal_o_none(datos_texto.get("costo_referencia", ""))
+        precio_venta = _decimal_o_none(datos_texto.get("precio_venta", ""))
+        tasa_itbis = _decimal_o_none(datos_texto.get("tasa_itbis", ""))
+        stock_minimo_defecto = _decimal_o_none(datos_texto.get("stock_minimo_defecto", ""))
         preparados = {
             "sku": datos_texto.get("sku", ""),
             "nombre": datos_texto.get("nombre", ""),
@@ -114,10 +123,12 @@ def procesar(texto: str, mapeo: dict[str, str]) -> list[FilaImportada]:
             "marca": marca,
             "unidad": unidad,
             "codigo_barras": datos_texto.get("codigo_barras", ""),
-            "costo_referencia": _decimal_o_none(datos_texto.get("costo_referencia", "")) or 0,
-            "precio_venta": _decimal_o_none(datos_texto.get("precio_venta", "")) or 0,
-            "tasa_itbis": _decimal_o_none(datos_texto.get("tasa_itbis", "")) or 18,
-            "stock_minimo_defecto": _decimal_o_none(datos_texto.get("stock_minimo_defecto", "")) or 0,
+            "costo_referencia": costo_referencia if costo_referencia is not None else 0,
+            "precio_venta": precio_venta if precio_venta is not None else 0,
+            "tasa_itbis": tasa_itbis if tasa_itbis is not None else 18,
+            "stock_minimo_defecto": (
+                stock_minimo_defecto if stock_minimo_defecto is not None else 5
+            ),
         }
         filas.append(FilaImportada(numero=numero, crudo=datos_texto, datos=preparados, errores=errores))
     return filas
@@ -130,5 +141,9 @@ def reporte_de_errores_csv(filas: list[FilaImportada]) -> str:
     escritor.writerow(["fila", "nombre", "errores"])
     for fila in filas:
         if not fila.es_valida:
-            escritor.writerow([fila.numero, fila.datos.get("nombre", ""), " | ".join(fila.errores)])
+            escritor.writerow([
+                fila.numero,
+                sanear_celda_hoja_de_calculo(fila.datos.get("nombre", "")),
+                " | ".join(fila.errores),
+            ])
     return buffer.getvalue()

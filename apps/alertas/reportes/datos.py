@@ -8,6 +8,7 @@ fechas en dd/mm/aaaa, cantidades y montos con punto fijo — así ``pdf.py`` y
 
 from __future__ import annotations
 
+from apps.movimientos.models import EstadoMovimiento
 from apps.movimientos.repositories import (
     RepositorioExistencias,
     RepositorioKardex,
@@ -54,7 +55,8 @@ def movimientos_por_rango(
     encabezados = ["Número", "Tipo", "Fecha", "Almacén", "Cantidad", "Costo", "Estado"]
     filas = []
     for movimiento in RepositorioMovimientos.listar(
-        tipo_id=tipo_id, almacen_id=almacen_id, desde=desde, hasta=hasta
+        tipo_id=tipo_id, almacen_id=almacen_id, desde=desde, hasta=hasta,
+        estado=EstadoMovimiento.CONFIRMADO,
     ):
         almacen = movimiento.almacen_destino or movimiento.almacen_origen
         filas.append(

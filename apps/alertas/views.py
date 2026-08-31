@@ -18,7 +18,7 @@ from apps.alertas.forms import FormularioEstadoAlerta, FormularioReglaAlerta
 from apps.alertas.models import EstadoAlerta
 from apps.alertas.services import ServicioAlertas, ServicioEvaluador, ServicioReglas
 from apps.nucleo.decoradores import requiere_permiso
-from apps.nucleo.models import Almacen
+from apps.nucleo.repositories import RepositorioAlmacenes
 from apps.nucleo.utilidades import entero_o_none, fichas_de_filtro, paginar, respuesta_exito
 
 ETIQUETAS_ESTADO = {
@@ -55,7 +55,7 @@ def indice(request: HttpRequest) -> HttpResponse:
         "titulo": "Alertas",
         "migas": [{"texto": "Inventario"}, {"texto": "Alertas"}],
         "busqueda": busqueda, "estado": estado, "almacen_id": almacen_id,
-        "almacenes": Almacen.objects.filter(activo=True).order_by("codigo"),
+        "almacenes": RepositorioAlmacenes.activos(),
         "estados": EstadoAlerta.choices,
         "etiquetas_estado": ETIQUETAS_ESTADO, "variantes_estado": VARIANTES_ESTADO,
         "columnas_alerta": [

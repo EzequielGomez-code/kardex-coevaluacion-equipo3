@@ -93,6 +93,39 @@ def test_ajuste_positivo_crea_lote_al_costo_indicado(
 
 
 @pytest.mark.django_db
+def test_ajuste_positivo_respeta_costo_unitario_explicito_en_cero(
+    tipo_ajuste, almacen, articulo, usuario_administrador
+):
+    """Un costo de 0 escrito a propósito (donación, hallazgo) no se reemplaza por el promedio."""
+    movimiento = ServicioMovimientos.registrar_ajuste(
+        tipo=tipo_ajuste, almacen=almacen, usuario=usuario_administrador, motivo="Donación recibida",
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("4"), "signo": 1,
+                "costo_unitario": Decimal("0")}],
+    )
+    assert movimiento.total_costo == Decimal("0")
+    lote = Lote.objects.get(articulo=articulo, almacen=almacen)
+    assert lote.costo_unitario == Decimal("0")
+
+
+@pytest.mark.django_db
+def test_ajuste_positivo_sin_costo_usa_el_promedio_actual(
+    tipo_entrada, tipo_ajuste, almacen, articulo, usuario_administrador
+):
+    """Dejar el costo en blanco sigue usando el costo promedio, como documenta el formulario."""
+    ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("10"), "costo_unitario": Decimal("50")}],
+    )
+    ServicioMovimientos.registrar_ajuste(
+        tipo=tipo_ajuste, almacen=almacen, usuario=usuario_administrador, motivo="Conteo físico",
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("4"), "signo": 1,
+                "costo_unitario": None}],
+    )
+    lotes = Lote.objects.filter(articulo=articulo, almacen=almacen).order_by("id")
+    assert lotes.last().costo_unitario == Decimal("50")
+
+
+@pytest.mark.django_db
 def test_ajuste_negativo_consume_lotes_como_una_salida(
     tipo_entrada, tipo_ajuste, almacen, articulo, usuario_administrador
 ):

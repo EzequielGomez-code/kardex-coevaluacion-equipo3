@@ -416,15 +416,14 @@
 /* Esqueleto de carga en tablas: nunca un girador centrado (punto 2.4). */
 .esqueleto-fila td { height: var(--alto-fila); padding: 0 var(--e3); }
 .esqueleto-barra {
-  height: 12px;
+  height: var(--e3);
   border-radius: var(--radio-s);
-  background: linear-gradient(90deg, var(--superficie-alt) 25%, var(--superficie-hover) 50%, var(--superficie-alt) 75%);
-  background-size: 200% 100%;
+  background: var(--superficie-alt);
   animation: kardex-pulso 1.4s ease-in-out infinite;
 }
 @keyframes kardex-pulso {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0%, 100% { background-color: var(--superficie-alt); }
+  50% { background-color: var(--superficie-hover); }
 }
 
 /* --------------------------------------------------------------------------

@@ -10,6 +10,7 @@ from decimal import Decimal
 import pytest
 from django.core.exceptions import ValidationError
 
+from apps.alertas.models import Alerta, EstadoAlerta, ReglaAlerta, TipoRegla
 from apps.movimientos.models import EstadoMovimiento, Existencia, Lote
 from apps.movimientos.services import ServicioMovimientos
 
@@ -77,6 +78,28 @@ def test_anular_salida_restaura_el_lote_consumido(
     assert lote.cantidad_disponible == Decimal("10")
     existencia = Existencia.objects.get(articulo=articulo, almacen=almacen)
     assert existencia.cantidad == Decimal("10")
+
+
+@pytest.mark.django_db
+def test_anular_salida_cierra_la_alerta_de_stock_bajo_que_dejo(
+    tipo_entrada, tipo_salida, almacen, articulo, usuario_administrador
+):
+    """Anular la salida que provocó la alerta debe resolverla, igual que reponer stock a mano."""
+    ReglaAlerta.objects.create(nombre="Existencia baja", tipo=TipoRegla.STOCK_BAJO)
+    ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("10"), "costo_unitario": Decimal("10")}],
+    )
+    salida = ServicioMovimientos.registrar_salida(
+        tipo=tipo_salida, almacen_origen=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("8")}],
+    )
+    assert Alerta.objects.filter(articulo=articulo, almacen=almacen, estado=EstadoAlerta.ABIERTA).exists()
+
+    ServicioMovimientos.anular(salida, "Devolución del cliente", usuario_administrador)
+
+    alerta = Alerta.objects.get(articulo=articulo, almacen=almacen)
+    assert alerta.estado == EstadoAlerta.RESUELTA
 
 
 @pytest.mark.django_db

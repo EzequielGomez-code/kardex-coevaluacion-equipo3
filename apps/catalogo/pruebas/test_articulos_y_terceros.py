@@ -67,6 +67,22 @@ def test_crear_articulo_sin_sku_lo_genera_solo(categoria, unidad):
 
 
 @pytest.mark.django_db
+def test_crear_articulo_con_minimo_explicito_en_cero_no_cae_al_defecto(categoria, unidad):
+    """Un mínimo de 0 escrito a propósito («no avisar de este artículo») no se vuelve 5."""
+    articulo = ServicioArticulos.crear(
+        nombre="Cemento gris", categoria=categoria, unidad=unidad, stock_minimo_defecto=0,
+    )
+    assert articulo.stock_minimo_defecto == 0
+
+
+@pytest.mark.django_db
+def test_crear_articulo_sin_minimo_usa_el_defecto(categoria, unidad):
+    """No indicar el mínimo sigue usando el valor de reserva de siempre."""
+    articulo = ServicioArticulos.crear(nombre="Cemento gris", categoria=categoria, unidad=unidad)
+    assert articulo.stock_minimo_defecto == 5
+
+
+@pytest.mark.django_db
 def test_crear_articulo_con_sku_duplicado_falla(categoria, unidad):
     """No se permiten dos artículos con el mismo SKU."""
     ServicioArticulos.crear(sku="CEM-001", nombre="Uno", categoria=categoria, unidad=unidad)

@@ -14,6 +14,8 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
+from apps.nucleo.utilidades import sanear_celda_hoja_de_calculo
+
 COLOR_ACENTO = "1F5B4E"
 ANCHO_MAXIMO_COLUMNA = 42
 
@@ -31,7 +33,7 @@ def construir_excel(titulo: str, encabezados: list[str], filas: list[list[str]])
         celda.alignment = Alignment(horizontal="center", vertical="center")
 
     for fila in filas:
-        hoja.append(fila)
+        hoja.append([sanear_celda_hoja_de_calculo(str(valor)) for valor in fila])
 
     anchos = [len(str(encabezado)) for encabezado in encabezados]
     for fila in filas:

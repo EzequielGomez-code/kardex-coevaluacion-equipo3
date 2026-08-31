@@ -414,7 +414,10 @@ class ServicioArticulos:
             costo_referencia=datos.get("costo_referencia") or 0,
             precio_venta=datos.get("precio_venta") or 0,
             tasa_itbis=datos.get("tasa_itbis", 18),
-            stock_minimo_defecto=datos.get("stock_minimo_defecto") or 5,
+            stock_minimo_defecto=(
+                datos["stock_minimo_defecto"]
+                if datos.get("stock_minimo_defecto") is not None else 5
+            ),
             activo=datos.get("activo", True),
         )
         ServicioAuditoria.registrar(

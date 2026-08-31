@@ -60,6 +60,15 @@ class RepositorioAlertas:
         ).first()
 
     @staticmethod
+    def pares_abiertos_de_regla(regla_id: int) -> set[tuple[int, int]]:
+        """Devuelve los pares (artículo, almacén) con alerta abierta o en proceso de esa regla."""
+        return set(
+            Alerta.objects.filter(
+                regla_id=regla_id, estado__in=[EstadoAlerta.ABIERTA, EstadoAlerta.EN_PROCESO],
+            ).values_list("articulo_id", "almacen_id")
+        )
+
+    @staticmethod
     def contar_abiertas() -> int:
         """Cuenta las alertas que siguen abiertas o en proceso."""
         return Alerta.objects.filter(

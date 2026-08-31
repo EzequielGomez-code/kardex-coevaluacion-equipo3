@@ -10,7 +10,9 @@ from decimal import Decimal
 import pytest
 from django.urls import reverse
 
-from apps.movimientos.services import ServicioMovimientos
+from apps.alertas.reportes.datos import movimientos_por_rango
+from apps.movimientos.models import Naturaleza, TipoMovimiento
+from apps.movimientos.services import ServicioAprobaciones, ServicioMovimientos
 from apps.nucleo.models import RegistroAuditoria
 
 
@@ -86,6 +88,31 @@ def test_movimientos_pdf_filtra_por_rango_de_fechas(
     )
     assert respuesta.status_code == 200
     assert respuesta.content.startswith(b"%PDF")
+
+
+@pytest.mark.django_db
+def test_movimientos_por_rango_excluye_lo_que_no_esta_confirmado(
+    tipo_entrada, almacen, articulo, usuario_administrador
+):
+    """Un movimiento rechazado (pendiente de aprobación) no debe figurar como si hubiera ocurrido."""
+    tipo_con_aprobacion = TipoMovimiento.objects.create(
+        codigo="AJUSTE-SUP", nombre="Ajuste supervisado", naturaleza=Naturaleza.AJUSTE,
+        prefijo_numeracion="AJS", exige_aprobacion=True,
+    )
+    confirmado = ServicioMovimientos.registrar_entrada(
+        tipo=tipo_entrada, almacen_destino=almacen, usuario=usuario_administrador,
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("1"), "costo_unitario": Decimal("1")}],
+    )
+    pendiente = ServicioMovimientos.registrar_ajuste(
+        tipo=tipo_con_aprobacion, almacen=almacen, usuario=usuario_administrador, motivo="Conteo",
+        lineas=[{"articulo_id": articulo.pk, "cantidad": Decimal("1"), "signo": 1}],
+    )
+    ServicioAprobaciones.rechazar(pendiente, "No corresponde", usuario_administrador)
+
+    _encabezados, filas = movimientos_por_rango()
+    numeros = [fila[0] for fila in filas]
+    assert confirmado.numero in numeros
+    assert pendiente.numero not in numeros
 
 
 @pytest.mark.django_db

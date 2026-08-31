@@ -380,12 +380,14 @@ def _aplicar_lineas_ajuste(movimiento: Movimiento, lineas: list[dict]) -> tuple[
     for indice, linea in enumerate(lineas, start=1):
         cantidad = _decimal(linea["cantidad"])
         if int(linea["signo"]) >= 0:
-            costo_unitario = _decimal(linea.get("costo_unitario") or 0)
-            if not costo_unitario:
+            costo_unitario_provisto = linea.get("costo_unitario")
+            if costo_unitario_provisto is None:
                 existencia = Existencia.objects.filter(
                     articulo_id=linea["articulo_id"], almacen_id=movimiento.almacen_origen_id
                 ).first()
                 costo_unitario = existencia.costo_promedio if existencia else Decimal("0")
+            else:
+                costo_unitario = _decimal(costo_unitario_provisto)
             _, costo_total = _aplicar_linea_entrada(
                 movimiento, linea["articulo_id"], movimiento.almacen_origen_id, cantidad,
                 costo_unitario, indice, notas="Ajuste — existencia encontrada.",
@@ -675,6 +677,7 @@ class ServicioMovimientos:
         movimiento.save(
             update_fields=["estado", "anulado_en", "motivo_anulacion", "actualizado_en"]
         )
+        _evaluar_alertas_del_movimiento(contrapartida)
 
         ServicioAuditoria.registrar(
             entidad="Movimiento", entidad_id=movimiento.pk, accion=RegistroAuditoria.Accion.EDITAR,

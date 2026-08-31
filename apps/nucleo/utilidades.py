@@ -201,6 +201,23 @@ def sanear_nombre_archivo(nombre: str) -> str:
     return base[:80]
 
 
+_INICIOS_DE_FORMULA = ("=", "+", "-", "@", "\t", "\r")
+
+
+def sanear_celda_hoja_de_calculo(valor: str) -> str:
+    """
+    Neutraliza una celda de Excel/CSV que empiece como fórmula.
+
+    Un nombre de artículo u otro texto libre que llegue de un usuario podría
+    empezar con ``=``, ``+``, ``-`` o ``@`` — Excel y LibreOffice lo
+    interpretan como fórmula al abrir el archivo. Anteponer un apóstrofo
+    fuerza el texto plano sin cambiar lo que se ve en la celda.
+    """
+    if valor.startswith(_INICIOS_DE_FORMULA):
+        return f"'{valor}"
+    return valor
+
+
 def validar_archivo_subido(archivo) -> None:
     """
     Comprueba extensión y tamaño de un archivo subido, del lado del servidor.
