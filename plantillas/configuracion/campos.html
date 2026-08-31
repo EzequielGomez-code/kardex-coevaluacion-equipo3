@@ -3,11 +3,12 @@
 
 {% block contenido %}
   <div class="encabezado">
-    <div>
+    <div class="encabezado__migas-contador">
       <h1 class="encabezado__titulo">Campos personalizados</h1>
       <p class="encabezado__bajada">
         Campos que se agregan a cualquier entidad sin tocar el código. Arrastre una fila
         por su asa para cambiar el orden en que aparecen en los formularios.
+        {% if total %}<span class="encabezado__contador">· {{ total }} en total</span>{% endif %}
       </p>
     </div>
     <div class="encabezado__acciones">

@@ -1,0 +1,15 @@
+{% load formato %}
+{% comment %} Tarjeta apilada: el rastro de auditoría en teléfono (punto 2.6). {% endcomment %}
+<div class="tarjeta-fila">
+  <div class="tarjeta-fila__principal">
+    {{ fila.entidad }}{% if fila.entidad_id %} <span class="mono texto-2">#{{ fila.entidad_id }}</span>{% endif %}
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="mono">{{ fila.creado_en|fecha_hora }}</span>
+    {% include "componentes/badge.html" with texto=fila.get_accion_display variante=fila.accion|clase_de_accion %}
+  </div>
+  <div class="tarjeta-fila__linea">
+    <span class="texto-3">Usuario</span>
+    <span>{{ fila.usuario|default:"Sistema" }}</span>
+  </div>
+</div>

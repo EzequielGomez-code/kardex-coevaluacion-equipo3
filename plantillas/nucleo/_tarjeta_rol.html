@@ -1,0 +1,26 @@
+{% load formato %}
+{% comment %} Tarjeta apilada: la tabla de roles en teléfono (punto 2.6). {% endcomment %}
+<div class="tarjeta-fila">
+  <div class="tarjeta-fila__principal">{{ fila.nombre }}</div>
+  <div class="tarjeta-fila__linea">
+    <span>{{ fila.permisos.count }} permisos · {{ fila.total_usuarios }} usuarios</span>
+    {% if fila.es_sistema %}
+      {% include "componentes/badge.html" with texto="Del sistema" variante="neutro" %}
+    {% else %}
+      {% include "componentes/badge.html" with texto="Propio" variante="acento" %}
+    {% endif %}
+  </div>
+  <div class="tarjeta-fila__acciones">
+    <button class="boton boton--secundario" type="button"
+            hx-get="{% url 'nucleo:rol_editar' fila.pk %}" hx-target="#modal">
+      {% icono "editar" %} Editar
+    </button>
+    {% if not fila.es_sistema %}
+      <button class="boton boton--secundario" type="button"
+              hx-post="{% url 'nucleo:rol_eliminar' fila.pk %}" hx-swap="none"
+              hx-confirm="¿Eliminar el rol «{{ fila.nombre }}»? Esta acción no se puede deshacer.">
+        {% icono "papelera" %} Eliminar
+      </button>
+    {% endif %}
+  </div>
+</div>

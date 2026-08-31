@@ -3,10 +3,11 @@
 
 {% block contenido %}
   <div class="encabezado">
-    <div>
+    <div class="encabezado__migas-contador">
       <h1 class="encabezado__titulo">Etiquetas</h1>
       <p class="encabezado__bajada">
         Marcas de color que se pegan a artículos, movimientos o cualquier otra entidad.
+        {% if total %}<span class="encabezado__contador">· {{ total }} en total</span>{% endif %}
       </p>
     </div>
     <div class="encabezado__acciones">
@@ -21,6 +22,9 @@
        hx-trigger="kardexRecargar from:body" hx-select="#region-tabla" hx-swap="outerHTML">
     {% if total %}
       {% include "componentes/tabla.html" with columnas=columnas_etiqueta filas=pagina plantilla_filas="configuracion/_fila_etiqueta.html" con_acciones=True sin_filtros=True %}
+      <div class="tarjetas-lista">
+        {% for fila in pagina %}{% include "configuracion/_tarjeta_etiqueta.html" %}{% endfor %}
+      </div>
       {% include "componentes/paginacion.html" %}
     {% else %}
       <div class="tabla-envoltura tabla-envoltura--sola">

@@ -1,0 +1,18 @@
+{% load formato %}
+{% comment %}
+Fichas de filtro activo, cada una se quita con un clic (punto 2.4 del
+BRIEF 02). Uso:
+  {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+donde ``fichas_filtro`` viene de ``apps.nucleo.utilidades.fichas_de_filtro``.
+{% endcomment %}
+{% if fichas_filtro %}
+  <div class="filtros-activos">
+    {% for ficha in fichas_filtro %}
+      <a class="ficha-filtro" href="{{ ficha.url_quitar }}">
+        {{ ficha.texto }}
+        <span class="ficha-filtro__quitar" aria-hidden="true">{% icono "cerrar" %}</span>
+      </a>
+    {% endfor %}
+    <a class="filtros-activos__limpiar" href="{{ request.path }}">Limpiar todo</a>
+  </div>
+{% endif %}

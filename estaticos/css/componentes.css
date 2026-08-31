@@ -430,7 +430,13 @@
 /* --------------------------------------------------------------------------
    Tarjetas — la tabla se convierte en tarjetas apiladas en teléfono (2.6)
    -------------------------------------------------------------------------- */
-.tarjetas-lista { display: none; }
+.tarjetas-lista {
+  display: none;
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+}
 
 .tarjeta-fila {
   display: flex;
@@ -452,8 +458,11 @@
 .tarjeta-fila__acciones { margin-top: var(--e2); display: flex; gap: var(--e2); }
 
 @media (max-width: 640px) {
-  .tabla-envoltura .tabla { display: none; }
+  /* En teléfono, la tarjeta reemplaza a la tabla entera: filtro y paginación
+     se mantienen; solo cambia cómo se ven las filas. */
+  .tabla-envoltura { display: none; }
   .tarjetas-lista { display: block; }
+  .filtros-activos { border-radius: 0; }
 }
 
 /* --------------------------------------------------------------------------

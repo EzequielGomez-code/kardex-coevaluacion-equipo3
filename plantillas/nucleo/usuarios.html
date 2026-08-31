@@ -3,9 +3,12 @@
 
 {% block contenido %}
   <div class="encabezado">
-    <div>
+    <div class="encabezado__migas-contador">
       <h1 class="encabezado__titulo">Usuarios</h1>
-      <p class="encabezado__bajada">Quién entra al sistema y con qué rol.</p>
+      <p class="encabezado__bajada">
+        Quién entra al sistema y con qué rol.
+        {% if total %}<span class="encabezado__contador">· {{ total }} en total</span>{% endif %}
+      </p>
     </div>
     <div class="encabezado__acciones">
       <button class="boton boton--primario" type="button"
@@ -47,8 +50,13 @@
       </div>
     </form>
 
+    {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+
     {% if total %}
       {% include "componentes/tabla.html" with columnas=columnas_usuario filas=pagina plantilla_filas="nucleo/_fila_usuario.html" seleccionable=True con_acciones=True %}
+      <div class="tarjetas-lista">
+        {% for fila in pagina %}{% include "nucleo/_tarjeta_usuario.html" %}{% endfor %}
+      </div>
       {% include "componentes/paginacion.html" %}
     {% else %}
       <div class="tabla-envoltura">

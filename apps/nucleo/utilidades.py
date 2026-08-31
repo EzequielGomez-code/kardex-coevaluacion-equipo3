@@ -140,6 +140,46 @@ def ordenar(consulta: Any, request: HttpRequest, permitidas: dict[str, str]) -> 
     return consulta.order_by(f"-{campo}" if descendente else campo)
 
 
+def fichas_de_filtro(request: HttpRequest, campos: dict[str, str],
+                     etiquetas_valor: dict[str, dict[str, str]] | None = None) -> list[dict]:
+    """
+    Arma las fichas de filtro activo de una pantalla de listado.
+
+    Cada ficha trae ya resuelta la URL que la quita sin tocar los demás
+    filtros ni la página en curso (BRIEF 02, punto 2.4).
+
+    :param request: petición en curso.
+    :param campos: ``{parametro_de_la_url: etiqueta_visible}``, por ejemplo
+        ``{"busqueda": "Busca", "estado": "Estado"}``.
+    :param etiquetas_valor: ``{parametro: {valor_crudo: etiqueta_legible}}``
+        para traducir un valor como ``"activo"`` a ``"Activos"``. Un
+        parámetro ausente de este diccionario muestra el valor tal cual.
+    :returns: lista de ``{"texto": str, "url_quitar": str}``; vacía si no hay
+        ningún filtro activo.
+    """
+    etiquetas_valor = etiquetas_valor or {}
+    fichas = []
+
+    for parametro, etiqueta in campos.items():
+        valor = request.GET.get(parametro, "").strip()
+        if not valor:
+            continue
+
+        texto_valor = etiquetas_valor.get(parametro, {}).get(valor, valor)
+        restantes = request.GET.copy()
+        restantes.pop(parametro, None)
+        restantes.pop("pagina", None)
+        cadena = restantes.urlencode()
+
+        fichas.append(
+            {
+                "texto": f"{etiqueta}: {texto_valor}",
+                "url_quitar": f"{request.path}?{cadena}" if cadena else request.path,
+            }
+        )
+    return fichas
+
+
 # ---------------------------------------------------------------------------
 # Subida de archivos — Seguridad #11 (OWASP A03 / A08)
 # ---------------------------------------------------------------------------

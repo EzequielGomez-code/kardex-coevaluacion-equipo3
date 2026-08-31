@@ -31,7 +31,13 @@ from apps.nucleo.services import (
     ServicioRoles,
     ServicioUsuarios,
 )
-from apps.nucleo.utilidades import entero_o_none, ordenar, paginar, respuesta_exito
+from apps.nucleo.utilidades import (
+    entero_o_none,
+    fichas_de_filtro,
+    ordenar,
+    paginar,
+    respuesta_exito,
+)
 
 # Importación diferida en tiempo de carga del módulo: ``configuracion`` depende
 # de ``nucleo`` para sus formularios, así que se toma solo lo necesario.
@@ -89,6 +95,9 @@ COLUMNAS_AUDITORIA = [
     {"etiqueta": "IP"},
 ]
 PERMITIDAS_AUDITORIA = {"fecha": "creado_en"}
+
+# Traducción de valores crudos a etiquetas legibles para las fichas de filtro.
+ETIQUETAS_ESTADO = {"activo": "Activos", "inactivo": "Inactivos"}
 
 
 # ---------------------------------------------------------------------------
@@ -181,6 +190,9 @@ def almacenes(request: HttpRequest) -> HttpResponse:
         "busqueda": busqueda,
         "estado": estado,
         "columnas_almacen": COLUMNAS_ALMACEN,
+        "fichas_filtro": fichas_de_filtro(
+            request, {"busqueda": "Busca", "estado": "Estado"}, {"estado": ETIQUETAS_ESTADO}
+        ),
         **paginar(request, consulta),
     }
     return render(request, "nucleo/almacenes.html", contexto)
@@ -267,14 +279,23 @@ def usuarios(request: HttpRequest) -> HttpResponse:
         PERMITIDAS_USUARIO,
     )
 
+    roles_disponibles = ServicioRoles.listar()
     contexto = {
         "titulo": "Usuarios",
         "migas": [{"texto": "Administración"}, {"texto": "Usuarios"}],
         "busqueda": busqueda,
         "rol_id": rol_id,
         "estado": estado,
-        "roles": ServicioRoles.listar(),
+        "roles": roles_disponibles,
         "columnas_usuario": COLUMNAS_USUARIO,
+        "fichas_filtro": fichas_de_filtro(
+            request,
+            {"busqueda": "Busca", "rol": "Rol", "estado": "Estado"},
+            {
+                "rol": {str(rol.pk): rol.nombre for rol in roles_disponibles},
+                "estado": ETIQUETAS_ESTADO,
+            },
+        ),
         **paginar(request, consulta),
     }
     return render(request, "nucleo/usuarios.html", contexto)
@@ -357,6 +378,7 @@ def roles(request: HttpRequest) -> HttpResponse:
         "migas": [{"texto": "Administración"}, {"texto": "Roles y permisos"}],
         "busqueda": busqueda,
         "columnas_rol": COLUMNAS_ROL,
+        "fichas_filtro": fichas_de_filtro(request, {"busqueda": "Busca"}),
         **paginar(request, consulta),
     }
     return render(request, "nucleo/roles.html", contexto)
@@ -459,6 +481,11 @@ def auditoria(request: HttpRequest) -> HttpResponse:
         "entidades": ServicioAuditoria.entidades(),
         "acciones": RegistroAuditoria.Accion.choices,
         "columnas_auditoria": COLUMNAS_AUDITORIA,
+        "fichas_filtro": fichas_de_filtro(
+            request,
+            {"busqueda": "Busca", "entidad": "Entidad", "accion": "Acción"},
+            {"accion": dict(RegistroAuditoria.Accion.choices)},
+        ),
         **paginar(request, consulta, por_pagina=40),
     }
     return render(request, "nucleo/auditoria.html", contexto)

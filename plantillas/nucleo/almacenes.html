@@ -3,9 +3,12 @@
 
 {% block contenido %}
   <div class="encabezado">
-    <div>
+    <div class="encabezado__migas-contador">
       <h1 class="encabezado__titulo">Almacenes</h1>
-      <p class="encabezado__bajada">Depósitos donde se registran las existencias.</p>
+      <p class="encabezado__bajada">
+        Depósitos donde se registran las existencias.
+        {% if total %}<span class="encabezado__contador">· {{ total }} en total</span>{% endif %}
+      </p>
     </div>
     <div class="encabezado__acciones">
       <button class="boton boton--primario" type="button"
@@ -38,8 +41,13 @@
       </div>
     </form>
 
+    {% include "componentes/fichas_filtro.html" with fichas_filtro=fichas_filtro %}
+
     {% if total %}
       {% include "componentes/tabla.html" with columnas=columnas_almacen filas=pagina plantilla_filas="nucleo/_fila_almacen.html" seleccionable=True con_acciones=True %}
+      <div class="tarjetas-lista">
+        {% for fila in pagina %}{% include "nucleo/_tarjeta_almacen.html" %}{% endfor %}
+      </div>
       {% include "componentes/paginacion.html" %}
     {% else %}
       <div class="tabla-envoltura">
