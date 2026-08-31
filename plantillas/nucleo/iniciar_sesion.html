@@ -15,10 +15,39 @@
 <body>
   <div class="acceso">
     <section class="acceso__lienzo">
-      <div>
-        <p class="acceso__marca">Kardex</p>
-        <p class="acceso__nota">{{ nombre_empresa }}</p>
+      <div class="acceso__marca-fila">
+        <span class="acceso__marca-icono">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="5" width="14" height="16" rx="1.5"></rect>
+            <path d="M7 10h6M7 14h6M7 18h3"></path>
+            <path d="M17 8l4 1.2v11l-4-1.2"></path>
+          </svg>
+        </span>
+        <div>
+          <p class="acceso__marca">Kardex</p>
+          <p class="acceso__nota">{{ nombre_empresa }}</p>
+        </div>
       </div>
+
+      <div class="acceso__media" data-media-portada>
+        {# Espacio reservado para un video de portada. Mientras no haya uno, #}
+        {# esta ilustración de línea (fichas de un kardex) ocupa el lugar. #}
+        <svg viewBox="0 0 200 140" fill="none" aria-hidden="true">
+          <g stroke="white" stroke-opacity=".55" stroke-width="1.4">
+            <rect x="34" y="18" width="108" height="70" rx="4" transform="rotate(-6 88 53)"
+                  fill="rgba(255,255,255,.05)"></rect>
+            <rect x="46" y="34" width="108" height="70" rx="4" transform="rotate(3 100 69)"
+                  fill="rgba(255,255,255,.08)"></rect>
+            <rect x="40" y="52" width="120" height="76" rx="4" fill="rgba(255,255,255,.12)"></rect>
+          </g>
+          <g stroke="white" stroke-opacity=".8" stroke-width="1.6" stroke-linecap="round">
+            <path d="M58 74h58M58 88h58M58 102h34"></path>
+          </g>
+          <circle cx="150" cy="66" r="3" fill="white" fill-opacity=".7"></circle>
+        </svg>
+      </div>
+
       <p class="acceso__lema">
         Gestión de inventario multi-almacén. Las categorías, los campos, los tipos de
         movimiento y las reglas se configuran desde la interfaz, no desde el código.

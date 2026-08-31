@@ -57,13 +57,16 @@
   --fuente: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --mono:   "IBM Plex Mono", ui-monospace, monospace;
 
-  /* Escala tipográfica de seis tamaños, base 14 px, con su altura de línea. */
+  /* Escala tipográfica de siete tamaños, base 14 px, con su altura de línea.
+     --t-2xl es la excepción deliberada: un único momento de énfasis, la
+     marca en la pantalla de acceso — no para usar dentro de la aplicación. */
   --t-xs: 12px;   --lh-xs: 16px;
   --t-s: 13px;    --lh-s: 18px;
   --t-base: 14px; --lh-base: 20px;
   --t-m: 16px;    --lh-m: 22px;
   --t-l: 20px;    --lh-l: 26px;
   --t-xl: 26px;   --lh-xl: 32px;
+  --t-2xl: 40px;  --lh-2xl: 44px;
 
   --peso-normal: 400;
   --peso-semi:   600;

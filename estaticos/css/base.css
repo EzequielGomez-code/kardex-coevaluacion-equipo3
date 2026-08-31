@@ -509,25 +509,78 @@ html[data-tema="claro"] .icono-luna { display: block; }
 }
 
 .acceso__lienzo {
-  background: var(--acento);
+  position: relative;
+  background-color: var(--acento);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Ccircle cx='2' cy='2' r='1.4' fill='white' fill-opacity='.14'/%3E%3C/svg%3E");
   color: var(--texto-invertido);
   padding: var(--e8);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  gap: var(--e8);
+  overflow: hidden;
 }
 
-.acceso__marca { font-size: var(--t-xl); font-weight: var(--peso-semi); letter-spacing: -.02em; }
+.acceso__marca-fila { display: flex; align-items: center; gap: var(--e3); }
+.acceso__marca-icono {
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, .3);
+  border-radius: var(--radio);
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.acceso__marca-icono svg { width: 22px; height: 22px; }
+.acceso__marca {
+  font-size: var(--t-2xl);
+  line-height: var(--lh-2xl);
+  font-weight: var(--peso-semi);
+  letter-spacing: -.02em;
+}
 .acceso__lema { font-size: var(--t-m); max-width: 30ch; line-height: 1.5; opacity: .9; }
 .acceso__nota { font-size: var(--t-xs); opacity: .75; }
 
+/* Espacio para el video de portada (Magnific): mientras no haya uno, una
+   ilustración propia de línea ocupa el mismo lugar — nunca queda vacío. */
+.acceso__media {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: var(--radio);
+  background: rgba(255, 255, 255, .04);
+}
+.acceso__media video { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radio); }
+.acceso__media svg { width: 60%; max-width: 220px; height: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .acceso__marca-fila, .acceso__media, .acceso__lema {
+    animation: kardex-acceso-entra var(--duracion-media) var(--fx) both;
+  }
+  .acceso__media { animation-delay: 60ms; }
+  .acceso__lema { animation-delay: 120ms; }
+}
+@keyframes kardex-acceso-entra {
+  from { transform: translateY(6px); opacity: 0; }
+}
+
 .acceso__panel {
+  position: relative;
   background: var(--superficie);
   border-left: 1px solid var(--borde);
   padding: var(--e8) var(--e6);
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.acceso__panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--acento);
 }
 
 .acceso__titulo { font-size: var(--t-l); font-weight: var(--peso-semi); margin-bottom: var(--e1); }
