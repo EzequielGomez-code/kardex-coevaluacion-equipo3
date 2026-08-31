@@ -540,28 +540,86 @@ html[data-tema="claro"] .icono-luna { display: block; }
 }
 .acceso__nota { font-size: var(--t-xs); opacity: .75; }
 
-/* Espacio para el video de portada (Magnific): mientras no haya uno, una
-   ilustración propia de línea ocupa el mismo lugar — nunca queda vacío. */
+/* Secuencia de fotos de portada: cuatro imágenes en disolvencia continua,
+   cada una con un acercamiento lento (Ken Burns). El tinte en degradado
+   las une a la paleta del panel en vez de competir con ella. */
 .acceso__media {
+  position: relative;
   flex: 1;
   min-height: 0;
-  display: grid;
-  place-items: center;
+  overflow: hidden;
   border: 1px solid rgba(255, 255, 255, .18);
   border-radius: var(--radio);
   background: rgba(255, 255, 255, .04);
 }
-.acceso__media video { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radio); }
-.acceso__media svg { width: 60%; max-width: 220px; height: auto; }
+.acceso__media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(16, 48, 41, .1), rgba(16, 48, 41, .6));
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+.acceso__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: saturate(.8) contrast(1.04);
+  transform: scale(1);
+}
+.acceso__foto:first-child { opacity: 1; }
 
 @media (prefers-reduced-motion: no-preference) {
   .acceso__marca-fila, .acceso__media {
     animation: kardex-acceso-entra var(--duracion-media) var(--fx) both;
   }
   .acceso__media { animation-delay: 60ms; }
+
+  .acceso__foto {
+    animation-duration: 24s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .acceso__foto:nth-child(1) { animation-name: kardex-foto-1; }
+  .acceso__foto:nth-child(2) { animation-name: kardex-foto-2; }
+  .acceso__foto:nth-child(3) { animation-name: kardex-foto-3; }
+  .acceso__foto:nth-child(4) { animation-name: kardex-foto-4; }
 }
 @keyframes kardex-acceso-entra {
   from { transform: translateY(6px); opacity: 0; }
+}
+
+/* Cada foto ocupa una cuarta parte del ciclo de 24s: 1s de entrada,
+   4s en pantalla mientras sigue acercándose, 1s de salida. */
+@keyframes kardex-foto-1 {
+  0%      { opacity: 0; transform: scale(1); }
+  4.17%   { opacity: 1; transform: scale(1.015); }
+  20.83%  { opacity: 1; transform: scale(1.05); }
+  25%     { opacity: 0; transform: scale(1.06); }
+  100%    { opacity: 0; transform: scale(1.06); }
+}
+@keyframes kardex-foto-2 {
+  0%, 25% { opacity: 0; transform: scale(1); }
+  29.17%  { opacity: 1; transform: scale(1.015); }
+  45.83%  { opacity: 1; transform: scale(1.05); }
+  50%     { opacity: 0; transform: scale(1.06); }
+  100%    { opacity: 0; transform: scale(1.06); }
+}
+@keyframes kardex-foto-3 {
+  0%, 50% { opacity: 0; transform: scale(1); }
+  54.17%  { opacity: 1; transform: scale(1.015); }
+  70.83%  { opacity: 1; transform: scale(1.05); }
+  75%     { opacity: 0; transform: scale(1.06); }
+  100%    { opacity: 0; transform: scale(1.06); }
+}
+@keyframes kardex-foto-4 {
+  0%, 75% { opacity: 0; transform: scale(1); }
+  79.17%  { opacity: 1; transform: scale(1.015); }
+  95.83%  { opacity: 1; transform: scale(1.05); }
+  100%    { opacity: 0; transform: scale(1.06); }
 }
 
 .acceso__panel {
