@@ -1,7 +1,7 @@
 # BRIEF 01 — Base del proyecto Kardex
-**Para: Claude Code · Ejecuta: Ezequiel Gómez Cepeda · Rama: `main`**
+**Para: el asistente de código · Ejecuta: Ezequiel Gómez Cepeda · Rama: `main`**
 
-Pega este archivo completo en Claude Code y dile: *"Construye esto. Empieza por el punto 1 y no pases al siguiente hasta que el anterior corra."*
+Pega este archivo completo en el asistente de código y dile: *"Construye esto. Empieza por el punto 1 y no pases al siguiente hasta que el anterior corra."*
 
 ---
 

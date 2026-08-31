@@ -4,7 +4,7 @@ Estas reglas aplican a toda sesión de trabajo sobre este repositorio, no solo a
 
 ## Commits
 
-- **Sin líneas de co-autoría ni menciones de Claude en los mensajes de commit.** El único autor es el dueño de la cuenta.
+- **Sin líneas de co-autoría ni menciones de ninguna herramienta de asistencia en los mensajes de commit.** El único autor es el dueño de la cuenta.
 - Formato: `feat:`, `fix:`, `docs:`, `test:`, `refactor:`, `style:`. Una línea, en español, describiendo el cambio real.
 - Se crea un commit por fase de trabajo terminada, nunca a mitad de una fase rota.
 
