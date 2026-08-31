@@ -23,3 +23,4 @@ class AdminAlerta(admin.ModelAdmin):
     list_filter = ["estado", "regla"]
     search_fields = ["articulo__sku", "articulo__nombre", "mensaje"]
     readonly_fields = ["regla", "articulo", "almacen", "mensaje", "contexto", "generada_en"]
+    list_select_related = ["articulo", "almacen", "regla"]

@@ -42,6 +42,7 @@ from apps.movimientos.repositories import (
     RepositorioTiposMovimiento,
 )
 from apps.movimientos.valoracion import (
+    CUATRO_DECIMALES,
     METODO_PEPS,
     costo_total_del_plan,
     costo_unitario_promedio_del_plan,
@@ -50,8 +51,6 @@ from apps.movimientos.valoracion import (
 )
 from apps.nucleo.models import RegistroAuditoria
 from apps.nucleo.services import ServicioAuditoria
-
-CUATRO_DECIMALES = Decimal("0.0001")
 
 
 def _decimal(valor: Any) -> Decimal:

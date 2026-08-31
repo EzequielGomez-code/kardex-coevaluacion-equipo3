@@ -8,8 +8,6 @@ modifica datos comprueba su permiso en el servidor (Seguridad #4).
 
 from __future__ import annotations
 
-import json
-
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -41,6 +39,7 @@ from apps.configuracion.forms import FormularioCamposDinamicos
 from apps.configuracion.services import ServicioCamposPersonalizados
 from apps.nucleo.decoradores import requiere_permiso
 from apps.nucleo.utilidades import (
+    cuerpo_json,
     entero_o_none,
     fichas_de_filtro,
     ordenar,
@@ -191,11 +190,13 @@ def categoria_eliminar(request: HttpRequest, categoria_id: int) -> HttpResponse:
 @require_http_methods(["POST"])
 def categorias_reordenar(request: HttpRequest) -> HttpResponse:
     """Recibe el nuevo orden entre hermanas tras arrastrarlas. Cuerpo JSON."""
+    cuerpo = cuerpo_json(request)
+    if cuerpo is None:
+        return JsonResponse({"error": "Orden inválido."}, status=400)
     try:
-        cuerpo = json.loads(request.body.decode("utf-8") or "{}")
         padre_id = entero_o_none(cuerpo.get("padre_id"))
         identificadores = [int(valor) for valor in cuerpo.get("orden", [])]
-    except (ValueError, TypeError, UnicodeDecodeError):
+    except (ValueError, TypeError):
         return JsonResponse({"error": "Orden inválido."}, status=400)
 
     if not identificadores:
@@ -212,11 +213,13 @@ def categorias_reordenar(request: HttpRequest) -> HttpResponse:
 @require_http_methods(["POST"])
 def categorias_mover(request: HttpRequest) -> HttpResponse:
     """Mueve una categoría (con su subárbol) a otro padre. Cuerpo JSON."""
+    cuerpo = cuerpo_json(request)
+    if cuerpo is None:
+        return JsonResponse({"error": "Solicitud inválida."}, status=400)
     try:
-        cuerpo = json.loads(request.body.decode("utf-8") or "{}")
         categoria_id = int(cuerpo["categoria_id"])
         nuevo_padre_id = entero_o_none(cuerpo.get("nuevo_padre_id"))
-    except (ValueError, TypeError, KeyError, UnicodeDecodeError):
+    except (ValueError, TypeError, KeyError):
         return JsonResponse({"error": "Solicitud inválida."}, status=400)
 
     categoria = ServicioCategorias.obtener(categoria_id)

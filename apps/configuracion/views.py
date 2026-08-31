@@ -8,8 +8,6 @@ Todas exigen el permiso ``configuracion.gestionar`` en el servidor
 
 from __future__ import annotations
 
-import json
-
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -23,7 +21,7 @@ from apps.configuracion.services import ServicioDefinicionesCampo, ServicioParam
 from apps.nucleo.decoradores import requiere_permiso
 from apps.nucleo.models import RegistroAuditoria
 from apps.nucleo.services import ServicioAuditoria
-from apps.nucleo.utilidades import ordenar, paginar, respuesta_aviso, respuesta_exito
+from apps.nucleo.utilidades import cuerpo_json, ordenar, paginar, respuesta_aviso, respuesta_exito
 
 # Columnas de la tabla de etiquetas (ver nota en apps/nucleo/views.py).
 COLUMNAS_ETIQUETA = [
@@ -174,10 +172,12 @@ def campos_reordenar(request: HttpRequest) -> HttpResponse:
 
     El cuerpo llega como JSON: ``{"orden": [12, 7, 30]}``.
     """
+    cuerpo = cuerpo_json(request)
+    if cuerpo is None:
+        return JsonResponse({"error": "Orden inválido."}, status=400)
     try:
-        cuerpo = json.loads(request.body.decode("utf-8") or "{}")
         identificadores = [int(valor) for valor in cuerpo.get("orden", [])]
-    except (ValueError, TypeError, UnicodeDecodeError):
+    except (ValueError, TypeError):
         return JsonResponse({"error": "Orden inválido."}, status=400)
 
     if not identificadores:

@@ -23,6 +23,7 @@ from dataclasses import dataclass
 from datetime import timedelta
 from decimal import Decimal
 
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.utils import timezone
@@ -39,6 +40,7 @@ from apps.catalogo.models import (
     UnidadMedida,
 )
 from apps.catalogo.services import ServicioCategorias, ServicioClientes, ServicioProveedores
+from apps.catalogo.validadores import PESOS_RNC_9
 from apps.movimientos.models import (
     ConsumoLote,
     EstadoMovimiento,
@@ -50,11 +52,10 @@ from apps.movimientos.models import (
     TipoMovimiento,
 )
 from apps.movimientos.services import ServicioMovimientos
-from apps.movimientos.valoracion import METODO_PEPS, planificar_consumo
+from apps.movimientos.valoracion import CUATRO_DECIMALES, METODO_PEPS, planificar_consumo
 from apps.nucleo.models import Almacen, Usuario
 
 SEMILLA = 20260831  # fija, para que la demo salga igual cada vez que se corre
-CUATRO_DECIMALES = Decimal("0.0001")
 
 UNIDADES = [
     ("UD", "Unidad", "ud", True),
@@ -258,12 +259,9 @@ CATEGORIAS = [
     ]),
 ]
 
-_PESOS_RNC_9 = [7, 9, 8, 6, 5, 4, 3, 2]
-
-
 def _generar_rnc(base_8_digitos: str) -> str:
     """Calcula un RNC de 9 dígitos válido a partir de sus primeros 8, con el algoritmo de la DGII."""
-    suma = sum(int(digito) * peso for digito, peso in zip(base_8_digitos, _PESOS_RNC_9, strict=True))
+    suma = sum(int(digito) * peso for digito, peso in zip(base_8_digitos, PESOS_RNC_9, strict=True))
     resto = suma % 11
     verificador = 11 - resto
     if verificador == 11:
@@ -474,19 +472,26 @@ class Command(BaseCommand):
     def _sembrar_categorias(self) -> list[tuple]:
         """Crea el árbol de categorías. Devuelve las hojas con su lista de productos."""
         hojas = []
+        # Una sola lectura del árbol; cada categoría creada en este mismo
+        # comando se agrega a la misma lista en memoria, así que las
+        # búsquedas siguientes no vuelven a consultar la base.
+        arbol = list(ServicioCategorias.arbol())
         for codigo, nombre, icono, subcategorias in CATEGORIAS:
             existente = next(
-                (c for c in ServicioCategorias.arbol() if c.codigo == codigo and c.padre_id is None),
-                None,
+                (c for c in arbol if c.codigo == codigo and c.padre_id is None), None,
             )
-            padre = existente or ServicioCategorias.crear(codigo, nombre, "", None, icono=icono)
+            if existente:
+                padre = existente
+            else:
+                padre = ServicioCategorias.crear(codigo, nombre, "", None, icono=icono)
+                arbol.append(padre)
             for sub_codigo, sub_nombre, unidad_codigo, productos in subcategorias:
-                sub_existente = next(
-                    (c for c in ServicioCategorias.arbol() if c.codigo == sub_codigo), None
-                )
-                sub = sub_existente or ServicioCategorias.crear(
-                    sub_codigo, sub_nombre, "", padre, icono=icono
-                )
+                sub_existente = next((c for c in arbol if c.codigo == sub_codigo), None)
+                if sub_existente:
+                    sub = sub_existente
+                else:
+                    sub = ServicioCategorias.crear(sub_codigo, sub_nombre, "", padre, icono=icono)
+                    arbol.append(sub)
                 hojas.append((sub, unidad_codigo, productos))
         total_productos = sum(len(productos) for _, _, productos in hojas)
         self.stdout.write(
@@ -757,7 +762,7 @@ class Command(BaseCommand):
                 proveedor=proveedor, documento_tipo="Factura",
                 documento_numero="F-00512", motivo="Reposición de inventario",
             )
-        except Exception as error:  # pylint: disable=broad-exception-caught
+        except ValidationError as error:
             self.stdout.write(self.style.WARNING(f"  (entrada de muestra omitida: {error})"))
 
         # Para la salida, la transferencia y el ajuste hace falta existencia
@@ -776,7 +781,7 @@ class Command(BaseCommand):
                     lineas=[{"articulo_id": existencia.articulo_id, "cantidad": Decimal("5")}],
                     documento_tipo="Factura", documento_numero="F-00513",
                 )
-            except Exception as error:  # pylint: disable=broad-exception-caught
+            except ValidationError as error:
                 self.stdout.write(self.style.WARNING(f"  (salida de muestra omitida: {error})"))
 
         if len(bien_surtidos) > 1 and len(almacenes) > 1:
@@ -787,7 +792,7 @@ class Command(BaseCommand):
                     usuario=usuario, motivo="Balanceo de existencia entre sucursales",
                     lineas=[{"articulo_id": existencia.articulo_id, "cantidad": Decimal("8")}],
                 )
-            except Exception as error:  # pylint: disable=broad-exception-caught
+            except ValidationError as error:
                 self.stdout.write(self.style.WARNING(f"  (transferencia de muestra omitida: {error})"))
 
         if len(bien_surtidos) > 2:
@@ -798,7 +803,7 @@ class Command(BaseCommand):
                     motivo="Conteo físico mensual — sobrante encontrado en anaquel",
                     lineas=[{"articulo_id": existencia.articulo_id, "cantidad": Decimal("2"), "signo": 1}],
                 )
-            except Exception as error:  # pylint: disable=broad-exception-caught
+            except ValidationError as error:
                 self.stdout.write(self.style.WARNING(f"  (ajuste de muestra omitido: {error})"))
 
         self.stdout.write("  movimientos de muestra ..... vía ServicioMovimientos")

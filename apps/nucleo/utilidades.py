@@ -102,6 +102,24 @@ def es_htmx(request: HttpRequest) -> bool:
     return request.headers.get("HX-Request") == "true"
 
 
+def cuerpo_json(request: HttpRequest) -> dict | None:
+    """
+    Decodifica el cuerpo de la petición como un objeto JSON.
+
+    Centraliza el manejo de un cuerpo manipulado a mano (bytes que no son
+    UTF-8, JSON mal formado, o algo que no sea un objeto) para que cada
+    vista solo tenga que validar sus propios campos, no repetir esto.
+
+    :returns: el diccionario decodificado, o ``None`` si el cuerpo no es un
+        objeto JSON válido.
+    """
+    try:
+        cuerpo = json.loads(request.body.decode("utf-8") or "{}")
+    except (ValueError, UnicodeDecodeError):
+        return None
+    return cuerpo if isinstance(cuerpo, dict) else None
+
+
 def entero_o_none(valor: Any) -> int | None:
     """Convierte a entero un parámetro de la URL; devuelve ``None`` si no se puede."""
     try:

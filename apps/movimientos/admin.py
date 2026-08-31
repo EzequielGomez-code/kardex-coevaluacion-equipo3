@@ -41,6 +41,7 @@ class AdminMovimiento(admin.ModelAdmin):
     readonly_fields = [
         "estado", "naturaleza", "total_cantidad", "total_costo", "metodo_valoracion",
     ]
+    list_select_related = ["tipo"]
     inlines = [LineaInline]
 
 
@@ -54,6 +55,7 @@ class AdminLote(admin.ModelAdmin):
     search_fields = ["codigo", "articulo__sku", "articulo__nombre"]
     readonly_fields = ["articulo", "almacen", "linea_origen", "costo_unitario",
                        "cantidad_inicial", "cantidad_disponible"]
+    list_select_related = ["articulo", "almacen"]
 
 
 @admin.register(Existencia)
@@ -64,6 +66,7 @@ class AdminExistencia(admin.ModelAdmin):
     list_filter = ["almacen"]
     search_fields = ["articulo__sku", "articulo__nombre"]
     readonly_fields = ["articulo", "almacen", "cantidad", "valor"]
+    list_select_related = ["articulo", "almacen"]
 
 
 admin.site.register(ConsumoLote)

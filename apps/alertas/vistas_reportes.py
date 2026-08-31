@@ -18,9 +18,11 @@ from apps.alertas.reportes import datos as datos_reporte
 from apps.alertas.reportes.excel import construir_excel
 from apps.alertas.reportes.pdf import construir_pdf
 from apps.catalogo.models import Articulo
+from apps.catalogo.repositories import RepositorioArticulos
 from apps.movimientos.repositories import RepositorioTiposMovimiento
 from apps.nucleo.decoradores import requiere_permiso
-from apps.nucleo.models import Almacen, RegistroAuditoria
+from apps.nucleo.models import RegistroAuditoria
+from apps.nucleo.repositories import RepositorioAlmacenes
 from apps.nucleo.services import ServicioAuditoria
 from apps.nucleo.utilidades import entero_o_none
 
@@ -71,9 +73,9 @@ def indice(request: HttpRequest) -> HttpResponse:
     contexto = {
         "titulo": "Reportes",
         "migas": [{"texto": "Reportes"}],
-        "almacenes": Almacen.objects.filter(activo=True).order_by("codigo"),
+        "almacenes": RepositorioAlmacenes.activos(),
         "tipos_movimiento": RepositorioTiposMovimiento.listar(solo_activos=True),
-        "articulos": Articulo.objects.filter(activo=True).order_by("nombre")[:200],
+        "articulos": RepositorioArticulos.listar(estado="activo")[:200],
     }
     return render(request, "alertas/reportes_indice.html", contexto)
 
@@ -86,7 +88,8 @@ def existencias_pdf(request: HttpRequest) -> HttpResponse:
     encabezados, filas = datos_reporte.existencias(busqueda=busqueda, almacen_id=almacen_id)
     filtros = []
     if almacen_id:
-        codigo = Almacen.objects.filter(pk=almacen_id).values_list("codigo", flat=True).first()
+        almacen = RepositorioAlmacenes.obtener(almacen_id)
+        codigo = almacen.codigo if almacen else None
         if codigo:
             filtros.append(f"Almacén: {codigo}")
     _auditar_exportacion("Existencia", {"formato": "pdf", "filas": len(filas)})
@@ -134,7 +137,8 @@ def _filtros_movimientos(request: HttpRequest) -> tuple[dict, list[str]]:
         if nombre:
             frases.append(f"Tipo: {nombre.nombre}")
     if almacen_id:
-        codigo = Almacen.objects.filter(pk=almacen_id).values_list("codigo", flat=True).first()
+        almacen = RepositorioAlmacenes.obtener(almacen_id)
+        codigo = almacen.codigo if almacen else None
         if codigo:
             frases.append(f"Almacén: {codigo}")
     return {"desde": desde, "hasta": hasta, "tipo_id": tipo_id, "almacen_id": almacen_id}, frases
@@ -161,7 +165,7 @@ def movimientos_excel(request: HttpRequest) -> HttpResponse:
 def _articulo_del_reporte(request: HttpRequest) -> Articulo | None:
     """Resuelve el artículo elegido en ``?articulo=`` para el reporte de kardex."""
     articulo_id = entero_o_none(request.GET.get("articulo"))
-    return Articulo.objects.filter(pk=articulo_id).first() if articulo_id else None
+    return RepositorioArticulos.obtener(articulo_id) if articulo_id else None
 
 
 @requiere_permiso("reporte.exportar")

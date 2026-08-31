@@ -14,7 +14,7 @@ from __future__ import annotations
 from decimal import Decimal
 
 from django.core.management.base import BaseCommand
-from django.db.models import Sum
+from django.db.models import DecimalField, ExpressionWrapper, F, Sum
 
 from apps.movimientos.models import Existencia, Lote, MovimientoLinea
 
@@ -44,19 +44,24 @@ class Command(BaseCommand):
             Lote.objects.values("articulo_id", "almacen_id")
             .annotate(
                 cantidad=Sum("cantidad_disponible"),
+                valor=Sum(
+                    ExpressionWrapper(
+                        F("cantidad_disponible") * F("costo_unitario"),
+                        output_field=DecimalField(max_digits=18, decimal_places=4),
+                    )
+                ),
             )
         )
-        totales = {(fila["articulo_id"], fila["almacen_id"]): fila["cantidad"] for fila in lotes_por_par}
+        totales = {
+            (fila["articulo_id"], fila["almacen_id"]): (fila["cantidad"], fila["valor"])
+            for fila in lotes_por_par
+        }
 
         for existencia in Existencia.objects.select_related("articulo", "almacen"):
             clave = (existencia.articulo_id, existencia.almacen_id)
-            cantidad_lotes = totales.get(clave, Decimal("0")) or Decimal("0")
-            valor_lotes = sum(
-                (lote.cantidad_disponible * lote.costo_unitario for lote in Lote.objects.filter(
-                    articulo_id=existencia.articulo_id, almacen_id=existencia.almacen_id
-                )),
-                Decimal("0"),
-            )
+            cantidad_lotes, valor_lotes = totales.get(clave, (Decimal("0"), Decimal("0")))
+            cantidad_lotes = cantidad_lotes or Decimal("0")
+            valor_lotes = valor_lotes or Decimal("0")
             if abs(cantidad_lotes - existencia.cantidad) > TOLERANCIA:
                 errores += 1
                 self.stdout.write(self.style.ERROR(

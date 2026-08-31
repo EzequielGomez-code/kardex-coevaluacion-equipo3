@@ -13,8 +13,9 @@ import re
 from django.core.exceptions import ValidationError
 
 # Pesos del dígito verificador del RNC de 9 dígitos (persona jurídica),
-# según el algoritmo módulo 11 publicado por la DGII.
-_PESOS_RNC_9 = [7, 9, 8, 6, 5, 4, 3, 2]
+# según el algoritmo módulo 11 publicado por la DGII. Público a propósito:
+# el comando de datos de demostración genera RNC ficticios con el mismo peso.
+PESOS_RNC_9 = [7, 9, 8, 6, 5, 4, 3, 2]
 
 
 def normalizar_rnc(valor: str) -> str:
@@ -42,7 +43,7 @@ def validar_rnc(valor: str) -> None:
         raise ValidationError("El RNC debe tener 9 dígitos, o 11 si es una cédula.")
 
     suma = sum(
-        int(digito) * peso for digito, peso in zip(digitos[:8], _PESOS_RNC_9, strict=True)
+        int(digito) * peso for digito, peso in zip(digitos[:8], PESOS_RNC_9, strict=True)
     )
     resto = suma % 11
     verificador_esperado = 11 - resto

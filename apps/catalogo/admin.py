@@ -21,6 +21,7 @@ class AdminCategoria(admin.ModelAdmin):
     list_filter = ["activo", "nivel"]
     search_fields = ["codigo", "nombre"]
     readonly_fields = ["ruta", "nivel", "secuencia_sku"]
+    list_select_related = ["padre"]
 
 
 @admin.register(Marca)
@@ -57,6 +58,7 @@ class AdminArticulo(admin.ModelAdmin):
     list_filter = ["activo", "categoria", "marca", "maneja_lotes"]
     search_fields = ["sku", "nombre", "codigo_barras"]
     autocomplete_fields = ["categoria", "marca", "unidad"]
+    list_select_related = ["categoria", "marca"]
     inlines = [LineaProveedorArticulo]
 
 

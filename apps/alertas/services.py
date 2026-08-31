@@ -214,6 +214,14 @@ def _evaluar_sin_movimiento(regla: ReglaAlerta, existencia) -> None:
         _cerrar_si_ya_no_aplica(regla.pk, existencia.articulo_id, existencia.almacen_id)
 
 
+def _evaluar_existencia_para_regla(regla: ReglaAlerta, existencia) -> None:
+    """Despacha una existencia que ya pasó el filtro de alcance a su evaluador de tipo."""
+    if regla.tipo in (TipoRegla.STOCK_BAJO, TipoRegla.STOCK_CERO):
+        _evaluar_stock(regla, existencia)
+    elif regla.tipo == TipoRegla.SIN_MOVIMIENTO:
+        _evaluar_sin_movimiento(regla, existencia)
+
+
 def _evaluar_vencimiento(regla: ReglaAlerta, almacenes_por_regla: dict,
                          categorias_por_regla: dict) -> None:
     """Evalúa los lotes con saldo que vencen dentro del margen de la regla."""
@@ -284,10 +292,7 @@ class ServicioEvaluador:
                 ):
                     continue
                 contadas += 1
-                if regla.tipo in (TipoRegla.STOCK_BAJO, TipoRegla.STOCK_CERO):
-                    _evaluar_stock(regla, existencia)
-                elif regla.tipo == TipoRegla.SIN_MOVIMIENTO:
-                    _evaluar_sin_movimiento(regla, existencia)
+                _evaluar_existencia_para_regla(regla, existencia)
         return contadas
 
     @staticmethod
@@ -322,8 +327,5 @@ class ServicioEvaluador:
                 ):
                     continue
                 contadas += 1
-                if regla.tipo in (TipoRegla.STOCK_BAJO, TipoRegla.STOCK_CERO):
-                    _evaluar_stock(regla, existencia)
-                elif regla.tipo == TipoRegla.SIN_MOVIMIENTO:
-                    _evaluar_sin_movimiento(regla, existencia)
+                _evaluar_existencia_para_regla(regla, existencia)
         return contadas

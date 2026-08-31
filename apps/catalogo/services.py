@@ -151,17 +151,26 @@ class ServicioCategorias:
         # Primera pasada: todas a un prefijo temporal, para que la unicidad de
         # «ruta» nunca choque a mitad de camino con la ruta definitiva de otra.
         # Se usa el mismo reescritor en cascada que «mover»: mueve la fila de
-        # la categoría Y las de sus descendientes, no solo la primera.
+        # la categoría Y las de sus descendientes, no solo la primera. El
+        # prefijo temporal sale del identificador, no de una lectura de la
+        # base, así que la segunda pasada no necesita volver a consultarla.
+        rutas_actuales = dict(
+            Categoria.objects.filter(pk__in=identificadores).values_list("pk", "ruta")
+        )
+        rutas_temporales = {}
         for categoria_id in identificadores:
-            categoria = Categoria.objects.get(pk=categoria_id)
-            ruta_temporal = f"{PREFIJO_TEMPORAL}{categoria.pk}"
-            RepositorioCategorias.reescribir_rutas_del_subarbol(categoria.ruta, ruta_temporal, 0)
+            ruta_temporal = f"{PREFIJO_TEMPORAL}{categoria_id}"
+            rutas_temporales[categoria_id] = ruta_temporal
+            RepositorioCategorias.reescribir_rutas_del_subarbol(
+                rutas_actuales[categoria_id], ruta_temporal, 0
+            )
 
         for posicion, categoria_id in enumerate(identificadores):
             orden = (posicion + 1) * 10
-            categoria = Categoria.objects.get(pk=categoria_id)  # ya con la ruta temporal
             ruta_nueva = f"{prefijo}{_segmento(orden)}"
-            RepositorioCategorias.reescribir_rutas_del_subarbol(categoria.ruta, ruta_nueva, 0)
+            RepositorioCategorias.reescribir_rutas_del_subarbol(
+                rutas_temporales[categoria_id], ruta_nueva, 0
+            )
             Categoria.objects.filter(pk=categoria_id).update(orden=orden)
 
         ServicioAuditoria.registrar(

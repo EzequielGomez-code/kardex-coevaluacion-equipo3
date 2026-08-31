@@ -15,7 +15,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods
 
 from apps.catalogo.models import Cliente, Proveedor
-from apps.catalogo.repositories import RepositorioArticulos
+from apps.catalogo.repositories import RepositorioArticulos, RepositorioTerceros
 from apps.movimientos.forms import (
     FormsetLineaAjuste,
     FormsetLineaEntrada,
@@ -332,7 +332,7 @@ def entrada_formulario(request: HttpRequest) -> HttpResponse:
     contexto = {
         "cabecera": cabecera, "formset": formset,
         "articulos_disponibles": _articulos_disponibles(),
-        "proveedores_disponibles": Proveedor.objects.filter(activo=True).order_by("razon_social"),
+        "proveedores_disponibles": RepositorioTerceros.listar(Proveedor, estado="activo"),
         "ancho": True, "titulo_modal": "Nueva entrada", "destino": reverse("movimientos:entrada_nueva"),
         "etiqueta_envio": "Registrar entrada",
     }
@@ -377,7 +377,7 @@ def salida_formulario(request: HttpRequest) -> HttpResponse:
     contexto = {
         "cabecera": cabecera, "formset": formset,
         "articulos_disponibles": _articulos_disponibles(),
-        "clientes_disponibles": Cliente.objects.filter(activo=True).order_by("razon_social"),
+        "clientes_disponibles": RepositorioTerceros.listar(Cliente, estado="activo"),
         "ancho": True, "titulo_modal": "Nueva salida", "destino": reverse("movimientos:salida_nueva"),
         "etiqueta_envio": "Registrar salida",
     }
