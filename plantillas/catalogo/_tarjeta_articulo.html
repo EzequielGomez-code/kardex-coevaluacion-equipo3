@@ -22,5 +22,12 @@
         {% icono "editar" %} Editar
       </button>
     {% endif %}
+    {% if user|tiene_permiso:"articulo.eliminar" %}
+      <button class="boton boton--secundario" type="button"
+              hx-post="{% url 'catalogo:articulo_eliminar' fila.pk %}" hx-swap="none"
+              hx-confirm="¿Eliminar el artículo «{{ fila.nombre }}»? Si ya tiene movimientos, se dará de baja en vez de borrarse.">
+        {% icono "papelera" %} Eliminar
+      </button>
+    {% endif %}
   </div>
 </div>

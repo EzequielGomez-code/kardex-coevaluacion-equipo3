@@ -355,6 +355,21 @@ def unidad_formulario(request: HttpRequest, unidad_id: int | None = None) -> Htt
     return render(request, "catalogo/unidad_formulario.html", contexto)
 
 
+@requiere_permiso("categoria.gestionar")
+@require_http_methods(["POST"])
+def unidad_eliminar(request: HttpRequest, unidad_id: int) -> HttpResponse:
+    """Elimina una unidad de medida sin artículos asignados."""
+    unidad = ServicioUnidadesMedida.obtener(unidad_id)
+    if unidad is None:
+        return render(request, "componentes/no_encontrado.html", status=404)
+    try:
+        nombre = unidad.nombre
+        ServicioUnidadesMedida.eliminar(unidad)
+    except ValidationError as error:
+        return respuesta_aviso(" ".join(error.messages))
+    return respuesta_exito(f"Unidad «{nombre}» eliminada.")
+
+
 # ---------------------------------------------------------------------------
 # Artículos
 # ---------------------------------------------------------------------------

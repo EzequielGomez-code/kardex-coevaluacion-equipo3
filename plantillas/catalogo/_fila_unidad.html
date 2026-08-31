@@ -16,6 +16,11 @@
               hx-get="{% url 'catalogo:unidad_editar' fila.pk %}" hx-target="#modal">
         {% icono "editar" %} Editar
       </button>
+      <button class="boton boton--plano" type="button"
+              hx-post="{% url 'catalogo:unidad_eliminar' fila.pk %}" hx-swap="none"
+              hx-confirm="¿Eliminar la unidad «{{ fila.nombre }}»? Esta acción no se puede deshacer.">
+        {% icono "papelera" %} Eliminar
+      </button>
     {% endif %}
   </td>
 </tr>

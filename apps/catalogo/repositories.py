@@ -122,6 +122,11 @@ class RepositorioUnidadesMedida:
         """Devuelve una unidad de medida por su identificador, o ``None``."""
         return UnidadMedida.objects.filter(pk=unidad_id).first()
 
+    @staticmethod
+    def tiene_articulos(unidad: UnidadMedida) -> bool:
+        """Indica si algún artículo usa esta unidad de medida."""
+        return Articulo.objects.filter(unidad=unidad).exists()
+
 
 class RepositorioArticulos:
     """Acceso a datos de :class:`~apps.catalogo.models.Articulo`."""

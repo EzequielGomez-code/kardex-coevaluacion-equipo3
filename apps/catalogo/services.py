@@ -343,6 +343,23 @@ class ServicioUnidadesMedida:
         )
         return unidad
 
+    @staticmethod
+    @transaction.atomic
+    def eliminar(unidad: UnidadMedida) -> None:
+        """
+        Elimina una unidad de medida.
+
+        :raises ValidationError: si algún artículo ya la usa.
+        """
+        if RepositorioUnidadesMedida.tiene_articulos(unidad):
+            raise ValidationError("Esta unidad tiene artículos asignados.")
+        identificador, codigo = unidad.pk, unidad.codigo
+        unidad.delete()
+        ServicioAuditoria.registrar(
+            entidad="UnidadMedida", entidad_id=identificador,
+            accion=RegistroAuditoria.Accion.ELIMINAR, detalle={"codigo": codigo},
+        )
+
 
 class ServicioArticulos:
     """Alta, edición y baja de artículos, con generación de SKU."""

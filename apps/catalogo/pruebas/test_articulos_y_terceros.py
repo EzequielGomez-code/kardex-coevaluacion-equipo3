@@ -11,6 +11,7 @@ from apps.catalogo.services import (
     ServicioCategorias,
     ServicioClientes,
     ServicioProveedores,
+    ServicioUnidadesMedida,
 )
 from apps.configuracion.models import Parametro, TipoDato
 
@@ -115,6 +116,22 @@ def test_dar_de_baja_sin_movimientos_borra_de_verdad(categoria, unidad):
     articulo = ServicioArticulos.crear(nombre="Cemento", categoria=categoria, unidad=unidad)
     ServicioArticulos.dar_de_baja(articulo)
     assert not Articulo.objects.filter(pk=articulo.pk).exists()
+
+
+@pytest.mark.django_db
+def test_eliminar_unidad_con_articulos_falla(categoria, unidad):
+    """No se elimina una unidad que ya usa algún artículo."""
+    ServicioArticulos.crear(nombre="Cemento", categoria=categoria, unidad=unidad)
+    with pytest.raises(ValidationError, match="artículos"):
+        ServicioUnidadesMedida.eliminar(unidad)
+
+
+@pytest.mark.django_db
+def test_eliminar_unidad_sin_articulos_funciona(db):
+    """Una unidad que ningún artículo usa se elimina sin problema."""
+    unidad = UnidadMedida.objects.create(codigo="GL", nombre="Galón")
+    ServicioUnidadesMedida.eliminar(unidad)
+    assert not UnidadMedida.objects.filter(pk=unidad.pk).exists()
 
 
 @pytest.mark.django_db
