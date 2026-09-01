@@ -9,6 +9,9 @@
      etiqueta  texto de la cabecera
      clave     campo por el que ordena (opcional)
      clase     clase CSS extra, por ejemplo "num" para cantidades
+
+   «titulo_tabla» es opcional: da el rótulo que anuncia un lector de pantalla
+   al entrar en la tabla. Si no se pasa, se usa el título de la pantalla.
 {% endcomment %}
 <div class="tabla-envoltura{% if sin_filtros %} tabla-envoltura--sola{% endif %}">
   {% if seleccionable %}
@@ -18,16 +21,17 @@
   {% endif %}
 
   <table class="tabla">
+    <caption class="solo-lectores">{{ titulo_tabla|default:titulo }}</caption>
     <thead>
       <tr>
         {% if seleccionable %}
-          <th class="tabla__seleccion">
+          <th scope="col" class="tabla__seleccion">
             <label class="solo-lectores" for="marcar-todo">Seleccionar todas las filas</label>
             <input class="casilla" type="checkbox" id="marcar-todo" data-seleccionar-todo>
           </th>
         {% endif %}
         {% for columna in columnas %}
-          <th class="{{ columna.clase }}">
+          <th scope="col" class="{{ columna.clase }}">
             {% if columna.clave %}
               {% if request.GET.orden == columna.clave %}
                 <a href="{% url_con orden=columna.clave|add:"-desc" %}">
@@ -47,7 +51,7 @@
             {% endif %}
           </th>
         {% endfor %}
-        {% if con_acciones %}<th class="tabla__acciones"><span class="solo-lectores">Acciones</span></th>{% endif %}
+        {% if con_acciones %}<th scope="col" class="tabla__acciones"><span class="solo-lectores">Acciones</span></th>{% endif %}
       </tr>
     </thead>
     <tbody>

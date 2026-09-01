@@ -22,7 +22,10 @@
 
   --texto:   #23211E;
   --texto-2: #6A665F;
-  --texto-3: #918C83;
+  /* --texto-3 llega justo al mínimo AA (4.5:1) sobre la superficie clara.
+     Antes era #918C83, que se quedaba en 3.34:1 — y no es solo texto de
+     apoyo: es el color de las etiquetas de las tarjetas en teléfono. */
+  --texto-3: #757068;
   --texto-invertido: #FFFFFF;
 
   /* Texto sobre foto: para la portada de acceso, que siempre lleva una
@@ -122,7 +125,7 @@
 
     --texto:   #EDEBE6;
     --texto-2: #B3AEA4;
-    --texto-3: #837E74;
+    --texto-3: #8F8A80;
     --texto-invertido: #1A1917;
 
     --acento:       #4E9683;
@@ -166,7 +169,7 @@
 
   --texto:   #EDEBE6;
   --texto-2: #B3AEA4;
-  --texto-3: #837E74;
+  --texto-3: #8F8A80;
   --texto-invertido: #1A1917;
 
   --acento:       #4E9683;

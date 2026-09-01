@@ -2,7 +2,15 @@
 <tr>
   <td class="mono">{{ fila.codigo }}</td>
   <td class="tabla__principal">{{ fila.nombre }}</td>
-  <td>{% if fila.permite_decimales %}{% icono "cheque" %}{% else %}—{% endif %}</td>
+  {% comment %} El ícono es decorativo (aria-hidden): sin este texto, un lector
+     de pantalla anunciaba la celda vacía en vez de decir «Sí». {% endcomment %}
+  <td>
+    {% if fila.permite_decimales %}
+      {% icono "cheque" %}<span class="solo-lectores">Sí</span>
+    {% else %}
+      <span aria-hidden="true">—</span><span class="solo-lectores">No</span>
+    {% endif %}
+  </td>
   <td>
     {% if fila.activo %}
       {% include "componentes/badge.html" with texto="Activa" variante="ok" con_punto=True %}
