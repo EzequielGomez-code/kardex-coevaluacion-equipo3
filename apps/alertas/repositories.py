@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+
 from django.db.models import Q, QuerySet
 
 from apps.alertas.models import Alerta, EstadoAlerta, ReglaAlerta
@@ -66,6 +68,46 @@ class RepositorioAlertas:
             Alerta.objects.filter(
                 regla_id=regla_id, estado__in=[EstadoAlerta.ABIERTA, EstadoAlerta.EN_PROCESO],
             ).values_list("articulo_id", "almacen_id")
+        )
+
+    @staticmethod
+    def abiertas_de_reglas(reglas_ids: Iterable[int]) -> dict[tuple[int, int, int], Alerta]:
+        """
+        Devuelve, en **una sola consulta**, las alertas vivas de varias reglas,
+        indexadas por ``(regla, artículo, almacén)``.
+
+        Es lo que permite al evaluador decidir en memoria en vez de preguntar
+        por cada par: con la base en otra región, una consulta por par hacía
+        que «Evaluar ahora» superara el tiempo límite del servidor.
+        """
+        return {
+            (alerta.regla_id, alerta.articulo_id, alerta.almacen_id): alerta
+            for alerta in Alerta.objects.filter(
+                regla_id__in=list(reglas_ids),
+                estado__in=[EstadoAlerta.ABIERTA, EstadoAlerta.EN_PROCESO],
+            )
+        }
+
+    @staticmethod
+    def crear_muchas(alertas: list[Alerta]) -> None:
+        """Inserta en bloque las alertas nuevas de una evaluación."""
+        Alerta.objects.bulk_create(alertas)
+
+    @staticmethod
+    def actualizar_mensajes(alertas: list[Alerta]) -> None:
+        """
+        Guarda en bloque el mensaje y el contexto de alertas que ya existían.
+
+        ``bulk_update`` no dispara ``auto_now``, así que ``actualizado_en`` va
+        en la lista de campos y lo fija quien llama.
+        """
+        Alerta.objects.bulk_update(alertas, ["mensaje", "contexto", "actualizado_en"])
+
+    @staticmethod
+    def cerrar_muchas(alertas_ids: list[int], momento) -> int:
+        """Marca como resueltas, en una sola consulta, las alertas indicadas."""
+        return Alerta.objects.filter(pk__in=alertas_ids).update(
+            estado=EstadoAlerta.RESUELTA, resuelta_en=momento, actualizado_en=momento,
         )
 
     @staticmethod

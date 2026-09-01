@@ -144,86 +144,118 @@ def _regla_aplica(regla: ReglaAlerta, articulo: Articulo, almacen_id: int,
     return True
 
 
-def _abrir_o_actualizar(regla_id: int, articulo_id: int, almacen_id: int, mensaje: str,
-                        contexto: dict) -> None:
-    """Abre una alerta nueva, o actualiza el mensaje si ya había una abierta."""
-    existente = RepositorioAlertas.abierta_para(regla_id, articulo_id, almacen_id)
-    if existente:
-        if existente.mensaje != mensaje or existente.contexto != contexto:
+class _Pendientes:
+    """
+    Junta lo que una pasada de evaluación decidió, y lo escribe de una vez.
+
+    El evaluador antes preguntaba a la base por cada par (artículo, almacén)
+    para saber si ya había una alerta abierta, y volvía a escribir de a una.
+    Con la base en otra región eso eran miles de idas y vueltas. Ahora las
+    alertas vivas se leen una sola vez, se decide en memoria, y aquí se
+    acumulan las altas, las modificaciones y los cierres.
+    """
+
+    def __init__(self, abiertas: dict[tuple[int, int, int], Alerta]) -> None:
+        self._abiertas = abiertas
+        self._nuevas: list[Alerta] = []
+        self._a_actualizar: list[Alerta] = []
+        self._a_cerrar: list[int] = []
+
+    def registrar(self, regla_id: int, articulo_id: int, almacen_id: int,
+                  decision: tuple[str, dict] | None) -> None:
+        """
+        Anota qué hacer con un par ya evaluado.
+
+        :param decision: ``(mensaje, contexto)`` si la alerta debe estar
+            abierta, o ``None`` si debe cerrarse.
+        """
+        existente = self._abiertas.get((regla_id, articulo_id, almacen_id))
+
+        if decision is None:
+            if existente is not None:
+                self._a_cerrar.append(existente.pk)
+            return
+
+        mensaje, contexto = decision
+        if existente is None:
+            self._nuevas.append(
+                Alerta(
+                    regla_id=regla_id, articulo_id=articulo_id, almacen_id=almacen_id,
+                    mensaje=mensaje, contexto=contexto,
+                )
+            )
+        elif existente.mensaje != mensaje or existente.contexto != contexto:
             existente.mensaje = mensaje
             existente.contexto = contexto
-            existente.save(update_fields=["mensaje", "contexto", "actualizado_en"])
-        return
-    Alerta.objects.create(
-        regla_id=regla_id, articulo_id=articulo_id, almacen_id=almacen_id,
-        mensaje=mensaje, contexto=contexto,
-    )
+            self._a_actualizar.append(existente)
+
+    def cerrar_par(self, regla_id: int, articulo_id: int, almacen_id: int) -> None:
+        """Cierra un par sin evaluarlo — lo usa la regla de vencimiento."""
+        self.registrar(regla_id, articulo_id, almacen_id, None)
+
+    def escribir(self) -> None:
+        """Vuelca a la base lo acumulado: como mucho tres consultas."""
+        momento = timezone.now()
+        if self._nuevas:
+            RepositorioAlertas.crear_muchas(self._nuevas)
+        if self._a_actualizar:
+            for alerta in self._a_actualizar:
+                alerta.actualizado_en = momento
+            RepositorioAlertas.actualizar_mensajes(self._a_actualizar)
+        if self._a_cerrar:
+            RepositorioAlertas.cerrar_muchas(self._a_cerrar, momento)
 
 
-def _cerrar_si_ya_no_aplica(regla_id: int, articulo_id: int, almacen_id: int) -> None:
-    """Resuelve automáticamente una alerta abierta cuya condición ya no se cumple."""
-    existente = RepositorioAlertas.abierta_para(regla_id, articulo_id, almacen_id)
-    if existente:
-        existente.estado = EstadoAlerta.RESUELTA
-        existente.resuelta_en = timezone.now()
-        existente.save(update_fields=["estado", "resuelta_en", "actualizado_en"])
-
-
-def _evaluar_stock(regla: ReglaAlerta, existencia) -> None:
-    """Evalúa las reglas de existencia (bajo mínimo o en cero) sobre una fila de existencia."""
-    articulo_id, almacen_id = existencia.articulo_id, existencia.almacen_id
+def _decidir_stock(regla: ReglaAlerta, existencia) -> tuple[str, dict] | None:
+    """Decide si una existencia incumple una regla de existencia (bajo mínimo o en cero)."""
     if regla.tipo == TipoRegla.STOCK_CERO:
         if existencia.cantidad <= 0:
-            _abrir_o_actualizar(
-                regla.pk, articulo_id, almacen_id,
+            return (
                 f"{existencia.articulo.sku} está en cero en {existencia.almacen.codigo}.",
                 {"cantidad": str(existencia.cantidad)},
             )
-        else:
-            _cerrar_si_ya_no_aplica(regla.pk, articulo_id, almacen_id)
-    elif regla.tipo == TipoRegla.STOCK_BAJO:
-        if 0 < existencia.cantidad < existencia.stock_minimo:
-            _abrir_o_actualizar(
-                regla.pk, articulo_id, almacen_id,
-                f"{existencia.articulo.sku} tiene {existencia.cantidad} unidades en "
-                f"{existencia.almacen.codigo}, por debajo del mínimo ({existencia.stock_minimo}).",
-                {"cantidad": str(existencia.cantidad), "minimo": str(existencia.stock_minimo)},
-            )
-        else:
-            _cerrar_si_ya_no_aplica(regla.pk, articulo_id, almacen_id)
+        return None
+
+    if 0 < existencia.cantidad < existencia.stock_minimo:
+        return (
+            f"{existencia.articulo.sku} tiene {existencia.cantidad} unidades en "
+            f"{existencia.almacen.codigo}, por debajo del mínimo ({existencia.stock_minimo}).",
+            {"cantidad": str(existencia.cantidad), "minimo": str(existencia.stock_minimo)},
+        )
+    return None
 
 
-def _evaluar_sin_movimiento(regla: ReglaAlerta, existencia) -> None:
-    """Evalúa si un artículo lleva demasiado tiempo sin movimiento."""
-    limite = timezone.now() - timedelta(days=regla.dias_umbral)
+def _decidir_sin_movimiento(regla: ReglaAlerta, existencia, ahora) -> tuple[str, dict] | None:
+    """Decide si un artículo lleva demasiado tiempo quieto en un almacén."""
+    limite = ahora - timedelta(days=regla.dias_umbral)
     sin_movimiento = (
         existencia.ultimo_movimiento_en is None or existencia.ultimo_movimiento_en < limite
     )
-    if sin_movimiento and existencia.cantidad > 0:
-        dias = (
-            (timezone.now() - existencia.ultimo_movimiento_en).days
-            if existencia.ultimo_movimiento_en else None
-        )
-        _abrir_o_actualizar(
-            regla.pk, existencia.articulo_id, existencia.almacen_id,
-            f"{existencia.articulo.sku} no tiene movimientos en {existencia.almacen.codigo} "
-            f"desde hace {dias if dias is not None else 'siempre'} días.",
-            {"dias_sin_movimiento": dias},
-        )
-    else:
-        _cerrar_si_ya_no_aplica(regla.pk, existencia.articulo_id, existencia.almacen_id)
+    if not (sin_movimiento and existencia.cantidad > 0):
+        return None
+
+    dias = (
+        (ahora - existencia.ultimo_movimiento_en).days
+        if existencia.ultimo_movimiento_en else None
+    )
+    return (
+        f"{existencia.articulo.sku} no tiene movimientos en {existencia.almacen.codigo} "
+        f"desde hace {dias if dias is not None else 'siempre'} días.",
+        {"dias_sin_movimiento": dias},
+    )
 
 
-def _evaluar_existencia_para_regla(regla: ReglaAlerta, existencia) -> None:
+def _decidir(regla: ReglaAlerta, existencia, ahora) -> tuple[str, dict] | None:
     """Despacha una existencia que ya pasó el filtro de alcance a su evaluador de tipo."""
     if regla.tipo in (TipoRegla.STOCK_BAJO, TipoRegla.STOCK_CERO):
-        _evaluar_stock(regla, existencia)
-    elif regla.tipo == TipoRegla.SIN_MOVIMIENTO:
-        _evaluar_sin_movimiento(regla, existencia)
+        return _decidir_stock(regla, existencia)
+    if regla.tipo == TipoRegla.SIN_MOVIMIENTO:
+        return _decidir_sin_movimiento(regla, existencia, ahora)
+    return None
 
 
 def _evaluar_vencimiento(regla: ReglaAlerta, almacenes_por_regla: dict,
-                         categorias_por_regla: dict) -> None:
+                         categorias_por_regla: dict, pendientes: _Pendientes) -> None:
     """Evalúa los lotes con saldo que vencen dentro del margen de la regla."""
     from apps.movimientos.repositories import RepositorioLotes  # pylint: disable=import-outside-toplevel
 
@@ -234,16 +266,18 @@ def _evaluar_vencimiento(regla: ReglaAlerta, almacenes_por_regla: dict,
         ):
             continue
         pares_vigentes.add((lote.articulo_id, lote.almacen_id))
-        _abrir_o_actualizar(
+        pendientes.registrar(
             regla.pk, lote.articulo_id, lote.almacen_id,
-            f"El lote {lote.codigo} de {lote.articulo.sku} vence el "
-            f"{lote.fecha_vencimiento:%d/%m/%Y}.",
-            {"lote": lote.codigo, "vencimiento": lote.fecha_vencimiento.isoformat()},
+            (
+                f"El lote {lote.codigo} de {lote.articulo.sku} vence el "
+                f"{lote.fecha_vencimiento:%d/%m/%Y}.",
+                {"lote": lote.codigo, "vencimiento": lote.fecha_vencimiento.isoformat()},
+            ),
         )
 
     pares_abiertos = RepositorioAlertas.pares_abiertos_de_regla(regla.pk)
     for articulo_id, almacen_id in pares_abiertos - pares_vigentes:
-        _cerrar_si_ya_no_aplica(regla.pk, articulo_id, almacen_id)
+        pendientes.cerrar_par(regla.pk, articulo_id, almacen_id)
 
 
 class ServicioEvaluador:
@@ -265,13 +299,17 @@ class ServicioEvaluador:
         if not pares:
             return 0
 
-        reglas = list(
-            RepositorioReglas.listar(solo_activas=True).exclude(tipo=TipoRegla.VENCIMIENTO_PROXIMO)
-        )
+        # El «exclude» se aplica en Python y no sobre el conjunto de consulta:
+        # clonarlo descartaría el prefetch de almacenes y categorías que el
+        # repositorio ya trajo, y volvería a preguntarlos por cada regla.
+        reglas = [
+            regla for regla in RepositorioReglas.listar(solo_activas=True)
+            if regla.tipo != TipoRegla.VENCIMIENTO_PROXIMO
+        ]
         if not reglas:
             return 0
-        almacenes_por_regla = {r.pk: set(r.almacenes.values_list("id", flat=True)) for r in reglas}
-        categorias_por_regla = {r.pk: set(r.categorias.values_list("id", flat=True)) for r in reglas}
+        almacenes_por_regla = {r.pk: {a.pk for a in r.almacenes.all()} for r in reglas}
+        categorias_por_regla = {r.pk: {c.pk for c in r.categorias.all()} for r in reglas}
 
         existencias_por_par = {
             (existencia.articulo_id, existencia.almacen_id): existencia
@@ -281,6 +319,10 @@ class ServicioEvaluador:
             )
         }
 
+        pendientes = _Pendientes(
+            RepositorioAlertas.abiertas_de_reglas([r.pk for r in reglas])
+        )
+        ahora = timezone.now()
         contadas = 0
         for articulo_id, almacen_id in pares:
             existencia = existencias_por_par.get((articulo_id, almacen_id))
@@ -292,7 +334,10 @@ class ServicioEvaluador:
                 ):
                     continue
                 contadas += 1
-                _evaluar_existencia_para_regla(regla, existencia)
+                pendientes.registrar(
+                    regla.pk, articulo_id, almacen_id, _decidir(regla, existencia, ahora)
+                )
+        pendientes.escribir()
         return contadas
 
     @staticmethod
@@ -310,14 +355,28 @@ class ServicioEvaluador:
         from apps.movimientos.models import Existencia  # pylint: disable=import-outside-toplevel
 
         reglas = list(RepositorioReglas.listar(solo_activas=True))
+        if not reglas:
+            return 0
+
         contadas = 0
-        existencias = Existencia.objects.select_related("articulo", "almacen").all()
-        almacenes_por_regla = {r.pk: set(r.almacenes.values_list("id", flat=True)) for r in reglas}
-        categorias_por_regla = {r.pk: set(r.categorias.values_list("id", flat=True)) for r in reglas}
+        # Una sola lectura del inventario: la lista se recorre una vez por
+        # regla, pero el conjunto de consulta ya quedó en memoria.
+        existencias = list(Existencia.objects.select_related("articulo", "almacen").all())
+        # «.all()» consume el prefetch del repositorio; «.values_list()» lo
+        # descartaría y volvería a consultar por cada regla.
+        almacenes_por_regla = {r.pk: {a.pk for a in r.almacenes.all()} for r in reglas}
+        categorias_por_regla = {r.pk: {c.pk for c in r.categorias.all()} for r in reglas}
+
+        pendientes = _Pendientes(
+            RepositorioAlertas.abiertas_de_reglas([r.pk for r in reglas])
+        )
+        ahora = timezone.now()
 
         for regla in reglas:
             if regla.tipo == TipoRegla.VENCIMIENTO_PROXIMO:
-                _evaluar_vencimiento(regla, almacenes_por_regla, categorias_por_regla)
+                _evaluar_vencimiento(
+                    regla, almacenes_por_regla, categorias_por_regla, pendientes
+                )
                 contadas += 1
                 continue
             for existencia in existencias:
@@ -327,5 +386,9 @@ class ServicioEvaluador:
                 ):
                     continue
                 contadas += 1
-                _evaluar_existencia_para_regla(regla, existencia)
+                pendientes.registrar(
+                    regla.pk, existencia.articulo_id, existencia.almacen_id,
+                    _decidir(regla, existencia, ahora),
+                )
+        pendientes.escribir()
         return contadas

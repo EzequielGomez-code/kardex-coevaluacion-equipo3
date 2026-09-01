@@ -188,3 +188,35 @@ def test_regla_de_vencimiento_se_cierra_sola_cuando_el_lote_se_agota(
     ServicioEvaluador.evaluar_todo()
     alerta = Alerta.objects.get(regla=regla, articulo=articulo, almacen=almacen)
     assert alerta.estado == EstadoAlerta.RESUELTA
+
+
+@pytest.mark.django_db
+def test_evaluar_todo_no_consulta_una_vez_por_par(
+    regla_stock_bajo, regla_stock_cero, tipo_entrada, almacen, articulo,
+    usuario_administrador, django_assert_max_num_queries,
+):
+    """
+    El evaluador decide en memoria y escribe en bloque.
+
+    Antes preguntaba a la base si ya había alerta abierta **por cada par**
+    (artículo, almacén) y por cada regla, así que el costo crecía con el
+    tamaño del inventario: con la base en otra región, «Evaluar ahora»
+    superaba el tiempo límite del servidor. Esta prueba fija ese contrato —
+    el conteo no debe depender de cuántas existencias haya.
+    """
+    segundo_almacen = Almacen.objects.create(codigo="ALM-98", nombre="Segundo depósito")
+    for destino in (almacen, segundo_almacen):
+        ServicioMovimientos.registrar_entrada(
+            tipo=tipo_entrada, almacen_destino=destino, usuario=usuario_administrador,
+            lineas=[{
+                "articulo_id": articulo.pk, "cantidad": Decimal("3"),
+                "costo_unitario": Decimal("10"),
+            }],
+        )
+
+    # Dos almacenes × dos reglas = cuatro pares evaluados. Con el defecto
+    # anterior esto solo bajaba de veinte consultas por casualidad.
+    with django_assert_max_num_queries(12):
+        ServicioEvaluador.evaluar_todo()
+
+    assert Alerta.objects.filter(estado=EstadoAlerta.ABIERTA).count() == 2

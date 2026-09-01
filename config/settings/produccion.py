@@ -12,6 +12,12 @@ from .base import env
 
 DEBUG = False
 
+# Render (Oregón) y Neon (us-east-2) están en regiones distintas: abrir una
+# conexión nueva cuesta un ida y vuelta caro. Se sostienen diez minutos en vez
+# de uno, apoyadas en CONN_HEALTH_CHECKS de base.py, que es lo que hace seguro
+# reutilizarlas.
+DATABASES["default"]["CONN_MAX_AGE"] = 600  # noqa: F405
+
 # ALLOWED_HOSTS cerrado: se declara explícitamente en el entorno de Render.
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=[])
 

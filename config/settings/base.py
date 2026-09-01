@@ -111,6 +111,13 @@ DATABASES = {
 }
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)
 
+# El cómputo gratuito de Neon se suspende tras unos minutos sin uso. Con
+# conexiones persistentes y sin esta comprobación, Django reutiliza un socket
+# ya muerto y la primera petición después de una pausa termina en error 500.
+# Con la comprobación activa, prueba la conexión antes de usarla y reconecta
+# sola. Es inocua en SQLite.
+DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # ---------------------------------------------------------------------------
