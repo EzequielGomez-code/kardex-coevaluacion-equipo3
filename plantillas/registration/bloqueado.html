@@ -4,6 +4,26 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acceso bloqueado · Kardex</title>
+
+  {% include "componentes/icono_navegador.html" %}
+
+  {% comment %} Mismo guion anti-parpadeo que base.html. {% endcomment %}
+  <script>
+    (function () {
+      try {
+        var t = window.localStorage.getItem("kardex-tema");
+        if (t === "oscuro" || t === "claro") document.documentElement.setAttribute("data-tema", t);
+      } catch (e) { /* almacenamiento no disponible: se usa la preferencia del sistema */ }
+    })();
+  </script>
+
+  {% comment %} Esta pantalla no cargaba las fuentes y se pintaba con una
+     tipografía de reserva, distinta a la del resto del sistema. {% endcomment %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Sans+3:wght@400;600&display=swap">
+
   <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
   <link rel="stylesheet" href="{% static 'css/base.css' %}">
   <link rel="stylesheet" href="{% static 'css/componentes.css' %}">

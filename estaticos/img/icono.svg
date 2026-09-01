@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Kardex">
+  <!--
+    Ícono de marca de Kardex: la misma ficha de kardex que abre la pantalla de
+    acceso, redibujada en macizo. A 16 px un trazo fino desaparece, así que la
+    tarjeta va rellena y las líneas se recortan en el verde de marca.
+    El fondo propio hace que se lea igual sobre una pestaña clara u oscura.
+  -->
+  <rect width="32" height="32" rx="6" fill="#1F5B4E"/>
+
+  <!-- Ficha de atrás, apenas insinuada -->
+  <path d="M21.5 9.5 25.5 11 25.5 21 21.5 22.5Z" fill="#FFFFFF" fill-opacity=".55"/>
+
+  <!-- Ficha principal -->
+  <rect x="7" y="6.5" width="13" height="19" rx="2" fill="#FFFFFF"/>
+
+  <!-- Renglones -->
+  <rect x="10" y="10.88" width="7" height="2" rx="1" fill="#1F5B4E"/>
+  <rect x="10" y="15" width="7" height="2" rx="1" fill="#1F5B4E"/>
+  <rect x="10" y="19.12" width="4.5" height="2" rx="1" fill="#1F5B4E"/>
+</svg>

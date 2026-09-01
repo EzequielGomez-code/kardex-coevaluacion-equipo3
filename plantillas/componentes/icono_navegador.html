@@ -1,0 +1,13 @@
+{% load static %}{% comment %}
+  Ícono de la pestaña del navegador.
+
+  Va en un parcial porque hay tres plantillas raíz que no heredan de base.html
+  (el acceso y la pantalla de bloqueo son documentos completos aparte), y las
+  tres necesitan exactamente lo mismo.
+
+  El SVG primero: los navegadores que lo entienden lo prefieren y escala sin
+  perder nitidez. El .ico queda de reserva para los que no.
+{% endcomment %}
+<link rel="icon" href="{% static 'img/icono.svg' %}" type="image/svg+xml">
+<link rel="icon" href="{% static 'img/favicon.ico' %}" sizes="any">
+<link rel="apple-touch-icon" href="{% static 'img/icono-180.png' %}">

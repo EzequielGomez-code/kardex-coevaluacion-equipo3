@@ -4,6 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Acceso · Kardex</title>
+
+  {% include "componentes/icono_navegador.html" %}
+
+  {% comment %} Mismo guion anti-parpadeo que base.html: quien eligió tema claro
+     y cerró sesión debe volver a ver el acceso en claro, no en el del sistema. {% endcomment %}
+  <script>
+    (function () {
+      try {
+        var t = window.localStorage.getItem("kardex-tema");
+        if (t === "oscuro" || t === "claro") document.documentElement.setAttribute("data-tema", t);
+      } catch (e) { /* almacenamiento no disponible: se usa la preferencia del sistema */ }
+    })();
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet"

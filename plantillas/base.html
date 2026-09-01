@@ -7,6 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block titulo %}{{ titulo|default:"Panel" }}{% endblock %} · {{ nombre_sistema }}</title>
 
+  {% include "componentes/icono_navegador.html" %}
+
   {% comment %} Fija el tema antes del primer pintado, para que no haya parpadeo
      al pasar de claro a oscuro en la carga de la página. {% endcomment %}
   <script>
