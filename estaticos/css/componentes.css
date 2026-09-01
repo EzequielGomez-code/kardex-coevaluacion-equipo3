@@ -458,8 +458,16 @@
 
 @media (max-width: 640px) {
   /* En teléfono, la tarjeta reemplaza a la tabla entera: filtro y paginación
-     se mantienen; solo cambia cómo se ven las filas. */
-  .tabla-envoltura { display: none; }
+     se mantienen; solo cambia cómo se ven las filas.
+
+     La tabla se esconde SOLO si de verdad hay tarjetas detrás que la
+     reemplacen. Antes se escondía siempre, y toda pantalla sin tarjetas
+     (proveedores, clientes, marcas, unidades, el árbol de categorías, los
+     campos personalizados y las líneas de los formularios de movimiento)
+     quedaba en blanco en el teléfono — igual que los estados vacíos, que
+     también viven dentro de una envoltura. Sin reemplazo, la tabla se queda
+     y se desplaza en horizontal, que es incómodo pero legible. */
+  .tabla-envoltura:has(+ .tarjetas-lista) { display: none; }
   .tarjetas-lista { display: block; }
   .filtros-activos { border-radius: 0; }
 }
