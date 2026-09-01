@@ -302,6 +302,7 @@ class ServicioCamposPersonalizados:
         nombre_entidad = entidad or objeto.__class__.__name__
         limpios = ServicioCamposPersonalizados.validar(nombre_entidad, datos, categoria)
 
+        guardadas = []
         for definicion in ServicioCamposPersonalizados.campos_de(nombre_entidad, categoria):
             if definicion.clave not in limpios:
                 continue
@@ -309,6 +310,18 @@ class ServicioCamposPersonalizados:
                 definicion,
                 str(objeto.pk),
                 ServicioCamposPersonalizados._columnas(definicion, limpios[definicion.clave]),
+            )
+            guardadas.append(definicion.clave)
+
+        # Punto 9.7 del brief: toda acción deja rastro. Un solo registro por
+        # operación, con las claves tocadas — no uno por campo, que llenaría la
+        # auditoría de ruido cada vez que se guarda un artículo.
+        if guardadas:
+            ServicioAuditoria.registrar(
+                entidad=nombre_entidad,
+                entidad_id=objeto.pk,
+                accion=RegistroAuditoria.Accion.EDITAR,
+                detalle={"accion_dominio": "campos_personalizados", "campos": sorted(guardadas)},
             )
         return limpios
 
@@ -338,10 +351,19 @@ class ServicioCamposPersonalizados:
         return columnas
 
     @staticmethod
+    @transaction.atomic
     def borrar_valores(objeto: Any, entidad: str = "") -> int:
         """Elimina los valores personalizados de un objeto que se da de baja."""
         nombre_entidad = entidad or objeto.__class__.__name__
-        return RepositorioValoresCampo.borrar_de_objeto(nombre_entidad, str(objeto.pk))
+        borrados = RepositorioValoresCampo.borrar_de_objeto(nombre_entidad, str(objeto.pk))
+        if borrados:
+            ServicioAuditoria.registrar(
+                entidad=nombre_entidad,
+                entidad_id=objeto.pk,
+                accion=RegistroAuditoria.Accion.ELIMINAR,
+                detalle={"accion_dominio": "campos_personalizados", "borrados": borrados},
+            )
+        return borrados
 
 
 class ServicioDefinicionesCampo:

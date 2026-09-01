@@ -190,3 +190,67 @@ def test_el_formulario_dinamico_arma_los_widgets(campos_de_almacen):
     ]
     assert formulario.fields["responsable_seguridad"].required is True
     assert formulario.fields["tipo_local"].choices[1] == ("Propio", "Propio")
+
+
+@pytest.mark.django_db
+def test_guardar_campos_personalizados_deja_rastro_en_la_auditoria(
+    campos_de_almacen, almacen
+):
+    """
+    Punto 9.7 del brief: toda acción deja registro en la auditoría.
+
+    Guardar campos personalizados escribía filas de ``ValorCampo`` sin dejar
+    rastro, así que un cambio en esos datos era invisible para el auditor.
+    """
+    from apps.nucleo.models import RegistroAuditoria  # noqa: PLC0415
+
+    ServicioCamposPersonalizados.guardar_valores(
+        almacen,
+        {
+            "metros_cuadrados": "120",
+            "tipo_local": "Propio",
+            "responsable_seguridad": "Ramón Tolentino",
+        },
+        entidad="Almacen",
+    )
+
+    registro = RegistroAuditoria.objects.filter(
+        entidad="Almacen", entidad_id=str(almacen.pk),
+        accion=RegistroAuditoria.Accion.EDITAR,
+    ).latest("creado_en")
+    assert registro.detalle["accion_dominio"] == "campos_personalizados"
+    assert registro.detalle["campos"] == [
+        "metros_cuadrados", "responsable_seguridad", "tipo_local",
+    ]
+
+
+@pytest.mark.django_db
+def test_borrar_campos_personalizados_deja_rastro_en_la_auditoria(
+    campos_de_almacen, almacen
+):
+    """Dar de baja un objeto con campos propios también queda registrado."""
+    from apps.nucleo.models import RegistroAuditoria  # noqa: PLC0415
+
+    ServicioCamposPersonalizados.guardar_valores(
+        almacen,
+        {"metros_cuadrados": "120", "responsable_seguridad": "Ramón Tolentino"},
+        entidad="Almacen",
+    )
+    ServicioCamposPersonalizados.borrar_valores(almacen, entidad="Almacen")
+
+    registro = RegistroAuditoria.objects.filter(
+        entidad="Almacen", entidad_id=str(almacen.pk),
+        accion=RegistroAuditoria.Accion.ELIMINAR,
+    ).latest("creado_en")
+    assert registro.detalle["accion_dominio"] == "campos_personalizados"
+    assert registro.detalle["borrados"] >= 1
+
+
+@pytest.mark.django_db
+def test_guardar_sin_campos_definidos_no_ensucia_la_auditoria(almacen):
+    """Sin campos personalizados que guardar, no se escribe un registro vacío."""
+    from apps.nucleo.models import RegistroAuditoria  # noqa: PLC0415
+
+    antes = RegistroAuditoria.objects.count()
+    ServicioCamposPersonalizados.guardar_valores(almacen, {}, entidad="Almacen")
+    assert RegistroAuditoria.objects.count() == antes
