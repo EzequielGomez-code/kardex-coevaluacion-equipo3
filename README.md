@@ -8,8 +8,9 @@ código.** Categorías, campos, tipos de movimiento, reglas de alerta, roles,
 permisos y vistas se definen en pantalla. Agregar un tipo de negocio nuevo no
 requiere un despliegue.
 
-Este repositorio contiene **la base**. Los tres módulos funcionales se
-construyen sobre ella, cada uno en su propia rama.
+El sistema está **completo y en línea**: sobre la base común se construyeron
+los tres módulos funcionales (catálogo, movimientos y alertas), ya fusionados
+en `main`.
 
 | | |
 |---|---|
@@ -24,15 +25,15 @@ es normal, no es un error.
 
 ---
 
-## 1. Qué trae esta base
+## 1. Qué trae el sistema
 
 | Área | Qué incluye |
 |---|---|
 | `apps/nucleo` | Usuarios, roles, permisos, almacenes y auditoría inmutable |
 | `apps/configuracion` | Campos personalizados, parámetros, etiquetas, vistas guardadas, flujos de aprobación, plantillas de notificación y mapeos de importación |
-| `apps/catalogo` | Vacía, con estructura completa — la llena **Arturo** |
-| `apps/movimientos` | Vacía, con estructura completa — la llena **Cristian** |
-| `apps/alertas` | Vacía, con estructura completa — la llena **Francisco** |
+| `apps/catalogo` | Categorías en árbol, artículos con SKU generado, marcas, unidades, proveedores, clientes e importación masiva por CSV — **Arturo** |
+| `apps/movimientos` | Entradas, salidas, transferencias y ajustes, valoración PEPS por lotes, existencias, kardex, aprobaciones y anulación por contrapartida — **Cristian** |
+| `apps/alertas` | Reglas configurables, evaluación automática y reportes en PDF y Excel — **Francisco** |
 | `plantillas/componentes` | Tabla, filtros, paginación, modal, badge, toast, campo dinámico, estado vacío y confirmación |
 | `estaticos/css` | Sistema de diseño propio con variables; sin Tailwind ni Bootstrap |
 
@@ -257,23 +258,39 @@ git push -u origin main
    | `ALLOWED_HOSTS` | `kardex.onrender.com` (el host que le asigne Render) |
    | `CSRF_TRUSTED_ORIGINS` | `https://kardex.onrender.com` |
    | `DJANGO_ADMIN_PASSWORD` | la contraseña del administrador inicial |
-   | `SEMBRAR_AL_DESPLEGAR` | `true` **solo en el primer despliegue** |
+   | `SEMBRAR_AL_DESPLEGAR` | `true` — y se queda así (ver 7.4) |
 
    `DJANGO_SECRET_KEY` la genera Render sola. `DJANGO_SETTINGS_MODULE` ya viene
    fijada en `config.settings.produccion`.
 
 5. **Create Web Service.** El primer despliegue tarda unos minutos.
-6. Cuando termine, ponga `SEMBRAR_AL_DESPLEGAR` en `false` para que los
-   despliegues siguientes no vuelvan a sembrar. (El comando es idempotente, así
-   que no rompería nada, pero no hace falta.)
 
-### 7.4 Comprobar
+### 7.4 `SEMBRAR_AL_DESPLEGAR` se queda en `true`
+
+`build.sh` solo corre `python manage.py sembrar` cuando esa variable vale
+`true`. Conviene dejarla encendida siempre, y no apagarla tras el primer
+despliegue.
+
+El motivo: `sembrar` no es solo un arranque inicial. Carga el fixture
+`permisos_roles.json`, que es **configuración viva** — cada función nueva
+agrega sus permisos ahí. Con la variable apagada, el fixture del repositorio
+sigue creciendo mientras la base se queda con los permisos del primer día, y
+los roles que no son superusuario empiezan a recibir 403 en pantallas que sí
+deberían poder usar. Eso pasó en este proyecto: producción se quedó con 14 de
+25 permisos, y solo se notó cuando alguien entró con el rol «Gerente de
+almacén», porque el administrador es superusuario y no pasa por esa
+comprobación.
+
+El comando es idempotente: busca antes de crear y respeta lo que ya se editó
+a mano, así que correrlo en cada despliegue no duplica ni pisa nada.
+
+### 7.5 Comprobar
 
 Abra `https://<su-servicio>.onrender.com/` y entre con `admin` y la contraseña
 que cargó. Si ve la pantalla de acceso con la barra verde a la izquierda, quedó
 desplegado.
 
-### 7.5 Estado actual del despliegue
+### 7.6 Estado actual del despliegue
 
 Ya está montado y en línea:
 
@@ -283,7 +300,7 @@ Ya está montado y en línea:
 | URL pública | <https://kardex-aco4.onrender.com> |
 | Despliegue automático | activado en cada `push` a `main` |
 | Base de datos | Neon, ya migrada y sembrada |
-| `SEMBRAR_AL_DESPLEGAR` | `false` — la siembra ya corrió |
+| `SEMBRAR_AL_DESPLEGAR` | `true` — re-sincroniza permisos y roles en cada despliegue (ver 7.4) |
 
 Render asignó el sufijo `-aco4` porque el nombre `kardex` ya estaba tomado por
 otra cuenta. `ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS` apuntan a ese host; además,
@@ -302,25 +319,27 @@ así que el sistema sigue funcionando si el host cambia.
 - [x] Se edita un parámetro y el cambio se refleja sin reiniciar
 - [x] Toda acción quedó en la auditoría, y ese registro no se puede editar ni borrar
 - [x] `pylint apps/ config/` da 10.00/10 (el mínimo exigido era 8.0)
-- [x] `pytest` pasa en verde — 74 pruebas
+- [x] `ruff check apps/ config/` sin hallazgos
+- [x] `pytest` pasa en verde — 272 pruebas
 - [x] Desplegada en Render, conectada a Neon y respondiendo en <https://kardex-aco4.onrender.com>
 
-Las evidencias de las dos últimas corridas están en `evidencias/`.
+Las evidencias de las corridas están en `evidencias/`.
 
 ---
 
 ## 9. Para los compañeros de equipo
 
-Trabaje en su propia rama:
+Los tres módulos ya están construidos y fusionados en `main`. Para seguir
+trabajando sobre ellos, abra una rama por cambio:
 
 ```bash
-git checkout -b modulo-catalogo
+git checkout -b arregla-lo-que-sea
 ```
 
-Su app ya tiene `models.py`, `views.py`, `urls.py`, `services.py`,
+Cada app tiene `models.py`, `views.py`, `urls.py`, `services.py`,
 `repositories.py`, `admin.py`, `navegacion.py`, su carpeta de plantillas y su
-carpeta de pruebas. La ruta, el permiso y el layout ya funcionan: solo hay que
-llenar el contenido.
+carpeta de pruebas. Respete la regla de capas del punto 5: una vista nunca
+consulta el ORM.
 
 Antes de abrir un pull request:
 
