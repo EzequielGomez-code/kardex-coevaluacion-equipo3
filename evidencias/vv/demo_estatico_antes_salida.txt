@@ -1,0 +1,7 @@
+************* Module evidencias.vv.demo_estatico_antes
+evidencias\vv\demo_estatico_antes.py:18:4: W0702: No exception type(s) specified (bare-except)
+evidencias\vv\demo_estatico_antes.py:16:8: W0612: Unused variable 'auditoria' (unused-variable)
+evidencias\vv\demo_estatico_antes.py:8:0: W0611: Unused import os (unused-import)
+evidencias\vv\demo_estatico_antes.py:9:0: W0611: Unused import json (unused-import)
+------------------------------------------------------------------
+Your code has been rated at 5.56/10 (previous run: 5.56/10, +0.00)

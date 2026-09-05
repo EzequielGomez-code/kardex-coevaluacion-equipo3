@@ -1,0 +1,104 @@
+........................................................................ [ 26%]
+........................................................................ [ 52%]
+........................................................................ [ 79%]
+........................................................                 [100%]
+============================== warnings summary ===============================
+pruebas/test_autenticacion.py: 7 warnings
+pruebas/test_parametros.py: 1 warning
+pruebas/test_permisos.py: 13 warnings
+apps/alertas/pruebas/test_alertas.py: 1 warning
+apps/alertas/pruebas/test_reportes.py: 8 warnings
+apps/alertas/pruebas/test_vistas.py: 7 warnings
+apps/catalogo/pruebas/test_catalogo.py: 1 warning
+apps/catalogo/pruebas/test_importacion.py: 4 warnings
+apps/catalogo/pruebas/test_vistas.py: 20 warnings
+apps/movimientos/pruebas/test_movimientos.py: 1 warning
+apps/movimientos/pruebas/test_vistas.py: 19 warnings
+  C:\Users\elmej\OneDrive\Desktop\UASD 2026 GRADUACIÓN\kardex\venv\Lib\site-packages\django\core\handlers\base.py:61: UserWarning: No directory at: C:\Users\elmej\OneDrive\Desktop\UASD 2026 GRADUACIÓN\kardex\staticfiles\
+    mw_instance = middleware(adapted_handler)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=============================== tests coverage ================================
+______________ coverage: platform win32, python 3.12.13-final-0 _______________
+
+Name                                                      Stmts   Miss  Cover
+-----------------------------------------------------------------------------
+apps\__init__.py                                              0      0   100%
+apps\alertas\__init__.py                                      0      0   100%
+apps\alertas\admin.py                                        15      0   100%
+apps\alertas\apps.py                                          6      0   100%
+apps\alertas\forms.py                                        27      0   100%
+apps\alertas\management\__init__.py                           0      0   100%
+apps\alertas\management\commands\__init__.py                  0      0   100%
+apps\alertas\management\commands\evaluar_alertas.py           8      8     0%
+apps\alertas\models.py                                       45      2    96%
+apps\alertas\navegacion.py                                    1      0   100%
+apps\alertas\reportes\__init__.py                             0      0   100%
+apps\alertas\reportes\datos.py                               29      0   100%
+apps\alertas\reportes\excel.py                               29      0   100%
+apps\alertas\reportes\pdf.py                                 54      0   100%
+apps\alertas\repositories.py                                 49      5    90%
+apps\alertas\services.py                                    194     37    81%
+apps\alertas\urls.py                                          4      0   100%
+apps\alertas\views.py                                        84     27    68%
+apps\alertas\vistas_reportes.py                             126     29    77%
+apps\catalogo\__init__.py                                     0      0   100%
+apps\catalogo\admin.py                                       41      0   100%
+apps\catalogo\apps.py                                         6      0   100%
+apps\catalogo\forms.py                                      111     15    86%
+apps\catalogo\importacion.py                                 68      4    94%
+apps\catalogo\models.py                                     137      6    96%
+apps\catalogo\navegacion.py                                   1      0   100%
+apps\catalogo\repositories.py                               153     27    82%
+apps\catalogo\services.py                                   338     75    78%
+apps\catalogo\urls.py                                         4      0   100%
+apps\catalogo\validadores.py                                 36      0   100%
+apps\catalogo\views.py                                      400    191    52%
+apps\configuracion\__init__.py                                0      0   100%
+apps\configuracion\admin.py                                  45      0   100%
+apps\configuracion\apps.py                                    6      0   100%
+apps\configuracion\contexto.py                               12      3    75%
+apps\configuracion\forms.py                                 119     33    72%
+apps\configuracion\models.py                                174     18    90%
+apps\configuracion\navegacion.py                              1      0   100%
+apps\configuracion\repositories.py                           79     18    77%
+apps\configuracion\services.py                              229     52    77%
+apps\configuracion\templatetags\__init__.py                   0      0   100%
+apps\configuracion\urls.py                                    4      0   100%
+apps\configuracion\views.py                                 126     78    38%
+apps\movimientos\__init__.py                                  0      0   100%
+apps\movimientos\admin.py                                    35      0   100%
+apps\movimientos\apps.py                                      6      0   100%
+apps\movimientos\forms.py                                   152     24    84%
+apps\movimientos\models.py                                  173      9    95%
+apps\movimientos\navegacion.py                                1      0   100%
+apps\movimientos\repositories.py                            121     18    85%
+apps\movimientos\services.py                                370     21    94%
+apps\movimientos\urls.py                                      4      0   100%
+apps\movimientos\valoracion.py                               41      2    95%
+apps\movimientos\views.py                                   222     81    64%
+apps\nucleo\__init__.py                                       0      0   100%
+apps\nucleo\admin.py                                         42      0   100%
+apps\nucleo\apps.py                                           6      0   100%
+apps\nucleo\contexto.py                                      54      7    87%
+apps\nucleo\decoradores.py                                   31      1    97%
+apps\nucleo\forms.py                                         88     36    59%
+apps\nucleo\management\__init__.py                            0      0   100%
+apps\nucleo\management\commands\__init__.py                   0      0   100%
+apps\nucleo\management\commands\reiniciar_demo.py            34      0   100%
+apps\nucleo\management\commands\sembrar.py                   78      5    94%
+apps\nucleo\management\commands\sembrar_demo.py             335    163    51%
+apps\nucleo\management\commands\verificar_inventario.py      56     56     0%
+apps\nucleo\middleware.py                                    37      1    97%
+apps\nucleo\models.py                                       118      7    94%
+apps\nucleo\navegacion.py                                     1      0   100%
+apps\nucleo\repositories.py                                 108     30    72%
+apps\nucleo\services.py                                     172     59    66%
+apps\nucleo\templatetags\__init__.py                          0      0   100%
+apps\nucleo\templatetags\formato.py                          88     19    78%
+apps\nucleo\urls.py                                           4      0   100%
+apps\nucleo\utilidades.py                                   104     16    85%
+apps\nucleo\views.py                                        268    156    42%
+-----------------------------------------------------------------------------
+TOTAL                                                      5510   1339    76%
+272 passed, 82 warnings in 18.28s

@@ -1,0 +1,46 @@
+07f08e9 docs: pone el README al dia con el sistema terminado
+3b46b0d fix: registra en la auditoria los cambios de campos personalizados
+cf857e3 fix: sube el contraste del texto terciario y rotula las tablas
+b3b1a1a fix: deja de esconder tablas sin reemplazo en telefono
+c3f1622 fix: evita el error 500 tras una pausa y acelera la evaluacion de alertas
+66c82c3 feat: agrega el icono de marca en la pestana del navegador
+98c88d6 Agrega un enlace al menú para reiniciar la demo, visible solo con el permiso oculto
+131d084 Permite eliminar unidades de medida sin artículos, y agrega el botón de eliminar artículo que faltaba
+d948cea Agrega activar/desactivar y eliminar usuarios, eliminar almacenes sin movimientos, y un reinicio oculto de los datos de demostración
+29b49e7 Quita el texto de ayuda del formulario de acceso
+dbc4f6a Corrige el logo casi invisible en la portada: no dependa de --texto-invertido y agrega fichas oscuras propias
+1f0bac6 Hace que las fotos de portada ocupen todo el panel, de fondo, en vez de un cuadro contenido
+e6cfd9b Reemplaza la ilustración de la portada por una secuencia de fotos con acercamiento y disolvencia
+b080d46 Quitar el lema de la pantalla de acceso
+607d3b9 style: le da mas cuerpo visual a la portada, sin salir de la paleta del proyecto
+4244252 feat: muestra cantidad y costo antes de aprobar, y reemplaza el confirm() del navegador
+85d7e1e fix: corrige el cierre del modal por icono, los botones editar sin efecto y las coordenadas del grafico
+18d88fe docs: renombra el archivo de reglas y generaliza las referencias a la herramienta de asistencia
+1dc6973 chore: elimina archivo de configuracion de herramienta de asistencia
+75e1ece docs: activa Dependabot y regenera la evidencia de cierre de la Fase 8
+308b80a refactor: simplifica y elimina duplicacion tras la revision de codigo
+b12e421 fix: corrige hallazgos de la revision de codigo sobre catalogo, movimientos y alertas
+f2342bf fix: auditoria de botones muertos, ordenamiento roto en marcas y unidades, limpieza de plantillas huerfanas
+2cf4a19 feat: comando de datos de demostracion realistas y verificador de cuadre del inventario
+d3ccd67 feat: importacion masiva de articulos con vista previa, validacion y mapeo de columnas guardado
+a3847ad feat: reportes exportables en PDF y Excel para existencias, valorizacion, movimientos y kardex
+c7aa301 feat: modulo de alertas con evaluador automatico y panel principal completo
+d72f416 feat: modulo de movimientos con lotes, valoracion PEPS y anulacion por contrapartida
+1084f13 feat: vistas, formularios y plantillas del catalogo
+60714c7 feat: modelos y servicios del catalogo (categorias, articulos, terceros)
+eba6f62 feat: rehace las pantallas existentes con el sistema visual nuevo
+0a558c0 feat: sistema visual completo con modo oscuro y ordenamiento real
+755354e feat: reglas permanentes y contrato de datos para el sistema completo
+9b7774f refactor: kardex.js baja a 147 lineas
+98adbf8 docs: URLs reales del despliegue y evidencia de produccion
+bf1ac5b fix: elimina config/settings.py huerfano de startproject
+397d4cf docs: README, brief de referencia y evidencias de calidad
+82b9f4a docs: despliegue en Render con Neon y guion de construccion
+a2c8b1e test: pruebas de autenticacion, permisos, auditoria y campos
+2db7f22 feat: comando sembrar y fixture de permisos y roles
+651bfc3 feat: apps de catalogo, movimientos y alertas con estructura completa
+c961849 feat: vistas, formularios y rutas del nucleo
+d5c064d feat: interfaz con sistema de diseno propio, HTMX y Alpine
+950b6e8 feat: capa de configuracion con campos personalizados y parametros
+22029d9 feat: modelos, repositorios y servicios del nucleo
+c747f6e chore: estructura del proyecto Django con ajustes divididos
