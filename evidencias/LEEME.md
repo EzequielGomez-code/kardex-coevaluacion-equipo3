@@ -60,8 +60,8 @@ clic, sin depender de un servidor).
 | `demo_clase/test_demo_fallo.py` | Módulo de práctica: una función con un error real y dos pruebas | 1 en verde, 1 en rojo |
 | `demo_clase/reporte_pylint_v01.html` | Generador sobre `apps/` y `config/` (código real) | 10.00/10 |
 | `demo_clase/reporte_pylint_v02.html` | Generador sobre un archivo con defectos a propósito | 4 hallazgos, 5.56/10 |
-| `demo_clase/reporte_pytest_v01.html` | Generador sobre la suite real (`pruebas/`, `apps/`) | 272 en verde |
-| `demo_clase/reporte_pytest_v02.html` | Generador sobre `test_demo_fallo.py` | 1 en verde, 1 en rojo |
+| `demo_clase/reporte_pytest_v01.html` | Generador sobre la suite real (`pruebas/`, `apps/`) | 272/272 en verde |
+| `demo_clase/reporte_pytest_v02.html` | Generador sobre la suite real **más** `test_demo_fallo.py` (272 de siempre + 2 nuevas) | 273/274 en verde |
 
 Estos cuatro reportes `v01`/`v02` son de referencia (generados una vez para
 dejar constancia de que la herramienta funciona); al repetir la

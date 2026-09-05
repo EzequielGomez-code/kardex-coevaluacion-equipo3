@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>pytest v02 - con un error real en la funcion</title>
+<title>pytest v02 - con el modulo nuevo (1 error real)</title>
 <style>
   :root{
     --papel:#F2F4F1; --tinta:#1B2420; --tinta-suave:#42504A; --texto-2:#63706A;
@@ -47,17 +47,17 @@
 <div class="envoltura">
   <header>
     <div class="eyebrow">Kardex · Unidad 3 · Validación (pruebas automatizadas)</div>
-    <h1>pytest v02 - con un error real en la funcion</h1>
-    <div class="meta">Generado el 05/09/2026 17:53 · duración total: 0.18 s</div>
+    <h1>pytest v02 - con el modulo nuevo (1 error real)</h1>
+    <div class="meta">Generado el 05/09/2026 18:26 · duración total: 12.04 s</div>
   </header>
 
   <div class="panel">
     <div class="score riesgo">
-      <div class="num">1/2</div>
+      <div class="num">273/274</div>
       <div class="etq">pruebas en verde</div>
     </div>
     <div class="conteos">
-      <div class="conteo__item"><span class="conteo__num">1</span><span class="conteo__etq">Pasaron</span></div>
+      <div class="conteo__item"><span class="conteo__num">273</span><span class="conteo__etq">Pasaron</span></div>
       <div class="conteo__item"><span class="conteo__num">1</span><span class="conteo__etq">Fallaron</span></div>
       <div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Errores</span></div>
       <div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Omitidas</span></div>
@@ -69,6 +69,1638 @@
     <tbody>
       <tr>
         <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_modificar_un_registro</td>
+        <td class="mono">655 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_contenido_no_cambia_tras_el_intento</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_eliminar_un_registro</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_panel_de_administracion_no_permite_tocar_la_auditoria</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_la_insercion_si_esta_permitida</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_un_almacen_deja_su_rastro</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_editar_un_almacen_guarda_el_antes_y_el_despues</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_los_registros_se_ordenan_del_mas_reciente_al_mas_viejo</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_la_contrasena_se_guarda_con_argon2</td>
+        <td class="mono">117 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_la_contrasena_nunca_se_guarda_en_claro</td>
+        <td class="mono">56 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_acceso_con_credenciales_correctas</td>
+        <td class="mono">402 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_acceso_con_contrasena_incorrecta</td>
+        <td class="mono">139 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_usuario_desactivado_no_puede_entrar</td>
+        <td class="mono">95 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_acceso_queda_registrado_en_la_auditoria</td>
+        <td class="mono">131 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_cerrar_sesion_deja_rastro_y_limpia_la_sesion</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_pantalla_protegida_redirige_al_acceso</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_campo_activo_sincroniza_is_active</td>
+        <td class="mono">55 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_acepta_redireccion_a_sitio_externo</td>
+        <td class="mono">96 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_campos_de_devuelve_solo_los_activos</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_campos_de_respeta_el_orden</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_categoria_suma_sus_campos_a_los_generales</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_campo_obligatorio_vacio_falla</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_numero_mal_escrito_falla</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_opcion_fuera_de_la_lista_falla</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_los_valores_validos_se_convierten_a_su_tipo</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_y_leer_los_valores_de_un_objeto</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_dos_veces_no_duplica_valores</td>
+        <td class="mono">7 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_cada_tipo_va_a_su_columna</td>
+        <td class="mono">6 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_repite_la_clave_en_la_misma_entidad</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reordenar_guarda_el_nuevo_orden</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_formulario_dinamico_arma_los_widgets</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_campos_personalizados_deja_rastro_en_la_auditoria</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_borrar_campos_personalizados_deja_rastro_en_la_auditoria</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_sin_campos_definidos_no_ensucia_la_auditoria</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sin_parametro_orden_no_toca_la_consulta</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_orden_ascendente_por_clave_permitida</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_orden_descendente_con_sufijo</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_orden_por_otra_columna_permitida</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_clave_no_expuesta_se_ignora</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_clave_vacia_no_ordena</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_paginar_usa_el_parametro_del_sistema_por_omision</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_paginar_cae_al_valor_por_omision_sin_parametro</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_paginar_respeta_un_valor_explicito</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_ancho_de_las_barras_no_lleva_coma_decimal</td>
+        <td class="mono">70 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_los_valores_se_devuelven_con_su_tipo</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_parametro_inexistente_devuelve_el_valor_por_omision</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_cambia_el_valor_de_inmediato</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_guardar_devuelve_cuantos_cambiaron</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_cambio_queda_en_la_auditoria</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_entero_invalido_es_rechazado</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_opcion_fuera_de_la_lista_es_rechazada</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_parametro_no_editable_no_cambia</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_booleano_acepta_las_formas_del_formulario</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_decimal_conserva_precision</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_la_pantalla_refleja_el_cambio</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sin_permiso_la_url_directa_devuelve_403</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_con_permiso_la_pantalla_responde</td>
+        <td class="mono">82 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[nucleo:usuarios]</td>
+        <td class="mono">77 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[nucleo:roles]</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[nucleo:almacenes]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[nucleo:auditoria]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[configuracion:parametros]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[configuracion:campos]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_todas_las_pantallas_administrativas_exigen_permiso[configuracion:etiquetas]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_operador_ve_lo_suyo_y_no_lo_ajeno</td>
+        <td class="mono">70 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_intento_sin_permiso_queda_en_la_auditoria</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_menu_lateral_solo_trae_lo_permitido</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_superusuario_tiene_todos_los_permisos</td>
+        <td class="mono">56 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_usuario_sin_rol_no_tiene_permisos</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_vistas_que_cambian_datos_rechazan_el_metodo_get</td>
+        <td class="mono">61 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sembrar_carga_todo_lo_minimo</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sembrar_dos_veces_no_duplica</td>
+        <td class="mono">86 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sembrar_no_pisa_un_parametro_ya_editado</td>
+        <td class="mono">86 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_administrador_sembrado_tiene_todos_los_permisos</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_los_roles_del_sistema_no_se_pueden_eliminar</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_rol_con_usuarios_no_se_puede_eliminar</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_puede_desactivarse_a_si_mismo</td>
+        <td class="mono">56 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_puede_eliminarse_a_si_mismo</td>
+        <td class="mono">56 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_usuario_con_movimientos_falla</td>
+        <td class="mono">58 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_usuario_sin_movimientos_funciona</td>
+        <td class="mono">61 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_almacen_con_movimientos_falla</td>
+        <td class="mono">58 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_almacen_sin_movimientos_funciona</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reiniciar_demo_vacia_y_vuelve_a_sembrar</td>
+        <td class="mono">177 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_modulo_exige_permiso</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_entrada_insuficiente_abre_alerta_de_stock_bajo</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_entrada_suficiente_no_abre_alerta</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reponer_stock_cierra_la_alerta_automaticamente</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_evaluador_no_duplica_la_misma_alerta_abierta</td>
+        <td class="mono">71 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_stock_cero_y_stock_bajo_son_mutuamente_excluyentes</td>
+        <td class="mono">75 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_regla_limitada_a_un_almacen_no_aplica_a_otro</td>
+        <td class="mono">67 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_evaluar_todo_recorre_reglas_inactivas_sin_generar_alertas</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_regla_de_vencimiento_respeta_el_almacen_de_la_regla</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_regla_de_vencimiento_se_cierra_sola_cuando_el_lote_se_agota</td>
+        <td class="mono">77 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_evaluar_todo_no_consulta_una_vez_por_par</td>
+        <td class="mono">76 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reportes_indice_exige_permiso</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_descargar_reporte_exige_permiso_de_exportar</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_existencias_pdf_responde_con_un_pdf_valido</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_existencias_excel_responde_con_un_libro_valido</td>
+        <td class="mono">78 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_valorizacion_pdf_sin_existencias_no_revienta</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_movimientos_pdf_filtra_por_rango_de_fechas</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_movimientos_por_rango_excluye_lo_que_no_esta_confirmado</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_kardex_pdf_sin_articulo_da_404</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_kardex_excel_de_un_articulo_real</td>
+        <td class="mono">78 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_exigen_permiso[alertas:indice]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_exigen_permiso[alertas:reglas]</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_indice_responde_200_con_alertas</td>
+        <td class="mono">79 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_regla_por_la_url</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_regla_sin_dias_falla_para_tipos_que_lo_exigen</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_cambiar_estado_de_alerta_por_la_url</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_evaluar_ahora_exige_permiso_de_resolver</td>
+        <td class="mono">61 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_generar_sku_usa_el_formato_configurado</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_generar_sku_incrementa_en_cada_llamada</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_generar_sku_sin_parametro_usa_el_formato_de_reserva</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_sin_sku_lo_genera_solo</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_con_minimo_explicito_en_cero_no_cae_al_defecto</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_sin_minimo_usa_el_defecto</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_con_sku_duplicado_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_con_codigo_de_barras_duplicado_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_dos_articulos_sin_codigo_de_barras_no_chocan</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_dar_de_baja_sin_movimientos_borra_de_verdad</td>
+        <td class="mono">6 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_unidad_con_articulos_falla</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_unidad_sin_articulos_funciona</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_proveedor_valida_el_rnc</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_proveedor_con_rnc_valido</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_dos_proveedores_no_comparten_rnc</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_cliente_y_proveedor_pueden_compartir_rnc</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_fijar_precio_preferido_es_exclusivo</td>
+        <td class="mono">8 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_fijar_precio_dos_veces_actualiza_en_vez_de_duplicar</td>
+        <td class="mono">6 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_modulo_exige_permiso</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_categoria_raiz_arma_la_ruta</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_categoria_hija_hereda_el_prefijo_del_padre</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_dos_categorias_seguidas_incrementan_el_orden</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_codigo_repetido_bajo_el_mismo_padre_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_codigo_repetido_en_otra_rama_no_falla</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_profundidad_maxima_se_respeta</td>
+        <td class="mono">6 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_arbol_completo_sale_ordenado_por_ruta</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reordenar_hermanas_reescribe_las_rutas</td>
+        <td class="mono">7 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reordenar_arrastra_a_los_hijos</td>
+        <td class="mono">8 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reordenar_con_un_id_ajeno_falla</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_categoria_a_otro_padre</td>
+        <td class="mono">5 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_arrastra_el_subarbol_completo</td>
+        <td class="mono">7 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_una_categoria_dentro_de_su_propia_rama_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_a_si_misma_falla</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_categoria_con_hijas_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_categoria_con_articulos_falla</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_eliminar_categoria_vacia_funciona</td>
+        <td class="mono">4 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_procesar_fila_valida_queda_lista_para_crear</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_procesar_fila_con_categoria_inexistente_queda_marcada</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_procesar_fila_sin_nombre_queda_marcada</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_procesar_respeta_tasa_itbis_y_minimo_explicitos_en_cero</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reporte_de_errores_solo_incluye_filas_invalidas</td>
+        <td class="mono">3 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_confirmar_crea_solo_las_filas_validas</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_importar_pantalla_exige_permiso</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_previsualizar_por_la_url</td>
+        <td class="mono">67 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_confirmar_por_la_url_crea_el_articulo</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_descargar_errores_por_la_url</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:articulos-args0]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:categorias-args1]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:marcas-args2]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:unidades-args3]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:proveedores-args4]</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[catalogo:clientes-args5]</td>
+        <td class="mono">67 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_operador_ve_articulos_pero_no_gestiona_proveedores</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_por_htmx</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_articulo_genera_sku_automatico</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_editar_articulo_sin_permiso_de_edicion_da_403</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_articulo_inexistente_da_404_amable</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_region_tabla_y_region_arbol_no_heredan_su_hx_swap_a_los_botones</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_categoria_raiz_por_htmx</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_subcategoria_con_padre_en_la_url</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_reordenar_categorias_por_la_url</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_categoria_por_la_url</td>
+        <td class="mono">70 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_mover_categoria_a_su_propia_rama_da_error_json</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_precio_de_proveedor_por_la_url</td>
+        <td class="mono">67 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_alternar_estado_de_proveedor</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_campos_dinamicos_de_categoria_via_htmx</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_entrada_intacta_deja_el_lote_en_cero</td>
+        <td class="mono">71 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_entrada_ya_consumida_falla</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_salida_restaura_el_lote_consumido</td>
+        <td class="mono">76 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_salida_cierra_la_alerta_de_stock_bajo_que_dejo</td>
+        <td class="mono">82 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_anular_dos_veces</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_sin_motivo_falla</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_anular_un_movimiento_no_confirmado</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_pendiente_no_toca_el_inventario</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_lineas_solicitadas_con_costo_propio_no_se_marcan_estimadas</td>
+        <td class="mono">95 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_lineas_solicitadas_sin_costo_usan_el_promedio_como_estimado</td>
+        <td class="mono">70 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_aprobar_aplica_los_efectos</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_rechazar_no_toca_el_inventario</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_aprobar_un_movimiento_ya_confirmado</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_rechazar_sin_motivo_falla</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_pendientes_lista_solo_los_que_esperan</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_registrar_entrada_crea_lote_y_existencia</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_entrada_con_tipo_de_otra_naturaleza_falla</td>
+        <td class="mono">60 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_entrada_sin_lineas_falla</td>
+        <td class="mono">56 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_entrada_exige_ncf_cuando_el_tipo_lo_pide</td>
+        <td class="mono">60 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ncf_repetido_con_el_mismo_proveedor_falla</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_salida_consume_primero_el_lote_mas_antiguo</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_salida_sin_existencia_suficiente_falla_por_defecto</td>
+        <td class="mono">68 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_salida_con_stock_negativo_permitido_deja_tramo_sin_lote</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_movimiento_confirmado_no_se_puede_editar</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_linea_de_movimiento_registra_saldo_posterior_correcto</td>
+        <td class="mono">70 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_editar_una_linea_ya_creada</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_borrar_una_linea_directamente</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_no_se_puede_reescribir_un_movimiento_rechazado</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_modulo_exige_permiso</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_transferencia_mueve_existencia_y_conserva_el_costo</td>
+        <td class="mono">73 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_transferencia_crea_un_lote_por_cada_costo_de_origen</td>
+        <td class="mono">77 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_transferencia_al_mismo_almacen_falla</td>
+        <td class="mono">59 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_positivo_crea_lote_al_costo_indicado</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_positivo_respeta_costo_unitario_explicito_en_cero</td>
+        <td class="mono">66 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_positivo_sin_costo_usa_el_promedio_actual</td>
+        <td class="mono">71 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_negativo_consume_lotes_como_una_salida</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_sin_motivo_falla</td>
+        <td class="mono">61 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ajuste_con_tipo_de_otra_naturaleza_falla</td>
+        <td class="mono">61 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[movimientos:indice-args0]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[movimientos:existencias-args1]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_las_pantallas_de_listado_exigen_permiso[movimientos:tipos-args2]</td>
+        <td class="mono">63 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_indice_responde_200_y_pinta_la_tabla</td>
+        <td class="mono">79 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_indice_vacio_muestra_estado_vacio</td>
+        <td class="mono">65 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_existencias_responde_200</td>
+        <td class="mono">79 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_movimiento_detalle_responde_200</td>
+        <td class="mono">79 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_movimiento_inexistente_da_404</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_kardex_responde_200</td>
+        <td class="mono">69 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_aprobaciones_responde_200</td>
+        <td class="mono">64 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_formulario_de_entrada_get_responde_200</td>
+        <td class="mono">77 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_registrar_entrada_por_la_url</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_registrar_salida_por_la_url</td>
+        <td class="mono">77 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_registrar_ajuste_sin_motivo_deja_error_en_el_formulario</td>
+        <td class="mono">78 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_error_de_formulario_por_htmx_trae_encabezados_para_reenfocar_el_modal</td>
+        <td class="mono">76 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_exito_por_htmx_no_trae_encabezados_de_reenfoque</td>
+        <td class="mono">72 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_anular_por_la_url</td>
+        <td class="mono">78 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_aprobar_y_rechazar_por_la_url</td>
+        <td class="mono">74 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_crear_tipo_de_movimiento_por_la_url</td>
+        <td class="mono">62 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_nombre_de_archivo_se_sanea[../../etc/passwd-passwd]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_nombre_de_archivo_se_sanea[C:\\Windows\\system32\\cmd.exe-cmd.exe]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_nombre_de_archivo_se_sanea[reporte final.pdf-reporte_final.pdf]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_nombre_de_archivo_se_sanea[...oculto.txt-oculto.txt]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_el_nombre_de_archivo_se_sanea[-archivo]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_celda_que_empieza_como_formula_se_neutraliza[=HYPERLINK(&quot;http://evil&quot;,&quot;x&quot;)-&#x27;=HYPERLINK(&quot;http://evil&quot;,&quot;x&quot;)]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_celda_que_empieza_como_formula_se_neutraliza[+cmd|&#x27;/c calc&#x27;!A1-&#x27;+cmd|&#x27;/c calc&#x27;!A1]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_celda_que_empieza_como_formula_se_neutraliza[-2+3-&#x27;-2+3]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_celda_que_empieza_como_formula_se_neutraliza[@SUM(A1)-&#x27;@SUM(A1)]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_celda_que_empieza_como_formula_se_neutraliza[Martillo de u\xf1a 16oz-Martillo de u\xf1a 16oz]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_una_extension_no_permitida_es_rechazada</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_archivo_demasiado_grande_es_rechazado</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_un_archivo_valido_pasa</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_leer_texto_decodifica_utf8_con_bom</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_leer_texto_cae_a_cp1252_si_no_es_utf8</td>
+        <td class="mono">2 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_normalizar_rnc[1-31-12345-6-131123456]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_normalizar_rnc[001-1234567-8-00112345678]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_normalizar_rnc[  123 456 789 -123456789]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_normalizar_rnc[-]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_rnc_de_9_digitos_valido_no_lanza</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_rnc_de_9_digitos_con_digito_de_control_incorrecto</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_cedula_de_11_digitos_solo_valida_longitud</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_longitud_invalida_se_rechaza[12345]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_longitud_invalida_se_rechaza[1234567890123]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_longitud_invalida_se_rechaza[abc]</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_formatear_rnc_de_9_digitos</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_formatear_cedula_de_11_digitos</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_formatear_valor_con_longitud_rara_lo_devuelve_tal_cual</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ean13_valido_no_lanza</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ean13_con_digito_de_control_incorrecto</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ean13_con_longitud_incorrecta</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_peps_consume_primero_el_lote_mas_antiguo</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_ueps_consume_primero_el_lote_mas_nuevo</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_promedio_ponderado_agota_el_lote_mas_antiguo_pero_valora_al_promedio</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_lotes_insuficientes_dejan_un_tramo_sin_lote</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_sin_lotes_disponibles_todo_el_plan_es_sin_lote</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_costo_total_del_plan_suma_cada_tramo</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_costo_unitario_promedio_del_plan_es_el_equivalente_del_tramo_mixto</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
+        <td class="mono">test_costo_unitario_promedio_con_plan_vacio_es_cero</td>
+        <td class="mono">1 ms</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><span class="pastilla ok">Pasó</span></td>
         <td class="mono">test_un_precio_en_cero_no_cambia</td>
         <td class="mono">1 ms</td>
         <td></td>
@@ -76,13 +1708,13 @@
       <tr>
         <td><span class="pastilla riesgo">Falló</span></td>
         <td class="mono">test_el_total_incluye_el_impuesto</td>
-        <td class="mono">1 ms</td>
+        <td class="mono">5 ms</td>
         <td>assert 100 == 118</td>
       </tr></tbody>
   </table>
 
   <footer>
-    Comando ejecutado: <code>pytest evidencias/vv/demo_clase/test_demo_fallo.py</code>
+    Comando ejecutado: <code>pytest pruebas apps evidencias/vv/demo_clase/test_demo_fallo.py</code>
   </footer>
 </div>
 </body>
