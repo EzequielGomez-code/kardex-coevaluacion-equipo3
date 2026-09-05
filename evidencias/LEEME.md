@@ -48,19 +48,20 @@ Evidencia de la demostración de V&V (commit `07f08e9`, rama `main`).
 ### Reportes con formato para presentar (`vv/demo_clase/`)
 
 Pensado para la demostración en clase: clonar el repo, generar estos
-reportes en vivo y volver a subirlos. `generar_reporte_pylint.py` convierte
-la salida de Pylint (que por defecto es texto plano) en una página HTML
-legible; `pytest --html=... --self-contained-html` usa el plugin
-`pytest-html` (ya en `requirements-dev.txt`) para lo mismo con pytest.
+reportes en vivo y volver a subirlos. Ni Pylint ni pytest traen por
+defecto un reporte HTML que se vea bien, así que ambos generadores son
+scripts propios (sin JavaScript, para que abran bien con `start` o doble
+clic, sin depender de un servidor).
 
 | Archivo | Cómo se generó | Resultado |
 |---|---|---|
 | `demo_clase/generar_reporte_pylint.py` | Script propio: corre `pylint --output-format=json2` y arma el HTML | — |
-| `demo_clase/test_demo_fallo.py` | Prueba aislada con un caso que falla a propósito | 1 en verde, 1 en rojo |
+| `demo_clase/generar_reporte_pytest.py` | Script propio: corre `pytest --junitxml=...` y arma el HTML | — |
+| `demo_clase/test_demo_fallo.py` | Módulo de práctica: una función con un error real y dos pruebas | 1 en verde, 1 en rojo |
 | `demo_clase/reporte_pylint_v01.html` | Generador sobre `apps/` y `config/` (código real) | 10.00/10 |
 | `demo_clase/reporte_pylint_v02.html` | Generador sobre un archivo con defectos a propósito | 4 hallazgos, 5.56/10 |
-| `demo_clase/reporte_pytest_v01.html` | `pytest --html=... --self-contained-html` sobre la suite real | 272 en verde |
-| `demo_clase/reporte_pytest_v02.html` | Lo mismo sobre `test_demo_fallo.py` | 1 en verde, 1 en rojo |
+| `demo_clase/reporte_pytest_v01.html` | Generador sobre la suite real (`pruebas/`, `apps/`) | 272 en verde |
+| `demo_clase/reporte_pytest_v02.html` | Generador sobre `test_demo_fallo.py` | 1 en verde, 1 en rojo |
 
 Estos cuatro reportes `v01`/`v02` son de referencia (generados una vez para
 dejar constancia de que la herramienta funciona); al repetir la
