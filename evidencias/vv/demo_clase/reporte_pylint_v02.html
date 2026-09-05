@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pylint v02 - con defectos inyectados a proposito</title>
+<style>
+  :root{
+    --papel:#F2F4F1; --tinta:#1B2420; --tinta-suave:#42504A; --texto-2:#63706A;
+    --linea:#D2D9D1; --marca:#1F5B4E; --marca-fuerte:#153F36; --marca-tenue:#DEE9E4;
+    --ok:#1F5B4E; --ok-fondo:#DEE9E4; --alerta:#8A5A16; --alerta-fondo:#F3E7D3;
+    --riesgo:#8C2F2F; --riesgo-fondo:#F4DEDE;
+  }
+  *{box-sizing:border-box;}
+  body{background:var(--papel);color:var(--tinta);font-family:system-ui,Segoe UI,Arial,sans-serif;
+       line-height:1.5;margin:0;padding:32px 20px 60px;}
+  .envoltura{max-width:900px;margin:0 auto;}
+  .mono{font-family:ui-monospace,Consolas,"Courier New",monospace;font-size:.86rem;}
+  header{border-bottom:1px solid var(--linea);padding-bottom:20px;margin-bottom:22px;}
+  .eyebrow{font-family:ui-monospace,Consolas,monospace;font-size:.75rem;letter-spacing:.08em;
+           text-transform:uppercase;color:var(--marca-fuerte);margin-bottom:8px;}
+  h1{font-size:1.5rem;margin:0 0 6px;}
+  .meta{color:var(--texto-2);font-size:.86rem;}
+  .panel{display:flex;gap:24px;align-items:center;flex-wrap:wrap;margin:20px 0 26px;}
+  .score{border-radius:8px;padding:14px 22px;text-align:center;min-width:120px;}
+  .score .num{font-size:2.2rem;font-weight:700;line-height:1;}
+  .score .etq{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;opacity:.85;}
+  .score.ok{background:var(--ok-fondo);color:var(--marca-fuerte);}
+  .score.alerta{background:var(--alerta-fondo);color:var(--alerta);}
+  .score.riesgo{background:var(--riesgo-fondo);color:var(--riesgo);}
+  .conteos{display:flex;gap:18px;flex-wrap:wrap;}
+  .conteo__item{display:flex;flex-direction:column;align-items:center;min-width:64px;}
+  .conteo__num{font-size:1.25rem;font-weight:700;font-family:ui-monospace,monospace;}
+  .conteo__etq{font-size:.7rem;color:var(--texto-2);text-transform:uppercase;letter-spacing:.04em;}
+  table.datos{width:100%;border-collapse:collapse;font-size:.88rem;background:#fff;border:1px solid var(--linea);border-radius:6px;overflow:hidden;}
+  table.datos th, table.datos td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--linea);}
+  table.datos th{font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;color:var(--texto-2);background:var(--papel);}
+  table.datos tbody tr:last-child td{border-bottom:none;}
+  .pastilla{display:inline-block;font-family:ui-monospace,monospace;font-size:.72rem;padding:2px 9px;border-radius:999px;font-weight:600;}
+  .pastilla.warning{background:var(--alerta-fondo);color:var(--alerta);}
+  .pastilla.error, .pastilla.fatal{background:var(--riesgo-fondo);color:var(--riesgo);}
+  .pastilla.refactor, .pastilla.convention, .pastilla.info{background:var(--marca-tenue);color:var(--marca-fuerte);}
+  .vacio{background:var(--ok-fondo);color:var(--marca-fuerte);padding:22px;border-radius:6px;text-align:center;font-weight:600;}
+  footer{margin-top:30px;padding-top:16px;border-top:1px solid var(--linea);color:var(--texto-2);font-size:.8rem;}
+  footer code{background:var(--marca-tenue);padding:1px 6px;border-radius:4px;}
+</style>
+</head>
+<body>
+<div class="envoltura">
+  <header>
+    <div class="eyebrow">Kardex · Unidad 3 · Verificación (análisis estático)</div>
+    <h1>Pylint v02 - con defectos inyectados a proposito</h1>
+    <div class="meta">Generado el 05/09/2026 16:42 · umbral mínimo del brief: 8.0/10</div>
+  </header>
+
+  <div class="panel">
+    <div class="score alerta">
+      <div class="num">5.56</div>
+      <div class="etq">/ 10</div>
+    </div>
+    <div class="conteos"><div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Fatal</span></div><div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Error</span></div><div class="conteo__item"><span class="conteo__num">4</span><span class="conteo__etq">Aviso</span></div><div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Refactor</span></div><div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Convención</span></div><div class="conteo__item"><span class="conteo__num">0</span><span class="conteo__etq">Info</span></div></div>
+  </div>
+
+  
+        <table class="datos">
+          <thead><tr><th>Severidad</th><th>Ubicación</th><th>Código</th><th>Regla</th><th>Mensaje</th></tr></thead>
+          <tbody>
+      <tr>
+        <td><span class="pastilla warning">Aviso</span></td>
+        <td class="mono">evidencias\vv\demo_estatico_antes.py:8</td>
+        <td class="mono">W0611</td>
+        <td class="mono">unused-import</td>
+        <td>Unused import os</td>
+      </tr>
+      <tr>
+        <td><span class="pastilla warning">Aviso</span></td>
+        <td class="mono">evidencias\vv\demo_estatico_antes.py:9</td>
+        <td class="mono">W0611</td>
+        <td class="mono">unused-import</td>
+        <td>Unused import json</td>
+      </tr>
+      <tr>
+        <td><span class="pastilla warning">Aviso</span></td>
+        <td class="mono">evidencias\vv\demo_estatico_antes.py:16</td>
+        <td class="mono">W0612</td>
+        <td class="mono">unused-variable</td>
+        <td>Unused variable &#x27;auditoria&#x27;</td>
+      </tr>
+      <tr>
+        <td><span class="pastilla warning">Aviso</span></td>
+        <td class="mono">evidencias\vv\demo_estatico_antes.py:18</td>
+        <td class="mono">W0702</td>
+        <td class="mono">bare-except</td>
+        <td>No exception type(s) specified</td>
+      </tr></tbody>
+        </table>
+
+  <footer>
+    Comando ejecutado: <code>pylint evidencias/vv/demo_estatico_antes.py --output-format=json2</code>
+  </footer>
+</div>
+</body>
+</html>
