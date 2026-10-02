@@ -1,7 +1,7 @@
 # Kardex — dependencias de ejecución
 # Sin npm, sin frameworks de CSS, sin servicios de pago.
 
-Django[argon2]==5.2.6          # framework + hash Argon2 (Seguridad #1)
+Django[argon2]==6.1.1          # framework + hash Argon2 (Seguridad #1)
 django-environ==0.12.0         # secretos por variable de entorno (Seguridad #5)
 django-axes==8.0.0             # límite de intentos de inicio de sesión (Seguridad #7)
 psycopg[binary]==3.2.9         # controlador PostgreSQL (Neon)
