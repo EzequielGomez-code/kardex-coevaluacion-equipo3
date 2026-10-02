@@ -8,4 +8,4 @@ coverage==7.9.2
 pylint==3.3.7
 pylint-django==2.6.1
 ruff==0.12.7
-pip-audit==2.9.0               # auditoría de vulnerabilidades (Seguridad #10)
+pip-audit==2.10.1               # auditoría de vulnerabilidades (Seguridad #10)
