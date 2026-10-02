@@ -6,6 +6,6 @@ pytest-django==4.11.1
 pytest-cov==6.2.1
 coverage==7.9.2
 pylint==3.3.7
-pylint-django==2.6.1
+pylint-django==2.8.0
 ruff==0.12.7
 pip-audit==2.9.0               # auditoría de vulnerabilidades (Seguridad #10)
