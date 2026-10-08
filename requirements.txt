@@ -5,7 +5,7 @@ Django[argon2]==5.2.6          # framework + hash Argon2 (Seguridad #1)
 django-environ==0.12.0         # secretos por variable de entorno (Seguridad #5)
 django-axes==8.0.0             # límite de intentos de inicio de sesión (Seguridad #7)
 psycopg[binary]==3.2.9         # controlador PostgreSQL (Neon)
-whitenoise[brotli]==6.9.0      # estáticos servidos por el propio Django
+whitenoise[brotli]==6.12.0      # estáticos servidos por el propio Django
 gunicorn==23.0.0               # servidor WSGI en Render
 reportlab==4.2.5               # PDF sin dependencias de sistema (Render free no admite apt-get)
 openpyxl==3.1.5                # lectura y escritura de Excel (reportes e importación masiva)
